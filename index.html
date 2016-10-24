@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Game of Life</title>
+		<meta charset="utf-8">
+	</head>
+	<body>
+		<canvas width="600" height="600" id="canvas">Your browser doesn't support html5 canvas.</canvas>
+		<script>
+			(function(){
+				var canvas;
+        var context;
+        var CANVAS_SIZE = 600;
+        var CELL_SIZE = 4;
+        var CELL_LENGTH = CANVAS_SIZE / CELL_SIZE;
+				canvas = document.getElementById('canvas');
+				context = canvas.getContext('2d');
+
+        var cells = new Array(CELL_LENGTH * CELL_LENGTH);
+
+        getCellAt = function(x, y){
+          return cells[ x + y * CELL_LENGTH];
+        }
+        Cell = function(x, y){
+          this.x = x;
+          this.y = y;
+          this.state = 0; //dead => not colored
+
+          this.draw = function(){
+            if(this.state){
+              context.fillStyle = '#ff0000';
+              context.fillRect(this.x * CELL_SIZE, this.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+            }
+          }
+
+          this.update = function(cells){
+            var aliveCount = 0;
+
+            var directions = [[-1, -1], [-1, 0], [-1, 1],
+                              [-1, 0], [1, 0],
+                              [-1, 1], [0, 1], [1, 1]];
+            directions.forEach(function(d){
+              aliveCount += getCellAt(this.x + d[0], this.y + d[1]).state;
+            });
+            
+            if(this.state){ //1, alive
+              if(aliveCount <= 1 || aliveCount >= 4){
+                this.state = 0;
+              }
+              else{
+                this.state = 1;
+              }
+            }
+            else{ // 0, dead
+              if(aliveCount === 3){
+                this.state = 1;
+              }
+              else{
+                this.state = 0;
+              }
+            }
+          }
+
+        }  
+
+
+        for(i in cells){
+          cells[i] = new Cell( i % CELL_LENGTH, i / CELL_LENGTH );
+
+          if(i % 5 === 0){
+            cells[i].state = 1;
+          }
+        }
+
+        mainLoop = function(){
+          context.fillStyle = '#eeeeee';
+          context.fillRect(0, 0, canvas.width, canvas.height);
+
+
+          cells.forEach(function(c){
+            c.update();
+          });
+          cells.forEach(function(c){
+            c.draw();
+          });
+
+          setTimeout(function(){
+            this.mainLoop();
+          }.bind(this), 300);
+        }
+        mainLoop();
+			})();
+		</script>
+	</body>
+</html>
