@@ -12,10 +12,7 @@
       this.y = y;
       this.state = 0; //dead => not colored
       this._state = 0; //cache
-
-      // this.parentNode = _this;
     };
-
 
     Cell._getCellStateAt = function(x, y){
       if( x < 0 || y < 0 || x >= this.gameManager.CELL_LENGTH || y >= this.gameManager.CELL_LENGTH ){
@@ -23,7 +20,6 @@
       }
       return this.gameManager.cells[ x + y * this.gameManager.CELL_LENGTH]._state;
     };
-
     Cell.getCellAt = function (x, y){
       if( x < 0 || y < 0 || x >= this.gameManager.CELL_LENGTH || y >= this.gameManager.CELL_LENGTH ){
         return null;
@@ -32,7 +28,6 @@
     };
 
     Cell.prototype.draw = function(){
-      // console.log(Cell.classProp);
       if(this.state){
         Cell.gameManager.context.fillStyle = '#ff0000';
         Cell.gameManager.context.fillRect(this.x * Cell.gameManager.CELL_SIZE, this.y * Cell.gameManager.CELL_SIZE, Cell.gameManager.CELL_SIZE, Cell.gameManager.CELL_SIZE);
@@ -45,7 +40,6 @@
                         [-1, 0], [1, 0],
                         [-1, 1], [0, 1], [1, 1]];
       directions.forEach(function(d){
-        // aliveCount += getCellAt(this.x + d[0], this.y + d[1]).state;
         aliveCount += Cell._getCellStateAt(this.x + d[0], this.y + d[1]);
       }.bind(this));
 
@@ -61,13 +55,7 @@
       }
     };
 
-    // var c = new Cell(0, 0, this);
-    // c.draw();
-
-
-
     Polymer({
-
       is: 'life-app',
 
       properties: {
@@ -79,71 +67,7 @@
 
       gameManager: {},
 
-      // getCellStateAt: function (x, y){
-      //   if( x < 0 || y < 0 || x >= this.gameManager.CELL_LENGTH || y >= this.gameManager.CELL_LENGTH ){
-      //     return 0;
-      //   }
-      //   return this.gameManager.cells[ x + y * this.gameManager.CELL_LENGTH]._state;
-      // },
-      // getCellAt: function (x, y){
-      //   if( x < 0 || y < 0 || x >= this.gameManager.CELL_LENGTH || y >= this.gameManager.CELL_LENGTH ){
-      //     return null;
-      //   }
-      //   return this.gameManager.cells[ x + y * this.gameManager.CELL_LENGTH];
-      // },
-
-      // Cell: function(x, y, _this){
-      //   this.x = x;
-      //   this.y = y;
-      //   this.state = 0; //dead => not colored
-      //   this._state = 0; //cache
-      //
-      //   this.parentNode = _this;
-      //
-      //
-      //   this.draw = function(){
-      //     if(this.state){
-      //       this.parentNode.gameManager.context.fillStyle = '#ff0000';
-      //       this.parentNode.gameManager.context.fillRect(this.x * this.parentNode.gameManager.CELL_SIZE, this.y * this.parentNode.gameManager.CELL_SIZE, this.parentNode.gameManager.CELL_SIZE, this.parentNode.gameManager.CELL_SIZE);
-      //     }
-      //   }
-      //
-      //   this.update = function(){
-      //     var aliveCount = 0;
-      //
-      //     var directions = [[-1, -1], [0, -1], [1, -1],
-      //                       [-1, 0], [1, 0],
-      //                       [-1, 1], [0, 1], [1, 1]];
-      //     directions.forEach(function(d){
-      //       // aliveCount += getCellAt(this.x + d[0], this.y + d[1]).state;
-      //       aliveCount += this.parentNode.getCellStateAt(this.x + d[0], this.y + d[1]);
-      //     }.bind(this));
-      //
-      //     if(this._state){ //1, alive
-      //       if(aliveCount <= 1 || aliveCount >= 4){
-      //         this.state = 0;
-      //       }
-      //       // else{
-      //       //   this.state = 1;
-      //       // }
-      //     }
-      //     else{ // 0, dead
-      //       if(aliveCount === 3){
-      //         this.state = 1;
-      //       }
-      //       // else{
-      //       //   this.state = 0;
-      //       // }
-      //     }
-      //   }
-      //
-      // },
-
-
       ready: function() {
-        // console.log(this.prop1);
-        // console.log(TestHoge);
-        // console.log(TestHoge());
         Cell.gameManager = this.gameManager;
 
         Cell.gameManager.CANVAS_SIZE = 600;
@@ -174,22 +98,24 @@
 
         Cell.gameManager.isDrawing = false;
 
-        // var _this = this;
 
-        function onMouseMove(e){
-          if (!Cell.gameManager.isDrawing) return;
+        function handleClick(e){
           var rect = e.target.getBoundingClientRect();
           x = e.clientX - rect.left;
           y = e.clientY - rect.top;
           Cell.getCellAt(Math.floor(x / Cell.gameManager.CELL_SIZE), Math.floor(y / Cell.gameManager.CELL_SIZE)).state = 1;
+        }
+        function onMouseMove(e){
+          if (!Cell.gameManager.isDrawing) return;
+          handleClick(e);
         };
         function onMouseUp(e){
           Cell.gameManager.isDrawing = false;
-        }
+        };
         function onMouseDown(e){
           Cell.gameManager.isDrawing = true;
         }
-        // canvas.addEventListener('click', onClick, false);
+        Cell.gameManager.canvas.addEventListener('click', handleClick, false);
         Cell.gameManager.canvas.addEventListener('mousemove', onMouseMove, false);
         Cell.gameManager.canvas.addEventListener('mousedown', onMouseDown, false);
         Cell.gameManager.canvas.addEventListener('mouseup', onMouseUp, false);
@@ -207,9 +133,6 @@
           c._state = c.state;
           c.draw();
         });
-        // cells.forEach(function(c){
-        //   c.prepareUpdate();
-        // });
         this.gameManager.cells.forEach(function(c){
           c.update();
         });
