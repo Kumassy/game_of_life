@@ -76,9 +76,9 @@
         Cell.gameManager.canvas = document.getElementById('canvas');
         Cell.gameManager.context = canvas.getContext('2d');
 
+        Cell.gameManager.isDrawing = false;
+
         Cell.gameManager.cells = new Array(Cell.gameManager.CELL_LENGTH * Cell.gameManager.CELL_LENGTH);
-
-
         for(var i=0; i < Cell.gameManager.cells.length; i++){
           Cell.gameManager.cells[i] = new Cell( i % Cell.gameManager.CELL_LENGTH, Math.floor(i / Cell.gameManager.CELL_LENGTH ));
           if( Math.random() > 0.5){
@@ -96,32 +96,43 @@
 
 
 
-        Cell.gameManager.isDrawing = false;
 
 
-        function handleClick(e){
-          var rect = e.target.getBoundingClientRect();
-          x = e.clientX - rect.left;
-          y = e.clientY - rect.top;
-          Cell.getCellAt(Math.floor(x / Cell.gameManager.CELL_SIZE), Math.floor(y / Cell.gameManager.CELL_SIZE)).state = 1;
-        }
-        function onMouseMove(e){
-          if (!Cell.gameManager.isDrawing) return;
-          handleClick(e);
-        };
-        function onMouseUp(e){
-          Cell.gameManager.isDrawing = false;
-        };
-        function onMouseDown(e){
-          Cell.gameManager.isDrawing = true;
-        }
-        Cell.gameManager.canvas.addEventListener('click', handleClick, false);
-        Cell.gameManager.canvas.addEventListener('mousemove', onMouseMove, false);
-        Cell.gameManager.canvas.addEventListener('mousedown', onMouseDown, false);
-        Cell.gameManager.canvas.addEventListener('mouseup', onMouseUp, false);
+        Cell.gameManager.canvas.addEventListener('click', this._plotOnClick(this), false);
+        Cell.gameManager.canvas.addEventListener('mousemove', this._handlePlotSeq(this), false);
+        Cell.gameManager.canvas.addEventListener('mousedown', this._handlePlotStart(this), false);
+        Cell.gameManager.canvas.addEventListener('mouseup', this._handlePlotEnd(this), false);
+        // Cell.gameManager.canvas.addEventListener('touchmove', this._handlePlotSeq(this), false);
+        // Cell.gameManager.canvas.addEventListener('touchdown', this._handlePlotStart(this), false);
+        // Cell.gameManager.canvas.addEventListener('touchup', this._handlePlotEnd(this), false);
 
 
         this.mainLoop();
+      },
+
+      _plotOnClick: function(self){
+        return function(e){
+          var rect = e.target.getBoundingClientRect();
+          x = e.clientX - rect.left;
+          y = e.clientY - rect.top;
+          Cell.getCellAt(Math.floor(x / self.gameManager.CELL_SIZE), Math.floor(y / self.gameManager.CELL_SIZE)).state = 1;
+        };
+      },
+      _handlePlotStart: function(self){
+        return function(e){
+          self.gameManager.isDrawing = true;
+        };
+      },
+      _handlePlotSeq: function(self){
+        return function(e){
+          if (!self.gameManager.isDrawing) return;
+          self._plotOnClick(self)(e);
+        };
+      },
+      _handlePlotEnd: function(self){
+        return function(e){
+          self.gameManager.isDrawing = false;
+        };
       },
 
       mainLoop: function(){
