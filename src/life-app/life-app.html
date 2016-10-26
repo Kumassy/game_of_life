@@ -1,12 +1,22 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
 
 <dom-module id="life-app">
   <template>
     <life-canvas app="{{app}}"></life-canvas>
-    <nav>
+    <!-- <nav>
       <paper-button on-tap="handleTap" hogedata="hehe">Heavy Weight Spaceship</paper-button>
-    </nav>
+    </nav> -->
+    <paper-listbox on-iron-select="handleItemChange" selected="0">
+      <paper-item id="pencil">Pencil</paper-item>
+      <paper-item id="glider">Glider</paper-item>
+      <paper-item id="light_weight_spaceship">Light Weight Spaceship</paper-item>
+      <paper-item id="medium_weight_spaceship">Medium Weight Spaceship</paper-item>
+      <paper-item id="heavy_weight_spaceship">Heavy Weight Spaceship</paper-item>
+    </paper-listbox>
+
   </template>
 
   <script>
@@ -23,6 +33,9 @@
       ready: function() {
         this.app.catalog = {};
 
+        this.app.catalog.pencil = [
+          "1"
+        ];
         this.app.catalog.glider = [
           "010",
           "001",
@@ -54,6 +67,14 @@
         // document.querySelector('life-canvas').injectPattern( 50, 50, this.app.catalog.glider);
         // document.querySelector('life-canvas').injectPattern( 50, 50, this.app.catalog.light_weight_spaceship);
         document.querySelector('life-canvas').injectPattern( 50, 50, this.app.catalog.heavy_weight_spaceship);
+      },
+
+      handleItemChange: function(e){
+        // console.log("Changed!!!");
+        // console.log(e.detail.item.id);
+        // console.log(e);
+
+        this.app.selected = e.detail.item.id;
       }
 
     });

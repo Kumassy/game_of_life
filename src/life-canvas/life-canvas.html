@@ -91,11 +91,11 @@
           }
         }
 
-        Cell.getCellAt( 100 + 1, 100 +0 ).state = 1;
-        Cell.getCellAt( 100 +2, 100 +1 ).state = 1;
-        Cell.getCellAt( 100 +0, 100 +2 ).state = 1;
-        Cell.getCellAt( 100 +1, 100 +2 ).state = 1;
-        Cell.getCellAt( 100 +2, 100 +2 ).state = 1;
+        // Cell.getCellAt( 100 + 1, 100 +0 ).state = 1;
+        // Cell.getCellAt( 100 +2, 100 +1 ).state = 1;
+        // Cell.getCellAt( 100 +0, 100 +2 ).state = 1;
+        // Cell.getCellAt( 100 +1, 100 +2 ).state = 1;
+        // Cell.getCellAt( 100 +2, 100 +2 ).state = 1;
 
 
 
@@ -120,7 +120,9 @@
           var rect = e.target.getBoundingClientRect();
           var x = e.clientX - rect.left;
           var y = e.clientY - rect.top;
-          Cell.getCellAt(Math.floor(x / self.app.gameManager.CELL_SIZE), Math.floor(y / self.app.gameManager.CELL_SIZE)).state = 1;
+          // Cell.getCellAt(Math.floor(x / self.app.gameManager.CELL_SIZE), Math.floor(y / self.app.gameManager.CELL_SIZE)).state = 1;
+
+          self.injectPattern(Math.floor(x / self.app.gameManager.CELL_SIZE), Math.floor(y / self.app.gameManager.CELL_SIZE), self.app.catalog[self.app.selected])
         };
       },
       _handlePlotStart: function(self){
