@@ -1,156 +1,34 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
 
 <dom-module id="life-app">
   <template>
-    <canvas width="600" height="600" id="canvas">Your browser doesn't support html5 canvas.</canvas>
-    <h2>Hello [[prop1]]</h2>
+    <life-canvas app="{{app}}"></life-canvas>
+    <paper-button on-tap="handleTap" hogedata="hehe">Glider</paper-button>
   </template>
 
   <script>
-    var Cell = function(x, y){
-      this.x = x;
-      this.y = y;
-      this.state = 0; //dead => not colored
-      this._state = 0; //cache
-    };
-
-    Cell._getCellStateAt = function(x, y){
-      if( x < 0 || y < 0 || x >= this.gameManager.CELL_LENGTH || y >= this.gameManager.CELL_LENGTH ){
-        return 0;
-      }
-      return this.gameManager.cells[ x + y * this.gameManager.CELL_LENGTH]._state;
-    };
-    Cell.getCellAt = function (x, y){
-      if( x < 0 || y < 0 || x >= this.gameManager.CELL_LENGTH || y >= this.gameManager.CELL_LENGTH ){
-        return null;
-      }
-      return this.gameManager.cells[ x + y * this.gameManager.CELL_LENGTH];
-    };
-
-    Cell.prototype.draw = function(){
-      if(this.state){
-        Cell.gameManager.context.fillStyle = '#ff0000';
-        Cell.gameManager.context.fillRect(this.x * Cell.gameManager.CELL_SIZE, this.y * Cell.gameManager.CELL_SIZE, Cell.gameManager.CELL_SIZE, Cell.gameManager.CELL_SIZE);
-      }
-    };
-    Cell.prototype.update = function(){
-      var aliveCount = 0;
-
-      var directions = [[-1, -1], [0, -1], [1, -1],
-                        [-1, 0], [1, 0],
-                        [-1, 1], [0, 1], [1, 1]];
-      directions.forEach(function(d){
-        aliveCount += Cell._getCellStateAt(this.x + d[0], this.y + d[1]);
-      }.bind(this));
-
-      if(this._state){ //1, alive
-        if(aliveCount <= 1 || aliveCount >= 4){
-          this.state = 0;
-        }
-      }
-      else{ // 0, dead
-        if(aliveCount === 3){
-          this.state = 1;
-        }
-      }
-    };
-
     Polymer({
       is: 'life-app',
 
       properties: {
-        prop1: {
-          type: String,
-          value: 'life-app',
-        },
+        app: {
+          type: Object,
+          value: {}
+        }
       },
-
-      gameManager: {},
 
       ready: function() {
-        Cell.gameManager = this.gameManager;
-
-        Cell.gameManager.CANVAS_SIZE = 600;
-        Cell.gameManager.CELL_SIZE = 4;
-        Cell.gameManager.CELL_LENGTH = Math.floor(Cell.gameManager.CANVAS_SIZE / Cell.gameManager.CELL_SIZE);
-        Cell.gameManager.canvas = document.getElementById('canvas');
-        Cell.gameManager.context = canvas.getContext('2d');
-
-        Cell.gameManager.isDrawing = false;
-
-        Cell.gameManager.cells = new Array(Cell.gameManager.CELL_LENGTH * Cell.gameManager.CELL_LENGTH);
-        for(var i=0; i < Cell.gameManager.cells.length; i++){
-          Cell.gameManager.cells[i] = new Cell( i % Cell.gameManager.CELL_LENGTH, Math.floor(i / Cell.gameManager.CELL_LENGTH ));
-          if( Math.random() > 0.5){
-            Cell.gameManager.cells[i].state = 1;
-          }
-        }
-
-        Cell.getCellAt( 100 + 1, 100 +0 ).state = 1;
-        Cell.getCellAt( 100 +2, 100 +1 ).state = 1;
-        Cell.getCellAt( 100 +0, 100 +2 ).state = 1;
-        Cell.getCellAt( 100 +1, 100 +2 ).state = 1;
-        Cell.getCellAt( 100 +2, 100 +2 ).state = 1;
-
-
-
-
-
-
-
-        Cell.gameManager.canvas.addEventListener('click', this._plotOnClick(this), false);
-        Cell.gameManager.canvas.addEventListener('mousemove', this._handlePlotSeq(this), false);
-        Cell.gameManager.canvas.addEventListener('mousedown', this._handlePlotStart(this), false);
-        Cell.gameManager.canvas.addEventListener('mouseup', this._handlePlotEnd(this), false);
-        // Cell.gameManager.canvas.addEventListener('touchmove', this._handlePlotSeq(this), false);
-        // Cell.gameManager.canvas.addEventListener('touchdown', this._handlePlotStart(this), false);
-        // Cell.gameManager.canvas.addEventListener('touchup', this._handlePlotEnd(this), false);
-
-
-        this.mainLoop();
+        this.app.catalog = {};
+        this.app.catalog.glider = ["010", "001", "111"];
       },
 
-      _plotOnClick: function(self){
-        return function(e){
-          var rect = e.target.getBoundingClientRect();
-          x = e.clientX - rect.left;
-          y = e.clientY - rect.top;
-          Cell.getCellAt(Math.floor(x / self.gameManager.CELL_SIZE), Math.floor(y / self.gameManager.CELL_SIZE)).state = 1;
-        };
-      },
-      _handlePlotStart: function(self){
-        return function(e){
-          self.gameManager.isDrawing = true;
-        };
-      },
-      _handlePlotSeq: function(self){
-        return function(e){
-          if (!self.gameManager.isDrawing) return;
-          self._plotOnClick(self)(e);
-        };
-      },
-      _handlePlotEnd: function(self){
-        return function(e){
-          self.gameManager.isDrawing = false;
-        };
-      },
+      handleTap: function(e, detail) {
+        // var rect = e.target.getBoundingClientRect();
+        // var x = e.clientX - rect.left;
+        // var y = e.clientY - rect.top;
 
-      mainLoop: function(){
-        this.gameManager.context.fillStyle = '#eeeeee';
-        this.gameManager.context.fillRect(0, 0, this.gameManager.canvas.width, this.gameManager.canvas.height);
-
-
-        this.gameManager.cells.forEach(function(c){
-          c._state = c.state;
-          c.draw();
-        });
-        this.gameManager.cells.forEach(function(c){
-          c.update();
-        });
-
-        setTimeout(function(){
-          this.mainLoop();
-        }.bind(this), 30);
+        document.querySelector('life-canvas').injectPattern( 50, 50, this.app.catalog.glider);
       }
 
     });
