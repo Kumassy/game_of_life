@@ -4,7 +4,9 @@
 <dom-module id="life-app">
   <template>
     <life-canvas app="{{app}}"></life-canvas>
-    <paper-button on-tap="handleTap" hogedata="hehe">Glider</paper-button>
+    <nav>
+      <paper-button on-tap="handleTap" hogedata="hehe">Heavy Weight Spaceship</paper-button>
+    </nav>
   </template>
 
   <script>
@@ -20,7 +22,28 @@
 
       ready: function() {
         this.app.catalog = {};
-        this.app.catalog.glider = ["010", "001", "111"];
+
+        this.app.catalog.glider = [
+          "010",
+          "001",
+          "111"];
+        this.app.catalog.light_weight_spaceship = [
+          "01001",
+          "10000",
+          "10001",
+          "11110"];
+        this.app.catalog.medium_weight_spaceship = [
+          "000100",
+          "010001",
+          "100000",
+          "100001",
+          "111110"];
+        this.app.catalog.heavy_weight_spaceship = [
+          "0001100",
+          "0100001",
+          "1000000",
+          "1000001",
+          "1111110"];
       },
 
       handleTap: function(e, detail) {
@@ -28,7 +51,9 @@
         // var x = e.clientX - rect.left;
         // var y = e.clientY - rect.top;
 
-        document.querySelector('life-canvas').injectPattern( 50, 50, this.app.catalog.glider);
+        // document.querySelector('life-canvas').injectPattern( 50, 50, this.app.catalog.glider);
+        // document.querySelector('life-canvas').injectPattern( 50, 50, this.app.catalog.light_weight_spaceship);
+        document.querySelector('life-canvas').injectPattern( 50, 50, this.app.catalog.heavy_weight_spaceship);
       }
 
     });
