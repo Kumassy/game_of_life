@@ -1,0 +1,7 @@
+{
+  "entrypoint": "index.html",
+  "shell": "src/life-app/life-app.html",
+  "fragments": [
+    "src/life-canvas/life-canvas.html"
+  ]
+}
