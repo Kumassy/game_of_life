@@ -232,7 +232,13 @@
             }
           }
         }
-
+      },
+      clearCanvas: function(){
+        this.app.gameManager.cells.forEach(function(c){
+          c.state = 0;
+          c._state = 0;
+        });
+        this._draw();
       }
 
     });
