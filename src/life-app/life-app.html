@@ -1,4 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
@@ -19,6 +21,13 @@
         <paper-item id="heavy_weight_spaceship">Heavy Weight Spaceship</paper-item>
         <paper-item id="glider_gun">Glider Gun</paper-item>
         <paper-item id="test">Test</paper-item>
+
+
+        <template is="dom-repeat" items="{{app.localCatalog}}">
+          <paper-item id="{{item.name}}">{{item.name}}</paper-item>
+        </template>
+
+
       </paper-listbox>
     </div>
     <nav style="clear: both;">
@@ -27,6 +36,15 @@
       <!--                    ^ Awesome!! ^ -->
     </nav>
 
+
+    <iron-ajax auto url="../../patterns.json" handle-as="json" on-response="handleResponse"></iron-ajax>
+
+    <!-- <template is="dom-repeat" items="{{app.catalog2}}">
+      <paper-item id="{{items.name}}">{{items.name}}</paper-item>
+    </template> -->
+    <!-- <template is="dom-repeat" items="{{app.catalog2}}">
+      <div>First name: <span>{{item.name}}</span></div>
+    </template> -->
   </template>
 
   <script>
@@ -87,6 +105,28 @@
         this.app.catalog.test = "2b3o3b3o2b2$o4bobo4bo$o4bobo4bo$o4bobo4bo$2b3o3b3o2b2$2b3o3b3o2b$o4bobo4bo$o4bobo4bo$o4bobo4bo2$2b3o3b3o!";
         // this.app.catalog.test = "11b2o5b4o$9b2ob2o3bo3bo$9b4o8bo$10b2o5bo2bob2$8bo13b$7b2o8b2o3b$6bo9bo2bo2b$7b5o4bo2bo2b$8b4o3b2ob2o2b$11bo4b2o4b4$18b4o$o2bo13bo3bo$4bo16bo$o3bo12bo2bob$b4o!";
 
+
+        this.employees = [
+            {first: 'Bob', last: 'Smith'},
+            {first: 'Sally', last: 'Johnson'},
+        ];
+
+        // this.catalog2 = [
+        //   {
+        //     author: "Achim Flammenkamp",
+        //     comments: "A period 5 oscillator that was found in August 1994.↵The name was suggested by Bill Gosper, noting that the phase shown ↵below displays the period in binary.",
+        //     name: "101"
+        //
+        //   },
+        //   {
+        //     author: "Achimsd Flammenkamp",
+        //     comments: "A period 5 oscillator that was found in August 1994.↵The name was suggested by Bill Gosper, noting that the phase shown ↵below displays the period in binary.",
+        //     name: "101ss"
+        //
+        //   }
+        //
+        // ];
+
       },
 
       handleTap: function(e, detail) {
@@ -110,6 +150,20 @@
         // console.log(e);
 
         this.app.selected = e.detail.item.id;
+      },
+
+      handleResponse: function(r){
+        // console.log(r.detail.response);
+
+        // this.app.catalog = Object.assign(this.app.catalog, r.detail.response)
+
+        this.set('app.localCatalog', r.detail.response);
+        // this.catalog2 = r.detail.response;
+
+        r.detail.response.forEach(function(r){
+          this.app.catalog[r.name] = r.payload;
+
+        }.bind(this));
       }
 
     });
