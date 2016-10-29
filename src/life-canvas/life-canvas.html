@@ -2,7 +2,7 @@
 
 <dom-module id="life-canvas">
   <template>
-    <canvas width="600" height="600" id="canvas">Your browser doesn't support html5 canvas.</canvas>
+    <canvas width$="[[app.gameManager.CANVAS_SIZE_X]]" height$="[[app.gameManager.CANVAS_SIZE_Y]]" id="canvas">Your browser doesn't support html5 canvas.</canvas>
     <!-- <h2>Hello [[prop1]]</h2> -->
   </template>
 
@@ -15,16 +15,16 @@
     };
 
     Cell._getCellStateAt = function(x, y){
-      if( x < 0 || y < 0 || x >= this.gameManager.CELL_LENGTH || y >= this.gameManager.CELL_LENGTH ){
+      if( x < 0 || y < 0 || x >= this.gameManager.CELL_LENGTH_X || y >= this.gameManager.CELL_LENGTH_Y ){
         return 0;
       }
-      return this.gameManager.cells[ x + y * this.gameManager.CELL_LENGTH]._state;
+      return this.gameManager.cells[ x + y * this.gameManager.CELL_LENGTH_X]._state;
     };
     Cell.getCellAt = function (x, y){
-      if( x < 0 || y < 0 || x >= this.gameManager.CELL_LENGTH || y >= this.gameManager.CELL_LENGTH ){
+      if( x < 0 || y < 0 || x >= this.gameManager.CELL_LENGTH_X || y >= this.gameManager.CELL_LENGTH_Y ){
         return null;
       }
-      return this.gameManager.cells[ x + y * this.gameManager.CELL_LENGTH];
+      return this.gameManager.cells[ x + y * this.gameManager.CELL_LENGTH_X];
     };
 
     Cell.prototype.draw = function(){
@@ -70,22 +70,27 @@
         this.app.gameManager = {};
         Cell.gameManager = this.app.gameManager;
 
-        Cell.gameManager.CANVAS_SIZE = 600;
+        // Cell.gameManager.CANVAS_SIZE = 600;
+        Cell.gameManager.CANVAS_SIZE_X = 800;
+        Cell.gameManager.CANVAS_SIZE_Y = 600;
         Cell.gameManager.CELL_SIZE = 4;
-        Cell.gameManager.CELL_LENGTH = Math.floor(Cell.gameManager.CANVAS_SIZE / Cell.gameManager.CELL_SIZE);
+        // Cell.gameManager.CELL_LENGTH = Math.floor(Cell.gameManager.CANVAS_SIZE / Cell.gameManager.CELL_SIZE);
+        // Cell.gameManager.CELL_LENGTH_X = Math.floor(Cell.gameManager.CANVAS_SIZE_X / Cell.gameManager.CELL_SIZE);
+        // Cell.gameManager.CELL_LENGTH_Y = Math.floor(Cell.gameManager.CANVAS_SIZE_Y / Cell.gameManager.CELL_SIZE);
         // Cell.gameManager.canvas = document.getElementById('canvas');
         Cell.gameManager.canvas = this.$.canvas;
         Cell.gameManager.context = Cell.gameManager.canvas.getContext('2d');
 
         Cell.gameManager.isDrawing = false;
 
-        Cell.gameManager.cells = new Array(Cell.gameManager.CELL_LENGTH * Cell.gameManager.CELL_LENGTH);
-        for(var i=0; i < Cell.gameManager.cells.length; i++){
-          Cell.gameManager.cells[i] = new Cell( i % Cell.gameManager.CELL_LENGTH, Math.floor(i / Cell.gameManager.CELL_LENGTH ));
-          if( Math.random() > 0.5){
-            // Cell.gameManager.cells[i].state = 1;
-          }
-        }
+        // Cell.gameManager.cells = new Array(Cell.gameManager.CELL_LENGTH_X * Cell.gameManager.CELL_LENGTH_Y);
+        // for(var i=0; i < Cell.gameManager.cells.length; i++){
+        //   Cell.gameManager.cells[i] = new Cell( i % Cell.gameManager.CELL_LENGTH_X, Math.floor(i / Cell.gameManager.CELL_LENGTH_X ));
+        //   if( Math.random() > 0.5){
+        //     // Cell.gameManager.cells[i].state = 1;
+        //   }
+        // }
+        this.initializeCells();
 
         Cell.gameManager.canvas.addEventListener('click', this._plotOnClick(this), false);
         Cell.gameManager.canvas.addEventListener('mousemove', this._handlePlotSeq(this), false);
@@ -105,6 +110,10 @@
         this.app.gameManager.mousePos.y = -1;
 
 
+        // fix for the 1st initialization of canvas size
+        this.notifyPath('app.gameManager.CANVAS_SIZE_X');
+        this.notifyPath('app.gameManager.CANVAS_SIZE_Y');
+
         this.mainLoop();
       },
 
@@ -115,6 +124,7 @@
 
         return [Math.floor(x / this.app.gameManager.CELL_SIZE), Math.floor(y / this.app.gameManager.CELL_SIZE)];
       },
+
 
       _plotOnClick: function(self){
         return function(e){
@@ -251,7 +261,20 @@
           c._state = 0;
         });
         this._draw();
-      }
+      },
+      initializeCells: function(){
+        Cell.gameManager.CELL_LENGTH_X = Math.floor(Cell.gameManager.CANVAS_SIZE_X / Cell.gameManager.CELL_SIZE);
+        Cell.gameManager.CELL_LENGTH_Y = Math.floor(Cell.gameManager.CANVAS_SIZE_Y / Cell.gameManager.CELL_SIZE);
+
+        Cell.gameManager.cells = new Array(this.app.gameManager.CELL_LENGTH_X * this.app.gameManager.CELL_LENGTH_Y);
+        for(var i=0; i < Cell.gameManager.cells.length; i++){
+          Cell.gameManager.cells[i] = new Cell( i % Cell.gameManager.CELL_LENGTH_X, Math.floor(i / Cell.gameManager.CELL_LENGTH_X ));
+        }
+
+        // console.log("initialize!!");
+        // console.log(Cell.gameManager.CANVAS_SIZE_X);
+      },
+
 
     });
   </script>

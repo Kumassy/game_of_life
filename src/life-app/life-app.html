@@ -9,14 +9,21 @@
 <dom-module id="life-app">
   <template>
     <div style="float: left">
-      <life-canvas app="{{app}}"></life-canvas>
+      <div>
+        <life-canvas app="{{app}}"></life-canvas>
 
-      <nav>
-        <paper-button id="togglecontroller" on-tap="handleTap" toggles style="float: left;">Pause</paper-button>
-        <paper-slider value="{{app.controller.refreshRate}}" min="20" max="300" editable style="float: left; min-width: 300px;"></paper-slider>
-        <!--                    ^ Awesome!! ^ -->
-        <paper-button id="clearcontroller" on-tap="handleClear" toggles style="float: left;">Clear</paper-button>
-      </nav>
+        <nav>
+          <paper-button id="togglecontroller" on-tap="handleTap" toggles style="float: left;">Pause</paper-button>
+          <paper-slider value="{{app.controller.refreshRate}}" min="20" max="300" editable style="float: left; min-width: 300px;"></paper-slider>
+          <!--                    ^ Awesome!! ^ -->
+          <paper-button id="clearcontroller" on-tap="handleClear" toggles style="float: left;">Clear</paper-button>
+        </nav>
+      </div>
+      <div style="clear: both;">
+        <paper-input label="Canvas width" value="{{app.gameManager.CANVAS_SIZE_X}}" type="number" max="3000" on-change="handleCanvasResize" style="float:left; width: 45%; max-width: 400px; margin-right: 8px;"></paper-input>
+        <paper-input label="Canvas height" value="{{app.gameManager.CANVAS_SIZE_Y}}" type="number" max="3000" on-change="handleCanvasResize" style="float:left; width: 45%; max-width: 400px;"></paper-input>
+        <!-- <span>[[app.gameManager.CANVAS_SIZE_X]]</span> -->
+      </div>
     </div>
 
     <paper-listbox on-iron-select="handleItemChange" selected="0" style="float: left; height: 100vh; overflow-y: scroll;">
@@ -167,6 +174,18 @@
           this.app.catalog[r.id] = r.payload;
 
         }.bind(this));
+      },
+
+      handleCanvasResize: function(){
+        if(this.app.gameManager.CANVAS_SIZE_X > 3000){
+          this.app.gameManager.CANVAS_SIZE_X = 3000;
+          this.notifyPath('app.gameManager.CANVAS_SIZE_X');
+        }
+        if(this.app.gameManager.CANVAS_SIZE_Y > 3000){
+          this.app.gameManager.CANVAS_SIZE_Y = 3000;
+          this.notifyPath('app.gameManager.CANVAS_SIZE_Y');
+        }
+        document.querySelector('life-canvas').initializeCells();
       }
 
     });
