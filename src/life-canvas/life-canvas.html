@@ -66,12 +66,8 @@
         app: Object,
       },
 
-      // gameManager: {},
-
       ready: function() {
         this.app.gameManager = {};
-        // this.gameManager = this.app.gameManager;
-        // Cell.gameManager = this.gameManager;
         Cell.gameManager = this.app.gameManager;
 
         Cell.gameManager.CANVAS_SIZE = 600;
@@ -90,18 +86,6 @@
             // Cell.gameManager.cells[i].state = 1;
           }
         }
-
-        // Cell.getCellAt( 100 + 1, 100 +0 ).state = 1;
-        // Cell.getCellAt( 100 +2, 100 +1 ).state = 1;
-        // Cell.getCellAt( 100 +0, 100 +2 ).state = 1;
-        // Cell.getCellAt( 100 +1, 100 +2 ).state = 1;
-        // Cell.getCellAt( 100 +2, 100 +2 ).state = 1;
-
-
-
-
-
-
 
         Cell.gameManager.canvas.addEventListener('click', this._plotOnClick(this), false);
         Cell.gameManager.canvas.addEventListener('mousemove', this._handlePlotSeq(this), false);
@@ -134,11 +118,6 @@
 
       _plotOnClick: function(self){
         return function(e){
-          // var rect = e.target.getBoundingClientRect();
-          // var x = e.clientX - rect.left;
-          // var y = e.clientY - rect.top;
-          // Cell.getCellAt(Math.floor(x / self.app.gameManager.CELL_SIZE), Math.floor(y / self.app.gameManager.CELL_SIZE)).state = 1;
-
           // self.injectPattern(Math.floor(x / self.app.gameManager.CELL_SIZE), Math.floor(y / self.app.gameManager.CELL_SIZE), self.app.catalog[self.app.selected]);
           self.injectPattern.apply(self, [...self._toCellCoordinates(e), self.app.catalog[self.app.selected]]);
           self._draw();
@@ -151,12 +130,9 @@
       },
       _handlePlotSeq: function(self){
         return function(e){
-          if (!self.app.gameManager.isDrawing){
-            // self._drawPreview.apply(self, [...self._toCellCoordinates(e), self.app.catalog[self.app.selected]]);
-          }
-          else{
-            self._plotOnClick(self)(e);
-          }
+          if (!self.app.gameManager.isDrawing) return;
+
+          self._plotOnClick(self)(e);
         };
       },
 
@@ -181,7 +157,6 @@
         });
       },
 
-      // _drawPreview: function(startX, startY, pattern){
       _drawPreview: function(){
         if( !this.app.catalog || !this.app.selected) return;
         var startX = this.app.gameManager.mousePos.x;
@@ -208,12 +183,6 @@
         if(this.app.controller.isRunning){
           this.app.gameManager.context.fillStyle = '#eeeeee';
           this.app.gameManager.context.fillRect(0, 0, this.app.gameManager.canvas.width, this.app.gameManager.canvas.height);
-
-
-          // this.app.gameManager.cells.forEach(function(c){
-          //   c._state = c.state;
-          //   c.draw();
-          // });
 
           this.app.gameManager.cells.forEach(function(c){
             c.update();
@@ -265,22 +234,13 @@
           pattern = this._parseRLE(pattern);
         }
 
-        // Cell.getCellAt(startX + 1, startY + 0).state = 1;
-        // Cell.getCellAt(startX + 2, startY + 1).state = 1;
-        // Cell.getCellAt(startX + 0, startY + 2).state = 1;
-        // Cell.getCellAt(startX + 1, startY + 2).state = 1;
-        // Cell.getCellAt(startX + 2, startY + 2).state = 1;
-
         var i, j; // i => vertical, j => horizontal
-
         for(i = 0; i < pattern.length; i++){
           for(j = 0; j < pattern[i].length; j++){
             if(pattern[i][j] === "1"){
               if(Cell.getCellAt(startX + j, startY + i)){
                 Cell.getCellAt(startX + j, startY + i).state = 1;
               }
-
-              // console.log(startX + " + " + j + " , " + startY + " + " + i);
             }
           }
         }
