@@ -71,8 +71,10 @@
         Cell.gameManager = this.app.gameManager;
 
         // Cell.gameManager.CANVAS_SIZE = 600;
-        Cell.gameManager.CANVAS_SIZE_X = 800;
-        Cell.gameManager.CANVAS_SIZE_Y = 600;
+        // Cell.gameManager.CANVAS_SIZE_X = 800;
+        // Cell.gameManager.CANVAS_SIZE_Y = 600;
+        Cell.gameManager.CELL_LENGTH_X = 200;
+        Cell.gameManager.CELL_LENGTH_Y = 150;
         Cell.gameManager.CELL_SIZE = 4;
         // Cell.gameManager.CELL_LENGTH = Math.floor(Cell.gameManager.CANVAS_SIZE / Cell.gameManager.CELL_SIZE);
         // Cell.gameManager.CELL_LENGTH_X = Math.floor(Cell.gameManager.CANVAS_SIZE_X / Cell.gameManager.CELL_SIZE);
@@ -90,7 +92,7 @@
         //     // Cell.gameManager.cells[i].state = 1;
         //   }
         // }
-        this.initializeCells();
+        this.initialize();
 
         Cell.gameManager.canvas.addEventListener('click', this._plotOnClick(this), false);
         Cell.gameManager.canvas.addEventListener('mousemove', this._handlePlotSeq(this), false);
@@ -109,10 +111,10 @@
         this.app.gameManager.mousePos.x = -1;
         this.app.gameManager.mousePos.y = -1;
 
-
-        // fix for the 1st initialization of canvas size
-        this.notifyPath('app.gameManager.CANVAS_SIZE_X');
-        this.notifyPath('app.gameManager.CANVAS_SIZE_Y');
+        //
+        // // fix for the 1st initialization of canvas size
+        // this.notifyPath('app.gameManager.CANVAS_SIZE_X');
+        // this.notifyPath('app.gameManager.CANVAS_SIZE_Y');
 
         this.mainLoop();
       },
@@ -236,8 +238,6 @@
         return result;
       },
 
-
-
       // interface
       injectPattern: function(startX, startY, pattern){
         if(!Array.isArray(pattern)){
@@ -262,9 +262,10 @@
         });
         this._draw();
       },
-      initializeCells: function(){
-        Cell.gameManager.CELL_LENGTH_X = Math.floor(Cell.gameManager.CANVAS_SIZE_X / Cell.gameManager.CELL_SIZE);
-        Cell.gameManager.CELL_LENGTH_Y = Math.floor(Cell.gameManager.CANVAS_SIZE_Y / Cell.gameManager.CELL_SIZE);
+      initialize: function(){
+        // Cell.gameManager.CELL_LENGTH_X = Math.floor(Cell.gameManager.CANVAS_SIZE_X / Cell.gameManager.CELL_SIZE);
+        // Cell.gameManager.CELL_LENGTH_Y = Math.floor(Cell.gameManager.CANVAS_SIZE_Y / Cell.gameManager.CELL_SIZE);
+
 
         Cell.gameManager.cells = new Array(this.app.gameManager.CELL_LENGTH_X * this.app.gameManager.CELL_LENGTH_Y);
         for(var i=0; i < Cell.gameManager.cells.length; i++){
@@ -273,7 +274,18 @@
 
         // console.log("initialize!!");
         // console.log(Cell.gameManager.CANVAS_SIZE_X);
+
+
+        this.resizeCanvas();
+
       },
+      resizeCanvas: function(){
+        Cell.gameManager.CANVAS_SIZE_X = Cell.gameManager.CELL_LENGTH_X * Cell.gameManager.CELL_SIZE;
+        Cell.gameManager.CANVAS_SIZE_Y = Cell.gameManager.CELL_LENGTH_Y * Cell.gameManager.CELL_SIZE;
+        // fix for the 1st initialization of canvas size
+        this.notifyPath('app.gameManager.CANVAS_SIZE_X');
+        this.notifyPath('app.gameManager.CANVAS_SIZE_Y');
+      }
 
 
     });

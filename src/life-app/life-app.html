@@ -20,8 +20,11 @@
         </nav>
       </div>
       <div style="clear: both;">
-        <paper-input label="Canvas width" value="{{app.gameManager.CANVAS_SIZE_X}}" type="number" max="3000" on-change="handleCanvasResize" style="float:left; width: 45%; max-width: 400px; margin-right: 8px;"></paper-input>
-        <paper-input label="Canvas height" value="{{app.gameManager.CANVAS_SIZE_Y}}" type="number" max="3000" on-change="handleCanvasResize" style="float:left; width: 45%; max-width: 400px;"></paper-input>
+        <paper-input label="Canvas width" value="{{app.gameManager.CANVAS_SIZE_X}}" type="number" max="3000" on-change="handleCanvasResize" disabled style="float:left; width: 45%; max-width: 400px; margin-right: 8px;"></paper-input>
+        <paper-input label="Canvas height" value="{{app.gameManager.CANVAS_SIZE_Y}}" type="number" max="3000" on-change="handleCanvasResize" disabled style="float:left; width: 45%; max-width: 400px;"></paper-input>
+        <paper-input label="Cell width" value="{{app.gameManager.CELL_LENGTH_X}}" type="number" max="3000" on-change="handleCanvasResize" style="float:left; width: 45%; max-width: 400px; margin-right: 8px;"></paper-input>
+        <paper-input label="Cell height" value="{{app.gameManager.CELL_LENGTH_Y}}" type="number" max="3000" on-change="handleCanvasResize" style="float:left; width: 45%; max-width: 400px;"></paper-input>
+        <paper-input label="Cell size" value="{{app.gameManager.CELL_SIZE}}" type="number" min="1" max="10" on-change="handleCellResize" style="float:left; width: 45%; max-width: 400px;"></paper-input>
         <!-- <span>[[app.gameManager.CANVAS_SIZE_X]]</span> -->
       </div>
     </div>
@@ -177,15 +180,19 @@
       },
 
       handleCanvasResize: function(){
-        if(this.app.gameManager.CANVAS_SIZE_X > 3000){
-          this.app.gameManager.CANVAS_SIZE_X = 3000;
-          this.notifyPath('app.gameManager.CANVAS_SIZE_X');
-        }
-        if(this.app.gameManager.CANVAS_SIZE_Y > 3000){
-          this.app.gameManager.CANVAS_SIZE_Y = 3000;
-          this.notifyPath('app.gameManager.CANVAS_SIZE_Y');
-        }
-        document.querySelector('life-canvas').initializeCells();
+        // if(this.app.gameManager.CANVAS_SIZE_X > 3000){
+        //   this.app.gameManager.CANVAS_SIZE_X = 3000;
+        //   this.notifyPath('app.gameManager.CANVAS_SIZE_X');
+        // }
+        // if(this.app.gameManager.CANVAS_SIZE_Y > 3000){
+        //   this.app.gameManager.CANVAS_SIZE_Y = 3000;
+        //   this.notifyPath('app.gameManager.CANVAS_SIZE_Y');
+        // }
+        document.querySelector('life-canvas').initialize();
+      },
+
+      handleCellResize: function(){
+        document.querySelector('life-canvas').resizeCanvas();
       }
 
     });
