@@ -30,7 +30,7 @@
 
 
       <template is="dom-repeat" items="{{app.localCatalog}}">
-        <paper-item id="{{item.name}}">{{item.name}}</paper-item>
+        <paper-item id="{{item.id}}">{{item.name}}</paper-item>
       </template>
     </paper-listbox>
 
@@ -164,7 +164,7 @@
         // this.catalog2 = r.detail.response;
 
         r.detail.response.forEach(function(r){
-          this.app.catalog[r.name] = r.payload;
+          this.app.catalog[r.id] = r.payload;
 
         }.bind(this));
       }

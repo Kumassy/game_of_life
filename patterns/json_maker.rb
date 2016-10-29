@@ -14,6 +14,7 @@ Dir.glob("*.rle").each do |filename|
     author = "" # O
     offset = "" # P R, top-left corner coordinates
     rule = "" # r
+    id = "" # simplified `name`, which is used for HTML id
 
     meta = {} # e.g.: x = 71, y = 65, rule = 23/3
     payload = []
@@ -39,13 +40,14 @@ Dir.glob("*.rle").each do |filename|
       end
     end
 
-    name = name.downcase.gsub(/[^\d\w]/, '_')
+    id = name.downcase.gsub(/[^\d\w]/, '_')
 
     info[:name] = name
     info[:author] = author
     info[:offset] = offset
     info[:rule] = rule
     info[:comments] = comments.join("\n")
+    info[:id] = id
 
     info[:meta] = meta
     info[:payload] = payload.join("")

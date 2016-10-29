@@ -119,14 +119,23 @@
         this.mainLoop();
       },
 
+      _toCellCoordinates: function(e){
+        var rect = e.target.getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        var y = e.clientY - rect.top;
+
+        return [Math.floor(x / this.app.gameManager.CELL_SIZE), Math.floor(y / this.app.gameManager.CELL_SIZE)];
+      },
+
       _plotOnClick: function(self){
         return function(e){
-          var rect = e.target.getBoundingClientRect();
-          var x = e.clientX - rect.left;
-          var y = e.clientY - rect.top;
+          // var rect = e.target.getBoundingClientRect();
+          // var x = e.clientX - rect.left;
+          // var y = e.clientY - rect.top;
           // Cell.getCellAt(Math.floor(x / self.app.gameManager.CELL_SIZE), Math.floor(y / self.app.gameManager.CELL_SIZE)).state = 1;
 
-          self.injectPattern(Math.floor(x / self.app.gameManager.CELL_SIZE), Math.floor(y / self.app.gameManager.CELL_SIZE), self.app.catalog[self.app.selected]);
+          // self.injectPattern(Math.floor(x / self.app.gameManager.CELL_SIZE), Math.floor(y / self.app.gameManager.CELL_SIZE), self.app.catalog[self.app.selected]);
+          self.injectPattern.apply(self, [...self._toCellCoordinates(e), self.app.catalog[self.app.selected]]);
           self._draw();
         };
       },
@@ -137,8 +146,12 @@
       },
       _handlePlotSeq: function(self){
         return function(e){
-          if (!self.app.gameManager.isDrawing) return;
-          self._plotOnClick(self)(e);
+          if (!self.app.gameManager.isDrawing){
+            self._drawPreview.apply(self, [...self._toCellCoordinates(e), self.app.catalog[self.app.selected]]);
+          }
+          else{
+            self._plotOnClick(self)(e);
+          }
         };
       },
       _handlePlotEnd: function(self){
@@ -153,6 +166,23 @@
           c._state = c.state;
           c.draw();
         });
+      },
+
+      _drawPreview: function(startX, startY, pattern){
+        if(!Array.isArray(pattern)){
+          pattern = this._parseRLE(pattern);
+        }
+        for(i = 0; i < pattern.length; i++){
+          for(j = 0; j < pattern[i].length; j++){
+            if(pattern[i][j] === "1"){
+              if(Cell.getCellAt(startX + j, startY + i)){
+                // ^ use Cell.getCellAt() to check boundaries
+                Cell.gameManager.context.fillStyle = '#ffcccc';
+                Cell.gameManager.context.fillRect((startX + j) * Cell.gameManager.CELL_SIZE, (startY + i) * Cell.gameManager.CELL_SIZE, Cell.gameManager.CELL_SIZE, Cell.gameManager.CELL_SIZE);
+              }
+            }
+          }
+        }
       },
 
       mainLoop: function(){
@@ -226,7 +256,9 @@
         for(i = 0; i < pattern.length; i++){
           for(j = 0; j < pattern[i].length; j++){
             if(pattern[i][j] === "1"){
-              Cell.getCellAt(startX + j, startY + i).state = 1;
+              if(Cell.getCellAt(startX + j, startY + i)){
+                Cell.getCellAt(startX + j, startY + i).state = 1;
+              }
 
               // console.log(startX + " + " + j + " , " + startY + " + " + i);
             }
