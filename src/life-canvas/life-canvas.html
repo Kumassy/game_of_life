@@ -105,6 +105,7 @@
 
         Cell.gameManager.canvas.addEventListener('click', this._plotOnClick(this), false);
         Cell.gameManager.canvas.addEventListener('mousemove', this._handlePlotSeq(this), false);
+        Cell.gameManager.canvas.addEventListener('mousemove', this._updateMousePos(this), false);
         Cell.gameManager.canvas.addEventListener('mousedown', this._handlePlotStart(this), false);
         Cell.gameManager.canvas.addEventListener('mouseup', this._handlePlotEnd(this), false);
         // Cell.gameManager.canvas.addEventListener('touchmove', this._handlePlotSeq(this), false);
@@ -115,6 +116,10 @@
         this.app.controller = {};
         this.app.controller.isRunning = true;
         this.app.controller.refreshRate = 30;
+        this.app.gameManager.mousePos = {};
+        this.app.gameManager.mousePos.x = -1;
+        this.app.gameManager.mousePos.y = -1;
+
 
         this.mainLoop();
       },
@@ -147,13 +152,21 @@
       _handlePlotSeq: function(self){
         return function(e){
           if (!self.app.gameManager.isDrawing){
-            self._drawPreview.apply(self, [...self._toCellCoordinates(e), self.app.catalog[self.app.selected]]);
+            // self._drawPreview.apply(self, [...self._toCellCoordinates(e), self.app.catalog[self.app.selected]]);
           }
           else{
             self._plotOnClick(self)(e);
           }
         };
       },
+
+      _updateMousePos: function(self){
+        return function(e){
+          self.app.gameManager.mousePos.x = self._toCellCoordinates(e)[0];
+          self.app.gameManager.mousePos.y = self._toCellCoordinates(e)[1];
+        };
+      },
+
       _handlePlotEnd: function(self){
         return function(e){
           self.app.gameManager.isDrawing = false;
@@ -168,7 +181,13 @@
         });
       },
 
-      _drawPreview: function(startX, startY, pattern){
+      // _drawPreview: function(startX, startY, pattern){
+      _drawPreview: function(){
+        if( !this.app.catalog || !this.app.selected) return;
+        var startX = this.app.gameManager.mousePos.x;
+        var startY = this.app.gameManager.mousePos.y;
+        var pattern = this.app.catalog[this.app.selected];
+
         if(!Array.isArray(pattern)){
           pattern = this._parseRLE(pattern);
         }
@@ -177,7 +196,7 @@
             if(pattern[i][j] === "1"){
               if(Cell.getCellAt(startX + j, startY + i)){
                 // ^ use Cell.getCellAt() to check boundaries
-                Cell.gameManager.context.fillStyle = '#ffcccc';
+                Cell.gameManager.context.fillStyle = 'rgba(255, 0, 0, 0.3)';
                 Cell.gameManager.context.fillRect((startX + j) * Cell.gameManager.CELL_SIZE, (startY + i) * Cell.gameManager.CELL_SIZE, Cell.gameManager.CELL_SIZE, Cell.gameManager.CELL_SIZE);
               }
             }
@@ -200,6 +219,7 @@
             c.update();
           });
           this._draw();
+          this._drawPreview();
         }
 
         setTimeout(function(){
