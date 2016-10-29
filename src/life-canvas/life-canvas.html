@@ -192,16 +192,17 @@
       },
 
       mainLoop: function(){
-        if(this.app.controller.isRunning){
-          this.app.gameManager.context.fillStyle = '#eeeeee';
-          this.app.gameManager.context.fillRect(0, 0, this.app.gameManager.canvas.width, this.app.gameManager.canvas.height);
+        this.app.gameManager.context.fillStyle = '#eeeeee';
+        this.app.gameManager.context.fillRect(0, 0, this.app.gameManager.canvas.width, this.app.gameManager.canvas.height);
 
+        if(this.app.controller.isRunning){
           this.app.gameManager.cells.forEach(function(c){
             c.update();
           });
-          this._draw();
-          this._drawPreview();
+
         }
+        this._draw();
+        this._drawPreview();
 
         setTimeout(function(){
           this.mainLoop();
@@ -285,6 +286,10 @@
         // fix for the 1st initialization of canvas size
         this.notifyPath('app.gameManager.CANVAS_SIZE_X');
         this.notifyPath('app.gameManager.CANVAS_SIZE_Y');
+
+        this.app.gameManager.context.fillStyle = '#eeeeee';
+        this.app.gameManager.context.fillRect(0, 0, this.app.gameManager.canvas.width, this.app.gameManager.canvas.height);
+        // this._draw();
       }
 
 

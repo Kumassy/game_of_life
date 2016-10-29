@@ -20,11 +20,12 @@
         </nav>
       </div>
       <div style="clear: both;">
-        <paper-input label="Canvas width" value="{{app.gameManager.CANVAS_SIZE_X}}" type="number" max="3000" on-change="handleCanvasResize" disabled style="float:left; width: 45%; max-width: 400px; margin-right: 8px;"></paper-input>
-        <paper-input label="Canvas height" value="{{app.gameManager.CANVAS_SIZE_Y}}" type="number" max="3000" on-change="handleCanvasResize" disabled style="float:left; width: 45%; max-width: 400px;"></paper-input>
-        <paper-input label="Cell width" value="{{app.gameManager.CELL_LENGTH_X}}" type="number" max="3000" on-change="handleCanvasResize" style="float:left; width: 45%; max-width: 400px; margin-right: 8px;"></paper-input>
-        <paper-input label="Cell height" value="{{app.gameManager.CELL_LENGTH_Y}}" type="number" max="3000" on-change="handleCanvasResize" style="float:left; width: 45%; max-width: 400px;"></paper-input>
-        <paper-input label="Cell size" value="{{app.gameManager.CELL_SIZE}}" type="number" min="1" max="10" on-change="handleCellResize" style="float:left; width: 45%; max-width: 400px;"></paper-input>
+        <div>Use arrow key to increase numbers (you can't type numbers), or you'll get a crash. This bug may be fixed sooner or later.</div>
+        <paper-input label="Canvas width" value="{{app.gameManager.CANVAS_SIZE_X}}" type="number" max="3000" on-change="handleCanvasResize" on-keydown="handleCanvasResize" disabled style="float:left; width: 45%; max-width: 400px; margin-right: 8px;"></paper-input>
+        <paper-input label="Canvas height" value="{{app.gameManager.CANVAS_SIZE_Y}}" type="number" max="3000" on-change="handleCanvasResize" on-keydown="handleCanvasResize" disabled style="float:left; width: 45%; max-width: 400px;"></paper-input>
+        <paper-input label="Cell width" value="{{app.gameManager.CELL_LENGTH_X}}" type="number" max="3000" on-change="handleCanvasResize" on-keydown="handleCanvasResize" style="float:left; width: 45%; max-width: 400px; margin-right: 8px;"></paper-input>
+        <paper-input label="Cell height" value="{{app.gameManager.CELL_LENGTH_Y}}" type="number" max="3000" on-change="handleCanvasResize" on-keydown="handleCanvasResize" style="float:left; width: 45%; max-width: 400px;"></paper-input>
+        <paper-input label="Cell size" value="{{app.gameManager.CELL_SIZE}}" type="number" min="1" max="10" on-change="handleCellResize" on-keydown="handleCellResize" style="float:left; width: 45%; max-width: 400px;"></paper-input>
         <!-- <span>[[app.gameManager.CANVAS_SIZE_X]]</span> -->
       </div>
     </div>
@@ -188,7 +189,12 @@
         //   this.app.gameManager.CANVAS_SIZE_Y = 3000;
         //   this.notifyPath('app.gameManager.CANVAS_SIZE_Y');
         // }
+        if(this.app.controller.isRunning){
+          // stop
+          this.handleTap();
+        }
         document.querySelector('life-canvas').initialize();
+
       },
 
       handleCellResize: function(){
