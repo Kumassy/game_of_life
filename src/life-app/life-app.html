@@ -20,7 +20,7 @@
         </nav>
       </div>
       <div style="clear: both;">
-        <div>Use arrow key to increase numbers (you can't type numbers), or you'll get a crash. This bug may be fixed sooner or later.</div>
+        <div>Use arrow key to increase numbers (you can't type number keys), or you'll get a crash. This bug may be fixed sooner or later.</div>
         <paper-input label="Canvas width" value="{{app.gameManager.CANVAS_SIZE_X}}" type="number" max="3000" on-change="handleCanvasResize" on-keydown="handleCanvasResize" disabled style="float:left; width: 45%; max-width: 400px; margin-right: 8px;"></paper-input>
         <paper-input label="Canvas height" value="{{app.gameManager.CANVAS_SIZE_Y}}" type="number" max="3000" on-change="handleCanvasResize" on-keydown="handleCanvasResize" disabled style="float:left; width: 45%; max-width: 400px;"></paper-input>
         <paper-input label="Cell width" value="{{app.gameManager.CELL_LENGTH_X}}" type="number" max="3000" on-change="handleCanvasResize" on-keydown="handleCanvasResize" style="float:left; width: 45%; max-width: 400px; margin-right: 8px;"></paper-input>
