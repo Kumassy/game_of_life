@@ -1,15 +1,19 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html">
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item-body.html">
+<link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
 <link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 
 <link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
 <link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
@@ -40,12 +44,20 @@
             <div main-title>All Patterns</div>
           </app-toolbar>
         </app-header>
-        <paper-listbox style="height: 100%; overflow: auto;">
-          <paper-item>Some</paper-item>
-          <paper-item>Patterns</paper-item>
-          <paper-item>goes here</paper-item>
+        <paper-listbox style="height: 100%; overflow: auto;" on-iron-select="handleItemChange" selected="0">
+          <paper-item id="pencil">Pencil</paper-item>
+          <paper-item id="glider">Glider</paper-item>
+          <paper-item id="light_weight_spaceship">Light Weight Spaceship</paper-item>
+          <paper-item id="medium_weight_spaceship">Medium Weight Spaceship</paper-item>
+          <paper-item id="heavy_weight_spaceship">Heavy Weight Spaceship</paper-item>
+          <paper-item id="glider_gun">Glider Gun</paper-item>
+
           <template is="dom-repeat" items="{{app.localCatalog}}">
-            <paper-item id="{{item.id}}">{{item.name}}</paper-item>
+            <paper-item id="{{item.id}}" style="justify-content: space-between;">
+              {{item.name}}
+              <paper-icon-button icon="star" alt="favourite this!">
+              </paper-icon-button>
+            </paper-item>
           </template>
         </paper-listbox>
       </app-drawer>
@@ -61,11 +73,11 @@
             <div>Your favorite patterns go here</div>
           </div>
           <div id="canvasSaves">
-            <paper-button on-tap="handleDoExport" style="width: 100%; text-transform: none; justify-content: flex-start; margin-right: 4px;">
+            <paper-button on-tap="_handleCreateNewSave" style="width: 100%; text-transform: none; justify-content: flex-start; margin-right: 4px;">
               <iron-icon icon="add" item-icon></iron-icon>
               New
             </paper-button>
-            <paper-listbox on-iron-select="handleSelectSaves" selected="{{_selectedSavesIndex}}" style="height: 100%; overflow: auto;">
+            <paper-listbox id="savesList" on-iron-select="_handleSelectSaves" selected="{{_selectedSavesIndex}}" style="height: 100%; overflow: auto;">
               <!-- <paper-item>
                 <paper-icon-item>
                   <iron-icon icon="add" item-icon></iron-icon>
@@ -73,7 +85,30 @@
                 </paper-icon-item>
               </paper-item> -->
               <template is="dom-repeat" items="{{app.saves}}">
-                <paper-item id="{{item.name}}">{{item.name}}</paper-item>
+                <paper-item id="{{item.name}}" style="justify-content: space-between;">
+                  {{item.name}}
+                  <div>
+                    <!-- <paper-icon-button icon="save" >
+                    </paper-icon-button> -->
+                    <paper-icon-button icon="info" on-tap="_handleInfoViewForSave">
+                    </paper-icon-button>
+                    <!-- <paper-icon-button icon="social:share">
+                    </paper-icon-button>
+                    <paper-icon-button icon="delete">
+                    </paper-icon-button> -->
+                  </div>
+                </paper-item>
+                <!-- <paper-icon-item>
+                  <paper-item-body>
+                    <div>Recipes</div>
+                  </paper-item-body>
+                  <paper-icon-button icon="save">
+                  </paper-icon-button>
+                  <paper-icon-button icon="social:share">
+                  </paper-icon-button>
+                  <paper-icon-button icon="delete">
+                  </paper-icon-button>
+                </paper-icon-item> -->
               </template>
             </paper-listbox>
           </div>
@@ -94,6 +129,15 @@
 
       <div style="float: left; padding: 0 8px;">
         <div>
+          <paper-dialog id="infoViewDialog">
+            <h2>[[_selectingSaveInfo.name]]</h2>
+            <p style="overflow-wrap: break-word; max-height: 240px; overflow-y: scroll;">[[_selectingSaveInfo.data]]</p>
+            <paper-input label="Share URL" value="[[_selectingSaveShareURL]]"></paper-input>
+            <div class="buttons">
+              <!-- <paper-button dialog-dismiss>Share via Twitter</paper-button> -->
+              <paper-button dialog-confirm autofocus>OK</paper-button>
+            </div>
+          </paper-dialog>
           <life-canvas app="{{app}}"></life-canvas>
 
           <nav>
@@ -114,7 +158,7 @@
         </div>
       </div>
 
-      <paper-listbox on-iron-select="handleItemChange" selected="0" style="float: left; height: 100vh; overflow-y: scroll;">
+      <!-- <paper-listbox on-iron-select="handleItemChange" selected="0" style="float: left; height: 100vh; overflow-y: scroll;">
         <paper-item id="pencil">Pencil</paper-item>
         <paper-item id="glider">Glider</paper-item>
         <paper-item id="light_weight_spaceship">Light Weight Spaceship</paper-item>
@@ -127,7 +171,7 @@
         <template is="dom-repeat" items="{{app.localCatalog}}">
           <paper-item id="{{item.id}}">{{item.name}}</paper-item>
         </template>
-      </paper-listbox>
+      </paper-listbox> -->
 
 
 
@@ -185,6 +229,14 @@
         _selectedSavesIndex: {
           type: Number,
           value: 0
+        },
+        _selectingSaveInfo: {
+          type: Object,
+          value: {}
+        },
+        _selectingSaveShareURL: {
+          type: String,
+          computed: '_computeShareURL(_selectingSaveInfo)'
         }
       },
 
@@ -247,10 +299,7 @@
         //   name: "test",
         //   data: "RLE format"
         // });
-        this.set('app.saves', [{
-          name: "test",
-          data: "RLE format"
-        }]);
+        this.set('app.saves', []);
 
       },
 
@@ -338,25 +387,37 @@
         document.querySelector('life-canvas').resizeCanvas();
       },
 
-      handleDoExport: function(){
+      _handleCreateNewSave: function(){
         // console.log("handle!");
 
-        var r = document.querySelector('life-canvas')._encodeRLE();
+        var rle = document.querySelector('life-canvas')._encodeRLE();
         // console.log(r);
         // this.app.saves.push({
         //   name: "hogehoge",
         //   data: r
         // });
+
+        var date = new Date();
+        var timestamp = ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2) + ':' + ('0' + date.getHours()).slice(-2);
         this.push('app.saves', {
-          name: "hogehoge",
-          data: r
+          name: timestamp,
+          data: rle
         });
       },
 
-      handleSelectSaves: function(e){
+      _handleSelectSaves: function(e){
         // console.log(e);
         // console.log(this._selectedSavesIndex);
-        console.log(this.app.saves[this._selectedSavesIndex].data);
+        // console.log(this.app.saves[this._selectedSavesIndex].data);
+      },
+      _handleInfoViewForSave: function(){
+        console.log(this._selectedSavesIndex);
+        this._selectingSaveInfo = this.app.saves[this._selectedSavesIndex];
+        this.$.endDrawer.toggle();
+        this.$.infoViewDialog.open();
+      },
+      _computeShareURL: function(_selectingSaveInfo){
+        return 'http://kumassy.com/life2/?state=paused&data=' + _selectingSaveInfo.data;
       }
 
     });
