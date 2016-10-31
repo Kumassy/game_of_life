@@ -1,14 +1,89 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+
+<link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
+
 
 <dom-module id="life-app">
   <template>
-    <div style="float: left">
+
+    <!-- <app-drawer-layout>
+
+      <app-drawer swipe-ope></app-drawer>
+
+      <app-drawer id="endDrawer" align="end" swipe-open></app-drawer>
+
+      <app-toolbar>
+        <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+        <div main-title></div>
+        <paper-icon-button icon="info" onclick="document.getElementById('endDrawer').toggle();"></paper-icon-button>
+      </app-toolbar> -->
+
+    <app-drawer-layout force-narrow>
+      <app-drawer swipe-ope>
+        <app-header fixed>
+          <div main-title>All patterns</div>
+        </app-header>
+        <paper-listbox style="height: 100%; overflow: auto;">
+          <paper-item>Some</paper-item>
+          <paper-item>Patterns</paper-item>
+          <paper-item>goes here</paper-item>
+          <template is="dom-repeat" items="{{app.localCatalog}}">
+            <paper-item id="{{item.id}}">{{item.name}}</paper-item>
+          </template>
+        </paper-listbox>
+      </app-drawer>
+
+      <app-drawer id="endDrawer" align="end" swipe-open>
+        <paper-listbox>
+          <paper-item>Your</paper-item>
+          <paper-item>favorite</paper-item>
+          <paper-item>patterns</paper-item>
+          <paper-item>goes</paper-item>
+          <paper-item>here</paper-item>
+        </paper-listbox>
+        <paper-tabs id="tabs" selected="{{_tab}}">
+          <paper-tab name="starredPatterns">Star</paper-tab>
+          <paper-tab name="canvasSaves">Saves</paper-tab>
+        </paper-tabs>
+
+        <iron-pages selected="[[_tab]]" class="flex">
+          <div id="starredPatterns">
+            <div>Your favorite patterns go here</div>
+          </div>
+          <div id="canvasSaves">
+            <div>You can export/save your canvas here.</div>
+          </div>
+        </iron-pages>
+      </app-drawer>
+
+      <app-header-layout>
+        <app-header style="height: 96px;" fixed>
+          <app-toolbar>
+            <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+            <div main-title>Game of Life</div>
+            <paper-icon-button icon="star" onclick="document.getElementById('endDrawer').toggle();"></paper-icon-button>
+          </app-toolbar>
+        </app-header>
+      </app-header-layout>
+
+
+
+    <div style="float: left; padding: 0 8px;">
       <div>
         <life-canvas app="{{app}}"></life-canvas>
 
@@ -55,7 +130,31 @@
     <!-- <template is="dom-repeat" items="{{app.catalog2}}">
       <div>First name: <span>{{item.name}}</span></div>
     </template> -->
+    </app-drawer-layout>
   </template>
+
+
+  <style>
+    app-toolbar {
+      /* Toolbar is the main header, so give it some color */
+      background-color: #1E88E5;
+      font-family: 'Roboto', Helvetica, sans-serif;
+      color: white;
+      --app-toolbar-font-size: 20px;
+    }
+    app-header-layout {
+      z-index: 10;
+    }
+    app-drawer {
+      z-index: 11;
+    }
+    paper-tabs {
+      --paper-tabs-selection-bar-color: #304ffe;
+    }
+    paper-tab {
+      --paper-tab-ink: #304ffe;
+    }
+  </style>
 
   <script>
     Polymer({
@@ -65,6 +164,10 @@
         app: {
           type: Object,
           value: {}
+        },
+        _tab: {
+          type: Number,
+          value: 0
         }
       },
 

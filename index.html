@@ -5,14 +5,85 @@
     <title>Game of Life</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="/manifest.json">
-    <script src="/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
-    <link rel="import" href="/src/life-app/life-app.html">
-    <link rel="import" href="/src/life-canvas/life-canvas.html">
+    <link rel="manifest" href="manifest.json">
+    <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="src/life-app/life-app.html">
+    <link rel="import" href="src/life-canvas/life-canvas.html">
+
+    <link rel="import" href="bower_components/iron-icons/iron-icons.html">
+    <link rel="import" href="bower_components/app-layout/app-drawer/app-drawer.html">
+    <link rel="import" href="bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+    <link rel="import" href="bower_components/app-layout/app-toolbar/app-toolbar.html">
+    <link rel="import" href="bower_components/app-layout/app-header/app-header.html">
+    <link rel="import" href="bower_components/app-layout/app-header-layout/app-header-layout.html">
+    <link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html">
+
+
+
+
+    <!--<style is="custom-style">
+      html, body{
+        margin: 0;
+        padding: 0;
+      }
+      app-toolbar {
+        /* Toolbar is the main header, so give it some color */
+        background-color: #1E88E5;
+        font-family: 'Roboto', Helvetica, sans-serif;
+        color: white;
+        --app-toolbar-font-size: 20px;
+      }
+      app-header-layout {
+        z-index: 10;
+      }
+      app-drawer {
+        z-index: 11;
+      }
+    </style>
+    -->
+    <style>
+      html, body{
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+
   </head>
   <body>
-    <life-app>
+    <!-- <app-drawer-layout force-narrow>
 
-    </life-app>
+      <app-drawer swipe-ope>
+        <paper-listbox>
+          <paper-item>Some</paper-item>
+          <paper-item>Patterns</paper-item>
+          <paper-item>goes here</paper-item>
+        </paper-listbox>
+      </app-drawer>
+
+      <app-drawer id="endDrawer" align="end" swipe-open>
+        <paper-listbox>
+          <paper-item>Your</paper-item>
+          <paper-item>favorite</paper-item>
+          <paper-item>patterns</paper-item>
+          <paper-item>goes</paper-item>
+          <paper-item>here</paper-item>
+
+        </paper-listbox>
+      </app-drawer>
+
+      <app-header-layout>
+        <app-header style="height: 96px;" fixed>
+          <app-toolbar>
+            <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+            <div main-title>Game of Life</div>
+            <paper-icon-button icon="star" onclick="document.getElementById('endDrawer').toggle();"></paper-icon-button>
+          </app-toolbar>
+        </app-header>
+      </app-header-layout> -->
+
+      <life-app>
+
+      </life-app>
+    <!-- </app-drawer-layout> -->
   </body>
 </html>
