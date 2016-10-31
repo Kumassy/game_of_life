@@ -239,6 +239,57 @@
         return result;
       },
 
+      _encodeRLE: function(){
+        var accumulator = this.app.gameManager.cells.reduce(function(accumulator, cell, index, array){
+          return cell.status;
+        },"");
+
+        accumulator = accumulator.map(function(a){
+          if(a === ''){
+            return '$';
+          }
+          else{
+            return a + '$';
+          }
+        });
+        // console.log('Phase 1');
+        // console.log(encode_1);
+
+        var rawPattern = accumulator.join('').replace(/0/g, 'b').replace(/1/g, 'o');;
+        // console.log('Phase 2');
+        // console.log(encode_2);
+
+
+        var focusing = '';
+        var count = 0;
+        var result = '';
+        for(var stream = rawPattern; stream.length > 0; stream = stream.substring(1)){
+          if(stream[0] === focusing){
+            count++;
+          }
+          else{
+            if(count === 0){
+              // corner case: will be execute on the very first character of the stream
+              focusing = stream[0];
+              count = 1;
+            }
+            else if(count === 1){
+              result += '' + focusing;
+              focusing = stream[0];
+              count = 1;
+            }
+            else if(count > 1){
+              result += '' + count + focusing;
+              focusing = stream[0];
+              count = 1;
+            }
+          }
+        }
+        result += '!';
+
+        return result;
+      },
+
       // interface
       injectPattern: function(startX, startY, pattern){
         if(!Array.isArray(pattern)){
