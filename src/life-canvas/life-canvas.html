@@ -240,9 +240,19 @@
       },
 
       _encodeRLE: function(){
-        var accumulator = this.app.gameManager.cells.reduce(function(accumulator, cell, index, array){
-          return cell.status;
-        },"");
+        var accumulator = [];
+        var t = [];
+        for(i = 0; i < this.app.gameManager.CELL_LENGTH_Y; i++){
+          for(j = 0; j < this.app.gameManager.CELL_LENGTH_X; j++){
+            t.push(Cell.getCellAt(j, i).state);
+          }
+          accumulator.push(t.join(''));
+          t = [];
+        }
+        // console.log(accumulator);
+        // var accumulator = this.app.gameManager.cells.reduce(function(accumulator, cell, index, array){
+        //   return cell.status;
+        // },"");
 
         accumulator = accumulator.map(function(a){
           if(a === ''){

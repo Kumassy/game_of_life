@@ -36,7 +36,9 @@
     <app-drawer-layout force-narrow>
       <app-drawer swipe-ope>
         <app-header fixed>
-          <div main-title>All patterns</div>
+          <app-toolbar>
+            <div main-title>All Patterns</div>
+          </app-toolbar>
         </app-header>
         <paper-listbox style="height: 100%; overflow: auto;">
           <paper-item>Some</paper-item>
@@ -49,13 +51,6 @@
       </app-drawer>
 
       <app-drawer id="endDrawer" align="end" swipe-open>
-        <paper-listbox>
-          <paper-item>Your</paper-item>
-          <paper-item>favorite</paper-item>
-          <paper-item>patterns</paper-item>
-          <paper-item>goes</paper-item>
-          <paper-item>here</paper-item>
-        </paper-listbox>
         <paper-tabs id="tabs" selected="{{_tab}}">
           <paper-tab name="starredPatterns">Star</paper-tab>
           <paper-tab name="canvasSaves">Saves</paper-tab>
@@ -66,7 +61,21 @@
             <div>Your favorite patterns go here</div>
           </div>
           <div id="canvasSaves">
-            <div>You can export/save your canvas here.</div>
+            <paper-button on-tap="handleDoExport" style="width: 100%; text-transform: none; justify-content: flex-start; margin-right: 4px;">
+              <iron-icon icon="add" item-icon></iron-icon>
+              New
+            </paper-button>
+            <paper-listbox on-iron-select="handleSelectSaves" selected="{{_selectedSavesIndex}}" style="height: 100%; overflow: auto;">
+              <!-- <paper-item>
+                <paper-icon-item>
+                  <iron-icon icon="add" item-icon></iron-icon>
+                  New
+                </paper-icon-item>
+              </paper-item> -->
+              <template is="dom-repeat" items="{{app.saves}}">
+                <paper-item id="{{item.name}}">{{item.name}}</paper-item>
+              </template>
+            </paper-listbox>
           </div>
         </iron-pages>
       </app-drawer>
@@ -83,53 +92,53 @@
 
 
 
-    <div style="float: left; padding: 0 8px;">
-      <div>
-        <life-canvas app="{{app}}"></life-canvas>
+      <div style="float: left; padding: 0 8px;">
+        <div>
+          <life-canvas app="{{app}}"></life-canvas>
 
-        <nav>
-          <paper-button id="togglecontroller" on-tap="handleTap" toggles style="float: left;">Pause</paper-button>
-          <paper-slider value="{{app.controller.refreshRate}}" min="20" max="300" editable style="float: left; min-width: 300px;"></paper-slider>
-          <!--                    ^ Awesome!! ^ -->
-          <paper-button id="clearcontroller" on-tap="handleClear" toggles style="float: left;">Clear</paper-button>
-        </nav>
+          <nav>
+            <paper-button id="togglecontroller" on-tap="handleTap" toggles style="float: left;">Pause</paper-button>
+            <paper-slider value="{{app.controller.refreshRate}}" min="20" max="300" editable style="float: left; min-width: 300px;"></paper-slider>
+            <!--                    ^ Awesome!! ^ -->
+            <paper-button id="clearcontroller" on-tap="handleClear" toggles style="float: left;">Clear</paper-button>
+          </nav>
+        </div>
+        <div style="clear: both;">
+          <div>Use arrow key to increase numbers (you can't type number keys), or you'll get a crash. This bug may be fixed sooner or later.</div>
+          <paper-input label="Canvas width" value="{{app.gameManager.CANVAS_SIZE_X}}" type="number" max="3000" on-change="handleCanvasResize" on-keydown="handleCanvasResize" disabled style="float:left; width: 45%; max-width: 400px; margin-right: 8px;"></paper-input>
+          <paper-input label="Canvas height" value="{{app.gameManager.CANVAS_SIZE_Y}}" type="number" max="3000" on-change="handleCanvasResize" on-keydown="handleCanvasResize" disabled style="float:left; width: 45%; max-width: 400px;"></paper-input>
+          <paper-input label="Cell width" value="{{app.gameManager.CELL_LENGTH_X}}" type="number" max="3000" on-change="handleCanvasResize" on-keydown="handleCanvasResize" style="float:left; width: 45%; max-width: 400px; margin-right: 8px;"></paper-input>
+          <paper-input label="Cell height" value="{{app.gameManager.CELL_LENGTH_Y}}" type="number" max="3000" on-change="handleCanvasResize" on-keydown="handleCanvasResize" style="float:left; width: 45%; max-width: 400px;"></paper-input>
+          <paper-input label="Cell size" value="{{app.gameManager.CELL_SIZE}}" type="number" min="1" max="10" on-change="handleCellResize" on-keydown="handleCellResize" style="float:left; width: 45%; max-width: 400px;"></paper-input>
+          <!-- <span>[[app.gameManager.CANVAS_SIZE_X]]</span> -->
+        </div>
       </div>
-      <div style="clear: both;">
-        <div>Use arrow key to increase numbers (you can't type number keys), or you'll get a crash. This bug may be fixed sooner or later.</div>
-        <paper-input label="Canvas width" value="{{app.gameManager.CANVAS_SIZE_X}}" type="number" max="3000" on-change="handleCanvasResize" on-keydown="handleCanvasResize" disabled style="float:left; width: 45%; max-width: 400px; margin-right: 8px;"></paper-input>
-        <paper-input label="Canvas height" value="{{app.gameManager.CANVAS_SIZE_Y}}" type="number" max="3000" on-change="handleCanvasResize" on-keydown="handleCanvasResize" disabled style="float:left; width: 45%; max-width: 400px;"></paper-input>
-        <paper-input label="Cell width" value="{{app.gameManager.CELL_LENGTH_X}}" type="number" max="3000" on-change="handleCanvasResize" on-keydown="handleCanvasResize" style="float:left; width: 45%; max-width: 400px; margin-right: 8px;"></paper-input>
-        <paper-input label="Cell height" value="{{app.gameManager.CELL_LENGTH_Y}}" type="number" max="3000" on-change="handleCanvasResize" on-keydown="handleCanvasResize" style="float:left; width: 45%; max-width: 400px;"></paper-input>
-        <paper-input label="Cell size" value="{{app.gameManager.CELL_SIZE}}" type="number" min="1" max="10" on-change="handleCellResize" on-keydown="handleCellResize" style="float:left; width: 45%; max-width: 400px;"></paper-input>
-        <!-- <span>[[app.gameManager.CANVAS_SIZE_X]]</span> -->
-      </div>
-    </div>
 
-    <paper-listbox on-iron-select="handleItemChange" selected="0" style="float: left; height: 100vh; overflow-y: scroll;">
-      <paper-item id="pencil">Pencil</paper-item>
-      <paper-item id="glider">Glider</paper-item>
-      <paper-item id="light_weight_spaceship">Light Weight Spaceship</paper-item>
-      <paper-item id="medium_weight_spaceship">Medium Weight Spaceship</paper-item>
-      <paper-item id="heavy_weight_spaceship">Heavy Weight Spaceship</paper-item>
-      <paper-item id="glider_gun">Glider Gun</paper-item>
-      <paper-item id="test">Test</paper-item>
+      <paper-listbox on-iron-select="handleItemChange" selected="0" style="float: left; height: 100vh; overflow-y: scroll;">
+        <paper-item id="pencil">Pencil</paper-item>
+        <paper-item id="glider">Glider</paper-item>
+        <paper-item id="light_weight_spaceship">Light Weight Spaceship</paper-item>
+        <paper-item id="medium_weight_spaceship">Medium Weight Spaceship</paper-item>
+        <paper-item id="heavy_weight_spaceship">Heavy Weight Spaceship</paper-item>
+        <paper-item id="glider_gun">Glider Gun</paper-item>
+        <paper-item id="test">Test</paper-item>
 
 
-      <template is="dom-repeat" items="{{app.localCatalog}}">
-        <paper-item id="{{item.id}}">{{item.name}}</paper-item>
-      </template>
-    </paper-listbox>
+        <template is="dom-repeat" items="{{app.localCatalog}}">
+          <paper-item id="{{item.id}}">{{item.name}}</paper-item>
+        </template>
+      </paper-listbox>
 
 
 
-    <iron-ajax auto url="../../patterns.json" handle-as="json" on-response="handleResponse"></iron-ajax>
+      <iron-ajax auto url="../../patterns.json" handle-as="json" on-response="handleResponse"></iron-ajax>
 
-    <!-- <template is="dom-repeat" items="{{app.catalog2}}">
-      <paper-item id="{{items.name}}">{{items.name}}</paper-item>
-    </template> -->
-    <!-- <template is="dom-repeat" items="{{app.catalog2}}">
-      <div>First name: <span>{{item.name}}</span></div>
-    </template> -->
+      <!-- <template is="dom-repeat" items="{{app.catalog2}}">
+        <paper-item id="{{items.name}}">{{items.name}}</paper-item>
+      </template> -->
+      <!-- <template is="dom-repeat" items="{{app.catalog2}}">
+        <div>First name: <span>{{item.name}}</span></div>
+      </template> -->
     </app-drawer-layout>
   </template>
 
@@ -166,6 +175,10 @@
           value: {}
         },
         _tab: {
+          type: Number,
+          value: 0
+        },
+        _selectedSavesIndex: {
           type: Number,
           value: 0
         }
@@ -219,26 +232,21 @@
         // this.app.catalog.test = "11b2o5b4o$9b2ob2o3bo3bo$9b4o8bo$10b2o5bo2bob2$8bo13b$7b2o8b2o3b$6bo9bo2bo2b$7b5o4bo2bo2b$8b4o3b2ob2o2b$11bo4b2o4b4$18b4o$o2bo13bo3bo$4bo16bo$o3bo12bo2bob$b4o!";
 
 
-        this.employees = [
-            {first: 'Bob', last: 'Smith'},
-            {first: 'Sally', last: 'Johnson'},
-        ];
-
-        // this.catalog2 = [
+        // this.app.saves = [];
         //   {
-        //     author: "Achim Flammenkamp",
-        //     comments: "A period 5 oscillator that was found in August 1994.↵The name was suggested by Bill Gosper, noting that the phase shown ↵below displays the period in binary.",
-        //     name: "101"
-        //
+        //     name: "test",
+        //     data: "RLE format",
         //   },
-        //   {
-        //     author: "Achimsd Flammenkamp",
-        //     comments: "A period 5 oscillator that was found in August 1994.↵The name was suggested by Bill Gosper, noting that the phase shown ↵below displays the period in binary.",
-        //     name: "101ss"
-        //
-        //   }
-        //
         // ];
+
+        // this.push('app.saves', {
+        //   name: "test",
+        //   data: "RLE format"
+        // });
+        this.set('app.saves', [{
+          name: "test",
+          data: "RLE format"
+        }]);
 
       },
 
@@ -302,6 +310,27 @@
 
       handleCellResize: function(){
         document.querySelector('life-canvas').resizeCanvas();
+      },
+
+      handleDoExport: function(){
+        // console.log("handle!");
+
+        var r = document.querySelector('life-canvas')._encodeRLE();
+        // console.log(r);
+        // this.app.saves.push({
+        //   name: "hogehoge",
+        //   data: r
+        // });
+        this.push('app.saves', {
+          name: "hogehoge",
+          data: r
+        });
+      },
+
+      handleSelectSaves: function(e){
+        // console.log(e);
+        // console.log(this._selectedSavesIndex);
+        console.log(this.app.saves[this._selectedSavesIndex].data);
       }
 
     });

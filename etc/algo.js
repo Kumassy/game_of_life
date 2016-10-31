@@ -74,6 +74,8 @@ console.log(result);
 //
 // console.log(splited_pattern);
 
+console.log(result);
+
 var encode_1 = result.map(function(r){
   if(r === ''){
     return '$';
