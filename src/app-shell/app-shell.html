@@ -11,7 +11,7 @@
     server cooperation (e.g. with polyserve, in the elements catalog, etc) we'll
     use the hash portion of the URL for our route paths. -->
     <!-- <app-location route="{{route}}" use-hash-as-path></app-location> -->
-    <app-location route="{{route}}"></app-location>
+    <!-- <app-location route="{{route}}"></app-location> -->
 
 
     <!-- app-routes parse route paths based on the their `pattern`.
@@ -19,7 +19,7 @@
     comes after the `pattern` is put into the `tail` object, which can be
     passed to the `route` property of downstream app-routes. -->
     <!-- <app-route route="{{route}}" pattern="/:page" data="{{data}}"></app-route> -->
-    <app-route route="{{route}}" pattern="/" query-params="{{params}}"></app-route>
+    <!-- <app-route route="{{route}}" pattern="/" query-params="{{params}}"></app-route> -->
 
     <life-app params="{{params}}">
     </life-app>
@@ -40,6 +40,14 @@
 
       ready: function() {
         // console.log(this.route);
+
+        var arg = {};
+        var pair=location.search.substring(1).split('&');
+        for(var i=0;pair[i];i++) {
+            var kv = pair[i].split('=');
+            arg[kv[0]]=kv[1];
+        }
+        this.params = arg;
         console.log(this.params);
       },
 
