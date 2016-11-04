@@ -131,7 +131,10 @@
       _plotOnClick: function(self){
         return function(e){
           // self.injectPattern(Math.floor(x / self.app.gameManager.CELL_SIZE), Math.floor(y / self.app.gameManager.CELL_SIZE), self.app.catalog[self.app.selected]);
-          self.injectPattern.apply(self, [...self._toCellCoordinates(e), self.app.catalog[self.app.selected]]);
+          // self.injectPattern.apply(self, [...self._toCellCoordinates(e), self.app.catalog[self.app.selected]]);
+          // self.injectPattern.apply(self, [...self._toCellCoordinates(e), self.app._cthis.app._selectedPattern.payloadatalog[self.app._selected].payload]);
+          if(!self.app._selectedPattern || Object.keys(self.app._selectedPattern).length === 0 ) return;
+          self.injectPattern.apply(self, [...self._toCellCoordinates(e), self.app._selectedPattern.payload]);
           self._draw();
         };
       },
@@ -170,10 +173,13 @@
       },
 
       _drawPreview: function(){
-        if( !this.app.catalog || !this.app.selected) return;
+        // if( !this.app.catalog || !this.app.selected) return;
+        if( !this.app._catalog || !this.app._selectedPattern || Object.keys(this.app._selectedPattern).length === 0) return;
         var startX = this.app.gameManager.mousePos.x;
         var startY = this.app.gameManager.mousePos.y;
-        var pattern = this.app.catalog[this.app.selected];
+        // var pattern = this.app.catalog[this.app.selected];
+        // var pattern = this.app._catalog[this.app._selected].payload;
+        var pattern = this.app._selectedPattern.payload;
 
         if(!Array.isArray(pattern)){
           pattern = this._parseRLE(pattern);
