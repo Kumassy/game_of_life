@@ -3,6 +3,7 @@
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/social-icons.html">
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
 
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
@@ -35,18 +36,8 @@
             <div main-title>All Patterns</div>
           </app-toolbar>
         </app-header>
-        <!-- <paper-listbox style="height: 100%; overflow: auto;" on-iron-select="handleItemChange" selected="0"> -->
         <paper-listbox style="height: 100%; overflow: auto;" selected="0">
-          <!-- <paper-item id="pencil">Pencil</paper-item>
-          <paper-item id="glider">Glider</paper-item>
-          <paper-item id="light_weight_spaceship">Light Weight Spaceship</paper-item>
-          <paper-item id="medium_weight_spaceship">Medium Weight Spaceship</paper-item>
-          <paper-item id="heavy_weight_spaceship">Heavy Weight Spaceship</paper-item>
-          <paper-item id="glider_gun">Glider Gun</paper-item> -->
-
-          <!-- <template is="dom-repeat" items="{{app.localCatalog}}"> -->
           <template is="dom-repeat" items="{{app._catalog}}">
-            <!-- <paper-item id="{{item.id}}" on-tap="_handlePatternListTap" style="justify-content: space-between;"> -->
             <paper-item on-tap="_handlePatternListTap" style="justify-content: space-between;">
               {{item.name}}
               <!-- <paper-icon-button icon="star" alt="favourite this!">
@@ -66,7 +57,6 @@
         <iron-pages selected="[[_tab]]" class="flex">
           <div id="starredPatterns">
             <paper-listbox style="height: 100%; overflow: auto;" selected="0">
-              <!-- <template is="dom-repeat" items="{{app.localCatalog}}" filter="_isPatternStarred" observe="starred"> -->
               <template is="dom-repeat" items="{{app._catalog}}" filter="_isPatternStarred" observe="starred">
                 <paper-item on-tap="_handlePatternListTap" style="justify-content: space-between;">
                   {{item.name}}
@@ -134,7 +124,11 @@
         <div>
           <paper-dialog id="infoViewDialog">
             <h2>[[_selectingSaveInfo.name]]</h2>
-            <p style="overflow-wrap: break-word; max-height: 240px; overflow-y: scroll;">[[_selectingSaveInfo.data]]</p>
+            <!-- <iron-image src="[[_selectingSaveInfo.dataUrl]]"></iron-image> -->
+            <div style="position: relative;">
+              <img src="[[_selectingSaveInfo.dataUrl]]" style="max-height: 60vh; max-width: 100%; width: auto;">
+            </div>
+            <!-- <p style="overflow-wrap: break-word; max-height: 240px; overflow-y: scroll;">[[_selectingSaveInfo.rle]]</p> -->
             <paper-input label="Share URL" value="[[_selectingSaveShareURL]]"></paper-input>
             <div class="buttons">
               <!-- <paper-button dialog-dismiss>Share via Twitter</paper-button> -->
@@ -221,60 +215,11 @@
       },
 
       ready: function() {
-        this.app.catalog = {};
         this.app._catalog = [];
         // this.app.controller = {};
 
         // this.app.controller.isRunning = true;
         // this.app.controller.refreshRate = 30;
-
-        this.app.catalog.pencil = [
-          "1"
-        ];
-        this.app.catalog.glider = [
-          "010",
-          "001",
-          "111"];
-        this.app.catalog.light_weight_spaceship = [
-          "01001",
-          "10000",
-          "10001",
-          "11110"];
-        this.app.catalog.medium_weight_spaceship = [
-          "000100",
-          "010001",
-          "100000",
-          "100001",
-          "111110"];
-        this.app.catalog.heavy_weight_spaceship = [
-          "0001100",
-          "0100001",
-          "1000000",
-          "1000001",
-          "1111110"];
-        this.app.catalog.glider_gun = [
-          "000000000000000000000000100000000000",
-          "000000000000000000000010100000000000",
-          "000000000000110000001100000000000011",
-          "000000000001000100001100000000000011",
-          "110000000010000010001100000000000000",
-          "110000000010001011000010100000000000",
-          "000000000010000010000000100000000000",
-          "000000000001000100000000000000000000",
-          "000000000000110000000000000000000000"];
-        // this.app.catalog.test = "24bo$22bobo$12b2o6b2o12b2o$11bo3bo4b2o12b2o$2o8bo5bo3b2o$2o8bo3bob2o4bobo$10bo5bo7bo$11bo3bo$12b2o!";
-        // this.app.catalog.test = "28bo60b$27bobo59b$27bobo18b2o39b$25b3ob2o17b2o39b$24bo64b$25b3ob2o58b$27bob2o58b4$56b2o31b$56b2o31b12$21bo67b$20bobo66b$20bobo66b$18b3ob2o65b$17bo71b$18b3ob2o65b$20bob2o65b3$4bo57b3o24b$3bobo57bo25b$3bobo57bo2bo22b$b3ob2o56bo2bo22b$o63bobo22b$b3ob2o72b2o8b$3bob2o72b2o8b3$63bo        25b$62bobo24b$63bo25b$80bo8b$79bo7b2o$61b4o22b2o$61b2o3bo10bo11b$62bo        4bo9bobo9b$64bob2o10bo10b$65bo23b3$73bobob2o10b$56bo16bobo13b$55b3o17b        o2bo10b$2b2o70bo3bo10b$2b2o51b3o16b4o2b2o7b$56b2ob2o14bo5b2o6b$58bo21b        o8b3$32b3o54b$33bo55b$10b2o21bo2bo52b$10b2o21bo2bo52b$34bobo52b$49b2o        38b$49b2o38b$55bo33b$54b3o32b$33bo19b2ob2o31b$32bobo18bobo33b$33bo19bo        35b3$31b4o54b$31b2o3bo13bo38b$32bo4bo11bobo37b$34bob2o11bo39b$35bo15b        2o36b$52bo36b$49b3o37b$50b2o37b$47bo41b$47b2o40b$47b2o40b$37b2o6b2o42b        $37b2o4b2o44b$43b2obo42b$45b2o42b5$45b2o42b$45b2o!";
-
-        // this.app.catalog.test = "2b3o3b3o2b2$o4bobo4bo$o4bobo4bo$o4bobo4bo$2b3o3b3o2b2$2b3o3b3o2b$o4bobo4bo$o4bobo4bo$o4bobo4bo2$2b3o3b3o!";
-        // this.app.catalog.test = "11b2o5b4o$9b2ob2o3bo3bo$9b4o8bo$10b2o5bo2bob2$8bo13b$7b2o8b2o3b$6bo9bo2bo2b$7b5o4bo2bo2b$8b4o3b2ob2o2b$11bo4b2o4b4$18b4o$o2bo13bo3bo$4bo16bo$o3bo12bo2bob$b4o!";
-
-
-        // this.app.saves = [];
-        //   {
-        //     name: "test",
-        //     data: "RLE format",
-        //   },
-        // ];
 
         // this.push('app.saves', {
         //   name: "test",
@@ -290,13 +235,9 @@
 
         if(this.params.state){
           if(this.params.state === 'playing'){
-            // this.app.controller.isRunning = true;
-            // this.$.togglecontroller.textContent = "Pause";
             this._startPlaying();
           }
           else if(this.params.state === 'paused'){
-            // this.app.controller.isRunning = false;
-            // this.$.togglecontroller.textContent = "Resume";
             this._stopPlaying();
           }
         }
@@ -323,22 +264,6 @@
         this._isPlaying() ? this._stopPlaying() : this._startPlaying();
       },
 
-      // handleTap: function(e, detail) {
-      //   // var rect = e.target.getBoundingClientRect();
-      //   // var x = e.clientX - rect.left;
-      //   // var y = e.clientY - rect.top;
-      //
-      //   // document.querySelector('life-canvas').injectPattern( 50, 50, this.app.catalog.glider);
-      //   // document.querySelector('life-canvas').injectPattern( 50, 50, this.app.catalog.light_weight_spaceship);
-      //   // document.querySelector('life-canvas').injectPattern( 50, 50, this.app.catalog.heavy_weight_spaceship);
-      //
-      //
-      //
-      //   // this.$.togglecontroller.textContent = (this.app.controller.isRunning ?  "Resume" : "Pause");
-      //   // this.app.controller.isRunning = !this.app.controller.isRunning;
-      //   this._togglePlaying();
-      // },
-
       handleClear: function(e, datail) {
         document.querySelector('life-canvas').clearCanvas();
       },
@@ -353,99 +278,6 @@
 
       handleResponse: function(r){
         // console.log(r.detail.response);
-
-        // this.app.catalog = Object.assign(this.app.catalog, r.detail.response)
-
-        this.set('app.localCatalog', r.detail.response);
-        // this.catalog2 = r.detail.response;
-
-        r.detail.response.forEach(function(r){
-          this.app.catalog[r.id] = r.payload;
-
-        }.bind(this));
-
-
-
-        // this.app.catalog.unshift()
-        //
-        // this.app.catalog.pencil = [
-        //   "1"
-        // ];
-        // this.app.catalog.glider = [
-        //   "010",
-        //   "001",
-        //   "111"];
-        // this.app.catalog.light_weight_spaceship = [
-        //   "01001",
-        //   "10000",
-        //   "10001",
-        //   "11110"];
-        // this.app.catalog.medium_weight_spaceship = [
-        //   "000100",
-        //   "010001",
-        //   "100000",
-        //   "100001",
-        //   "111110"];
-        // this.app.catalog.heavy_weight_spaceship = [
-        //   "0001100",
-        //   "0100001",
-        //   "1000000",
-        //   "1000001",
-        //   "1111110"];
-        // this.app.catalog.glider_gun = [
-        //   "000000000000000000000000100000000000",
-        //   "000000000000000000000010100000000000",
-        //   "000000000000110000001100000000000011",
-        //   "000000000001000100001100000000000011",
-        //   "110000000010000010001100000000000000",
-        //   "110000000010001011000010100000000000",
-        //   "000000000010000010000000100000000000",
-        //   "000000000001000100000000000000000000",
-        //   "000000000000110000000000000000000000"];
-
-        this.app.localCatalog.forEach(function(lc){
-          lc.starred = false;
-        });
-
-        // this.set('app._catalog', r.detail.response);
-        // this.app._catalog = r.detail.response;
-        // this.app._catalog.unshift({
-        //   id: 'pencil',
-        //   name: 'Pencil',
-        //   payload: ["1"]
-        // });
-        // this.app._catalog.unshift({
-        //   id: 'glider',
-        //   name: 'Glider',
-        //   payload: [
-        //     "010",
-        //     "001",
-        //     "111"]
-        // });
-        // this.app._catalog.unshift({
-        //   id: 'light_weight_spaceship',
-        //   name: 'Light Weight Spaceship',
-        //   payload: [
-        //     "01001",
-        //     "10000",
-        //     "10001",
-        //     "11110"]
-        // });
-        // this.app._catalog.unshift({
-        //   id: 'glider_gun',
-        //   name: 'Glider Gun',
-        //   payload: [
-        //     "000000000000000000000000100000000000",
-        //     "000000000000000000000010100000000000",
-        //     "000000000000110000001100000000000011",
-        //     "000000000001000100001100000000000011",
-        //     "110000000010000010001100000000000000",
-        //     "110000000010001011000010100000000000",
-        //     "000000000010000010000000100000000000",
-        //     "000000000001000100000000000000000000",
-        //     "000000000000110000000000000000000000"]
-        // });
-
 
         this.app._catalog = [
           {
@@ -505,10 +337,6 @@
         //   this.app.gameManager.CANVAS_SIZE_Y = 3000;
         //   this.notifyPath('app.gameManager.CANVAS_SIZE_Y');
         // // }
-        // if(this._isPlaying()){
-        //   // stop
-        //   this.handleTap();
-        // }
         this._stopPlaying();
         document.querySelector('life-canvas').initialize();
       },
@@ -520,18 +348,17 @@
       _handleCreateNewSave: function(){
         // console.log("handle!");
 
-        var rle = document.querySelector('life-canvas')._encodeRLE();
-        // console.log(r);
-        // this.app.saves.push({
-        //   name: "hogehoge",
-        //   data: r
-        // });
+        var lifeCanvas = document.querySelector('life-canvas');
+
+        var rle = lifeCanvas._encodeRLE();
+        var dataUrl = lifeCanvas.getCanvasDataURL();
 
         var date = new Date();
         var timestamp = ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2) + ':' + ('0' + date.getHours()).slice(-2);
         this.push('app.saves', {
           name: timestamp,
-          data: rle
+          rle: rle,
+          dataUrl: dataUrl
         });
       },
 
@@ -558,7 +385,7 @@
         this.$.infoViewDialog.open();
       },
       _computeShareURL: function(_selectingSaveInfo){
-        return 'http://kumassy.com/life2/?state=paused&data=' + _selectingSaveInfo.data;
+        return 'http://kumassy.com/life2/?state=paused&data=' + _selectingSaveInfo.rle;
       },
       _isPatternStarred: function(item){
         return item.starred;

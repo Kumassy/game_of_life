@@ -76,22 +76,11 @@
         Cell.gameManager.CELL_LENGTH_X = 200;
         Cell.gameManager.CELL_LENGTH_Y = 150;
         Cell.gameManager.CELL_SIZE = 4;
-        // Cell.gameManager.CELL_LENGTH = Math.floor(Cell.gameManager.CANVAS_SIZE / Cell.gameManager.CELL_SIZE);
-        // Cell.gameManager.CELL_LENGTH_X = Math.floor(Cell.gameManager.CANVAS_SIZE_X / Cell.gameManager.CELL_SIZE);
-        // Cell.gameManager.CELL_LENGTH_Y = Math.floor(Cell.gameManager.CANVAS_SIZE_Y / Cell.gameManager.CELL_SIZE);
-        // Cell.gameManager.canvas = document.getElementById('canvas');
+
         Cell.gameManager.canvas = this.$.canvas;
         Cell.gameManager.context = Cell.gameManager.canvas.getContext('2d');
-
         Cell.gameManager.isDrawing = false;
 
-        // Cell.gameManager.cells = new Array(Cell.gameManager.CELL_LENGTH_X * Cell.gameManager.CELL_LENGTH_Y);
-        // for(var i=0; i < Cell.gameManager.cells.length; i++){
-        //   Cell.gameManager.cells[i] = new Cell( i % Cell.gameManager.CELL_LENGTH_X, Math.floor(i / Cell.gameManager.CELL_LENGTH_X ));
-        //   if( Math.random() > 0.5){
-        //     // Cell.gameManager.cells[i].state = 1;
-        //   }
-        // }
         this.initialize();
 
         Cell.gameManager.canvas.addEventListener('click', this._plotOnClick(this), false);
@@ -111,10 +100,6 @@
         this.app.gameManager.mousePos.x = -1;
         this.app.gameManager.mousePos.y = -1;
 
-        //
-        // // fix for the 1st initialization of canvas size
-        // this.notifyPath('app.gameManager.CANVAS_SIZE_X');
-        // this.notifyPath('app.gameManager.CANVAS_SIZE_Y');
 
         this.mainLoop();
       },
@@ -130,9 +115,6 @@
 
       _plotOnClick: function(self){
         return function(e){
-          // self.injectPattern(Math.floor(x / self.app.gameManager.CELL_SIZE), Math.floor(y / self.app.gameManager.CELL_SIZE), self.app.catalog[self.app.selected]);
-          // self.injectPattern.apply(self, [...self._toCellCoordinates(e), self.app.catalog[self.app.selected]]);
-          // self.injectPattern.apply(self, [...self._toCellCoordinates(e), self.app._cthis.app._selectedPattern.payloadatalog[self.app._selected].payload]);
           if(!self.app._selectedPattern || Object.keys(self.app._selectedPattern).length === 0 ) return;
           self.injectPattern.apply(self, [...self._toCellCoordinates(e), self.app._selectedPattern.payload]);
           self._draw();
@@ -177,8 +159,6 @@
         if( !this.app._catalog || !this.app._selectedPattern || Object.keys(this.app._selectedPattern).length === 0) return;
         var startX = this.app.gameManager.mousePos.x;
         var startY = this.app.gameManager.mousePos.y;
-        // var pattern = this.app.catalog[this.app.selected];
-        // var pattern = this.app._catalog[this.app._selected].payload;
         var pattern = this.app._selectedPattern.payload;
 
         if(!Array.isArray(pattern)){
@@ -218,8 +198,8 @@
       _parseRLE: function(src){
         var result = [];
         var line = "";
-        for(var pattern = src; pattern.length > 0; pattern = pattern.substring(consumed.length)){
-          var regexResult = pattern.match(/(\d*)([bo\$!])/);
+        for(var stream = src; stream.length > 0; stream = stream.substring(consumed.length)){
+          var regexResult = stream.match(/(\d*)([bo\$!])/);
 
           var consumed = regexResult[0];
           var length = regexResult[1] || 1;
@@ -262,10 +242,6 @@
           }
           line = [];
         }
-        // console.log(accumulator);
-        // var accumulator = this.app.gameManager.cells.reduce(function(accumulator, cell, index, array){
-        //   return cell.status;
-        // },"");
 
         accumulator = accumulator.map(function(a){
           if(a === ''){
@@ -275,12 +251,8 @@
             return a + '$';
           }
         });
-        // console.log('Phase 1');
-        // console.log(encode_1);
 
         var rawPattern = accumulator.join('').replace(/0/g, 'b').replace(/1/g, 'o');;
-        // console.log('Phase 2');
-        // console.log(encode_2);
 
 
         var focusing = '';
@@ -311,6 +283,9 @@
         result += '!';
 
         return result;
+      },
+      getCanvasDataURL: function(){
+        return this.app.gameManager.canvas.toDataURL();
       },
 
       // interface
