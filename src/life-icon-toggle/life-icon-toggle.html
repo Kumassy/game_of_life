@@ -1,0 +1,43 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+
+<dom-module id="life-icon-toggle">
+  <template>
+    <paper-icon-button icon="[[_icon]]" alt="favourite this!">
+    </paper-icon-button>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'life-icon-toggle',
+      properties: {
+        _icon: {
+          type: String,
+          computed: '_computeIcon(pressed)'
+        },
+        pressed: {
+          type: Boolean,
+          value: false,
+          notify: true
+        }
+      },
+      listeners: {
+        'tap': 'toggle'
+      },
+      _computeIcon: function(pressed){
+        if(pressed){
+          return 'star'
+        }
+        else{
+          return 'star-border'
+        }
+      },
+
+      toggle: function(){
+        this.pressed = !this.pressed;
+      }
+    });
+  </script>
+</dom-module>

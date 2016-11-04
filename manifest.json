@@ -1,0 +1,7 @@
+{
+  "name": "game_of_life",
+  "short_name": "game_of_life",
+  "description": "Game of Life implementaion in Polymer",
+  "start_url": "/",
+  "display": "standalone"
+}
