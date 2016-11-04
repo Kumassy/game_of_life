@@ -22,6 +22,10 @@
 <link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
 
 
+<link rel="import" href="../life-icon-toggle/life-icon-toggle.html">
+
+
+
 <dom-module id="life-app">
   <template>
 
@@ -53,10 +57,13 @@
           <paper-item id="glider_gun">Glider Gun</paper-item>
 
           <template is="dom-repeat" items="{{app.localCatalog}}">
-            <paper-item id="{{item.id}}" style="justify-content: space-between;">
+            <paper-item id="{{item.id}}" style="justify-content: space-between;"  on-tap="_handleItemTap">
               {{item.name}}
-              <paper-icon-button icon="star" alt="favourite this!">
-              </paper-icon-button>
+              <!-- <paper-icon-button icon="star" alt="favourite this!">
+              </paper-icon-button> -->
+
+              <!-- TODO: bind with {{}} to life-icon-toggle -->
+              <life-icon-toggle pressed="{{item.starred}}"></life-icon-toggle>
             </paper-item>
           </template>
         </paper-listbox>
@@ -70,7 +77,13 @@
 
         <iron-pages selected="[[_tab]]" class="flex">
           <div id="starredPatterns">
-            <div>Your favorite patterns go here</div>
+            <paper-listbox style="height: 100%; overflow: auto;" selected="0">
+              <template is="dom-repeat" items="{{app.localCatalog}}" filter="_isPatternStarred" observe="starred">
+                <paper-item style="justify-content: space-between;">
+                  {{item.name}}
+                </paper-item>
+              </template>
+            </paper-listbox>
           </div>
           <div id="canvasSaves">
             <paper-button on-tap="_handleCreateNewSave" style="width: 100%; text-transform: none; justify-content: flex-start; margin-right: 4px;">
@@ -364,6 +377,10 @@
           this.app.catalog[r.id] = r.payload;
 
         }.bind(this));
+
+        this.app.localCatalog.forEach(function(lc){
+          lc.starred = false;
+        });
       },
 
       handleCanvasResize: function(){
@@ -407,8 +424,15 @@
 
       _handleSelectSaves: function(e){
         // console.log(e);
+        // console.log(e.model);
         // console.log(this._selectedSavesIndex);
         // console.log(this.app.saves[this._selectedSavesIndex].data);
+      },
+      _handleItemTap: function(e){
+        console.log(e);
+        console.log(e.model);
+        // console.log(this.$.domRepeat.modelForElement(e.target));
+        console.log(e.model.get('name'));
       },
       _handleInfoViewForSave: function(){
         console.log(this._selectedSavesIndex);
@@ -418,6 +442,11 @@
       },
       _computeShareURL: function(_selectingSaveInfo){
         return 'http://kumassy.com/life2/?state=paused&data=' + _selectingSaveInfo.data;
+      },
+      _isPatternStarred: function(item){
+        // console.log(item);
+        // console.log(item.starred);
+        return item.starred;
       }
 
     });
