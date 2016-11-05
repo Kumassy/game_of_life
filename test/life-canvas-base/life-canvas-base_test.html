@@ -90,6 +90,27 @@
 
         });
 
+        test('should update cell width/height', function() {
+          var element = fixture('shouldCalculateCellSize');
+          console.log(element);
+          assert.equal(element.is, 'life-canvas-base');
+          assert.equal(element.width, 20);
+          assert.equal(element.height, 20);
+          assert.equal(element.mode, 'canvas');
+          assert.equal(element.cellSize, 4);
+
+          element.set('width', 40);
+          element.set('height', 60);
+
+          assert.equal(element.width, 40);
+          assert.equal(element.height, 60);
+          assert.equal(element._canvasWidth, 40);
+          assert.equal(element._canvasHeight, 60);
+
+          assert.equal(element._cellWidth, 10);
+          assert.equal(element._cellHeight, 15);
+        });
+
 
       });
     </script>
