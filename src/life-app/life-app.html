@@ -26,6 +26,7 @@
 
 <link rel="import" href="../life-icon-toggle/life-icon-toggle.html">
 <link rel="import" href="../life-save-dialog/life-save-dialog.html">
+<!-- <link rel="import" href="../life-icon-save-preview/life-icon-save-preview.html"> -->
 
 
 
@@ -85,14 +86,17 @@
                 <paper-item on-tap="_handleSaveListTap"  style="justify-content: space-between;">
                   <span>[[item.name]]</span>
                   <div>
-                    <!-- <paper-icon-button icon="save" >
-                    </paper-icon-button> -->
                     <paper-icon-button icon="info" on-tap="_handleInfoViewForSave">
                     </paper-icon-button>
+
+                    <!-- <paper-icon-button icon="save" >
+                    </paper-icon-button> -->
                     <!-- <paper-icon-button icon="social:share">
                     </paper-icon-button>
                     <paper-icon-button icon="delete">
                     </paper-icon-button> -->
+
+                    <!-- <life-icon-save-preview target="{{item}}"></life-icon-save-preview> -->
                   </div>
                 </paper-item>
                 <!-- <paper-icon-item>
@@ -126,7 +130,7 @@
 
       <div style="float: left; padding: 0 8px;">
         <div>
-          <life-save-dialog id="infoViewDialog" title="{{app._selectedSave.name}}" image-src="[[app._selectedSave.dataUrl]]" share-url="[[app._selectedSave.shareUrl]]"></life-save-dialog>
+          <life-save-dialog id="infoViewDialog" title="{{app._selectedSave.name}}" image-src="[[app._selectedSave.dataUrl]]" share-url="[[app._selectedSave.shareUrl]]" on-title-change="_handleTitleChange"></life-save-dialog>
           <!-- <life-save-dialog id="infoViewDialog"></life-save-dialog> -->
           <life-canvas app="{{app}}"></life-canvas>
 
@@ -382,6 +386,7 @@
 
         // this.app._selectedSave = e.model.get('item');
         this.set('app._selectedSave', e.model.get('item'));
+        this.set('app._selectedSaveIndex', e.model.get('index'));
         console.log(this.app._selectedSave);
         // this._selectingSaveInfo = e.model.get('item');
         this.$.endDrawer.toggle();
@@ -396,6 +401,14 @@
         // this.notifyPath('app.saves.*');
         // this.notifyPath('app.saves.0.name');
         this.notifyPath('app.saves.0.name');
+      },
+      _handleTitleChange: function(e){
+        if(this.app && this.app.hasOwnProperty('_selectedSaveIndex')){
+          this.notifyPath(['app', 'saves', this.app._selectedSaveIndex, 'name']);
+        }
+        // this.notifyPath(['app', 'saves', this.app._selectedSaveIndex, 'name'].join('.'));
+        // console.log(e);
+        // console.log(this.app._selectedSaveIndex);
       },
       // _computeShareURL: function(_selectingSaveInfo){
       //   return 'http://kumassy.com/life2/?state=paused&data=' + _selectingSaveInfo.rle;

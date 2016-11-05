@@ -25,7 +25,8 @@
       properties: {
         title: {
           type: String,
-          notify: true
+          notify: true,
+          observer: '_titleChanged'
         },
         imageSrc: {
           type: String
@@ -33,6 +34,10 @@
         shareUrl: {
           type: String
         }
+      },
+
+      _titleChanged: function(){
+        this.fire('title-change', {title: this.title});
       },
 
       open: function(){
