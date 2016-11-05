@@ -26,6 +26,7 @@
 
 <link rel="import" href="../life-icon-toggle/life-icon-toggle.html">
 <link rel="import" href="../life-save-dialog/life-save-dialog.html">
+<link rel="import" href="../life-brush-editor/life-brush-editor.html">
 
 
 <dom-module id="life-app">
@@ -129,6 +130,7 @@
           <!-- <life-save-dialog id="infoViewDialog" title="{{app._selectedSave.name}}" image-src="[[app._selectedSave.dataUrl]]" share-url="[[app._selectedSave.shareUrl]]" on-title-change="_handleTitleChange"></life-save-dialog> -->
           <life-save-dialog id="infoViewDialog" target="{{app._selectedSave}}" on-title-change="_handleTitleChange"></life-save-dialog>
           <life-canvas app="{{app}}"></life-canvas>
+          <life-brush-editor></life-brush-editor>
 
           <nav>
             <paper-button id="togglecontroller" on-tap="_togglePlaying" toggles style="float: left;">Pause</paper-button>
