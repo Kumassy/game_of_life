@@ -15,6 +15,7 @@
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
 
 <link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
 <link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
@@ -24,6 +25,7 @@
 
 
 <link rel="import" href="../life-icon-toggle/life-icon-toggle.html">
+<link rel="import" href="../life-save-dialog/life-save-dialog.html">
 
 
 
@@ -70,16 +72,18 @@
               <iron-icon icon="add" item-icon></iron-icon>
               New
             </paper-button>
-            <paper-listbox id="savesList" on-iron-select="_handleSelectSaves" selected="{{_selectedSavesIndex}}" style="height: 100%; overflow: auto;">
+            <!-- <paper-listbox id="savesList" on-iron-select="_handleSelectSaves" selected="{{_selectedSavesIndex}}" style="height: 100%; overflow: auto;"> -->
+            <paper-listbox id="savesList" style="height: 100%; overflow: auto;">
               <!-- <paper-item>
                 <paper-icon-item>
                   <iron-icon icon="add" item-icon></iron-icon>
                   New
                 </paper-icon-item>
               </paper-item> -->
-              <template is="dom-repeat" items="{{app.saves}}">
-                <paper-item id="{{item.name}}" style="justify-content: space-between;">
-                  {{item.name}}
+              <template is="dom-repeat" items="{{app.saves}}" id="repeater">
+                <!-- <paper-item id="{{item.name}}" style="justify-content: space-between;"> -->
+                <paper-item on-tap="_handleSaveListTap"  style="justify-content: space-between;">
+                  <span>[[item.name]]</span>
                   <div>
                     <!-- <paper-icon-button icon="save" >
                     </paper-icon-button> -->
@@ -122,19 +126,8 @@
 
       <div style="float: left; padding: 0 8px;">
         <div>
-          <paper-dialog id="infoViewDialog">
-            <h2>[[_selectingSaveInfo.name]]</h2>
-            <!-- <iron-image src="[[_selectingSaveInfo.dataUrl]]"></iron-image> -->
-            <div style="position: relative;">
-              <img src="[[_selectingSaveInfo.dataUrl]]" style="max-height: 60vh; max-width: 100%; width: auto;">
-            </div>
-            <!-- <p style="overflow-wrap: break-word; max-height: 240px; overflow-y: scroll;">[[_selectingSaveInfo.rle]]</p> -->
-            <paper-input label="Share URL" value="[[_selectingSaveShareURL]]"></paper-input>
-            <div class="buttons">
-              <!-- <paper-button dialog-dismiss>Share via Twitter</paper-button> -->
-              <paper-button dialog-confirm autofocus>OK</paper-button>
-            </div>
-          </paper-dialog>
+          <life-save-dialog id="infoViewDialog" title="{{app._selectedSave.name}}" image-src="[[app._selectedSave.dataUrl]]" share-url="[[app._selectedSave.shareUrl]]"></life-save-dialog>
+          <!-- <life-save-dialog id="infoViewDialog"></life-save-dialog> -->
           <life-canvas app="{{app}}"></life-canvas>
 
           <nav>
@@ -206,12 +199,13 @@
         },
         _selectingSaveInfo: {
           type: Object,
+          notify: true,
           value: {}
         },
-        _selectingSaveShareURL: {
-          type: String,
-          computed: '_computeShareURL(_selectingSaveInfo)'
-        }
+        // _selectingSaveShareURL: {
+        //   type: String,
+        //   computed: '_computeShareURL(_selectingSaveInfo)'
+        // }
       },
 
       ready: function() {
@@ -358,15 +352,19 @@
         this.push('app.saves', {
           name: timestamp,
           rle: rle,
-          dataUrl: dataUrl
+          dataUrl: dataUrl,
+          shareUrl: 'http://kumassy.com/life2/?state=paused&data=' + rle
         });
       },
 
-      _handleSelectSaves: function(e){
+      // _handleSelectSaves: function(e){
+      _handleSaveListTap: function(e){
         // console.log(e);
         // console.log(e.model);
         // console.log(this._selectedSavesIndex);
         // console.log(this.app.saves[this._selectedSavesIndex].data);
+
+        this.app._selectedSave = e.model.get('item');
       },
       _handlePatternListTap: function(e){
         console.log(e);
@@ -378,15 +376,30 @@
         // this.app._selected = e.model.get('index');
         this.app._selectedPattern = e.model.get('item');
       },
-      _handleInfoViewForSave: function(){
-        console.log(this._selectedSavesIndex);
-        this._selectingSaveInfo = this.app.saves[this._selectedSavesIndex];
+      _handleInfoViewForSave: function(e){
+        // console.log(this._selectedSavesIndex);
+        // this._selectingSaveInfo = this.app.saves[this._selectedSavesIndex];
+
+        // this.app._selectedSave = e.model.get('item');
+        this.set('app._selectedSave', e.model.get('item'));
+        console.log(this.app._selectedSave);
+        // this._selectingSaveInfo = e.model.get('item');
         this.$.endDrawer.toggle();
+        // this.$.infoViewDialog.title = e.model.get('item').name;
+        // this.$.infoViewDialog.imageSrc = e.model.get('item.dataUrl');
+        // this.$.infoViewDialog.shareUrl = e.model.get('item.shareUrl');
         this.$.infoViewDialog.open();
+        // this.set('app.saves.0.name', 'hogeCCC');
+        // e.model.set('item.name', 'hogeCCC');
+        console.log(this.app.saves);
+        this.notifyPath('app.saves');
+        // this.notifyPath('app.saves.*');
+        // this.notifyPath('app.saves.0.name');
+        this.notifyPath('app.saves.0.name');
       },
-      _computeShareURL: function(_selectingSaveInfo){
-        return 'http://kumassy.com/life2/?state=paused&data=' + _selectingSaveInfo.rle;
-      },
+      // _computeShareURL: function(_selectingSaveInfo){
+      //   return 'http://kumassy.com/life2/?state=paused&data=' + _selectingSaveInfo.rle;
+      // },
       _isPatternStarred: function(item){
         return item.starred;
       }
