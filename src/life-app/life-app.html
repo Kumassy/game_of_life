@@ -26,8 +26,6 @@
 
 <link rel="import" href="../life-icon-toggle/life-icon-toggle.html">
 <link rel="import" href="../life-save-dialog/life-save-dialog.html">
-<!-- <link rel="import" href="../life-icon-save-preview/life-icon-save-preview.html"> -->
-
 
 
 <dom-module id="life-app">
@@ -84,7 +82,7 @@
               <template is="dom-repeat" items="{{app.saves}}" id="repeater">
                 <!-- <paper-item id="{{item.name}}" style="justify-content: space-between;"> -->
                 <paper-item on-tap="_handleSaveListTap"  style="justify-content: space-between;">
-                  <span>[[item.name]]</span>
+                  <span>[[item.title]]</span>
                   <div>
                     <paper-icon-button icon="info" on-tap="_handleInfoViewForSave">
                     </paper-icon-button>
@@ -95,8 +93,6 @@
                     </paper-icon-button>
                     <paper-icon-button icon="delete">
                     </paper-icon-button> -->
-
-                    <!-- <life-icon-save-preview target="{{item}}"></life-icon-save-preview> -->
                   </div>
                 </paper-item>
                 <!-- <paper-icon-item>
@@ -130,8 +126,8 @@
 
       <div style="float: left; padding: 0 8px;">
         <div>
-          <life-save-dialog id="infoViewDialog" title="{{app._selectedSave.name}}" image-src="[[app._selectedSave.dataUrl]]" share-url="[[app._selectedSave.shareUrl]]" on-title-change="_handleTitleChange"></life-save-dialog>
-          <!-- <life-save-dialog id="infoViewDialog"></life-save-dialog> -->
+          <!-- <life-save-dialog id="infoViewDialog" title="{{app._selectedSave.name}}" image-src="[[app._selectedSave.dataUrl]]" share-url="[[app._selectedSave.shareUrl]]" on-title-change="_handleTitleChange"></life-save-dialog> -->
+          <life-save-dialog id="infoViewDialog" target="{{app._selectedSave}}" on-title-change="_handleTitleChange"></life-save-dialog>
           <life-canvas app="{{app}}"></life-canvas>
 
           <nav>
@@ -354,30 +350,20 @@
         var date = new Date();
         var timestamp = ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2) + ':' + ('0' + date.getHours()).slice(-2);
         this.push('app.saves', {
-          name: timestamp,
+          title: timestamp,
           rle: rle,
           dataUrl: dataUrl,
-          shareUrl: 'http://kumassy.com/life2/?state=paused&data=' + rle
+          shareUrl: 'http://kumassy.com/life2/?state=paused&data=' + rle,
+          createdAt: new Date(),
+          updatedAt: new Date(),
         });
       },
 
       // _handleSelectSaves: function(e){
       _handleSaveListTap: function(e){
-        // console.log(e);
-        // console.log(e.model);
-        // console.log(this._selectedSavesIndex);
-        // console.log(this.app.saves[this._selectedSavesIndex].data);
-
         this.app._selectedSave = e.model.get('item');
       },
       _handlePatternListTap: function(e){
-        console.log(e);
-        console.log(e.model);
-        // console.log(this.$.domRepeat.modelForElement(e.target));
-        // console.log(e.model.get('name'));
-
-        // this.app.selected = e.model.get('item.id');
-        // this.app._selected = e.model.get('index');
         this.app._selectedPattern = e.model.get('item');
       },
       _handleInfoViewForSave: function(e){
@@ -387,28 +373,15 @@
         // this.app._selectedSave = e.model.get('item');
         this.set('app._selectedSave', e.model.get('item'));
         this.set('app._selectedSaveIndex', e.model.get('index'));
-        console.log(this.app._selectedSave);
-        // this._selectingSaveInfo = e.model.get('item');
+        // console.log(this.app._selectedSave);
         this.$.endDrawer.toggle();
-        // this.$.infoViewDialog.title = e.model.get('item').name;
-        // this.$.infoViewDialog.imageSrc = e.model.get('item.dataUrl');
-        // this.$.infoViewDialog.shareUrl = e.model.get('item.shareUrl');
         this.$.infoViewDialog.open();
-        // this.set('app.saves.0.name', 'hogeCCC');
-        // e.model.set('item.name', 'hogeCCC');
-        console.log(this.app.saves);
-        this.notifyPath('app.saves');
-        // this.notifyPath('app.saves.*');
-        // this.notifyPath('app.saves.0.name');
-        this.notifyPath('app.saves.0.name');
+        // console.log(this.app.saves);
       },
       _handleTitleChange: function(e){
         if(this.app && this.app.hasOwnProperty('_selectedSaveIndex')){
-          this.notifyPath(['app', 'saves', this.app._selectedSaveIndex, 'name']);
+          this.notifyPath(['app', 'saves', this.app._selectedSaveIndex, 'title']);
         }
-        // this.notifyPath(['app', 'saves', this.app._selectedSaveIndex, 'name'].join('.'));
-        // console.log(e);
-        // console.log(this.app._selectedSaveIndex);
       },
       // _computeShareURL: function(_selectingSaveInfo){
       //   return 'http://kumassy.com/life2/?state=paused&data=' + _selectingSaveInfo.rle;

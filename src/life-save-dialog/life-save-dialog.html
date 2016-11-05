@@ -7,13 +7,14 @@
 <dom-module id="life-save-dialog">
   <template>
     <paper-dialog>
-      <paper-input value="{{title}}"></paper-input>
+      <paper-input value="{{target.title}}"></paper-input>
       <div style="position: relative;">
-        <img src="[[imageSrc]]" style="max-height: 60vh; max-width: 100%; width: auto;">
+        <img src="[[target.dataUrl]]" style="max-height: 60vh; max-width: 100%; width: auto;">
       </div>
-      <paper-input label="Share URL" value="[[shareUrl]]"></paper-input>
+      <!-- <span>[[target.createdAt]]</span>
+      <span>[[target.updatedAt]]</span> -->
+      <paper-input label="Share URL" value="[[target.shareUrl]]"></paper-input>
       <div class="buttons">
-        <!-- <paper-button dialog-dismiss>Share via Twitter</paper-button> -->
         <paper-button dialog-confirm autofocus>OK</paper-button>
       </div>
     </paper-dialog>
@@ -23,20 +24,17 @@
     Polymer({
       is: 'life-save-dialog',
       properties: {
-        title: {
-          type: String,
-          notify: true,
-          observer: '_titleChanged'
-        },
-        imageSrc: {
-          type: String
-        },
-        shareUrl: {
-          type: String
+        target: {
+          type: Object
         }
       },
 
+      observers: [
+        '_titleChanged(target.title)'
+      ],
+
       _titleChanged: function(){
+        this.set('target.updatedAt', new Date());
         this.fire('title-change', {title: this.title});
       },
 
