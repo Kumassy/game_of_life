@@ -1,0 +1,83 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+
+<dom-module id="life-canvas-base">
+  <template>
+    <canvas width$="[[_canvasWidth]]" height$="[[_canvasHeight]]">Your browser doesn't support html5 canvas.</canvas>
+
+  </template>
+
+  <style>
+  </style>
+
+  <script>
+    Polymer({
+      is: 'life-canvas-base',
+      properties: {
+        _canvasWidth: {
+          type: Number,
+        },
+        _canvasHeight: {
+          type: Number,
+        },
+        _cellWidth: {
+          type: Number,
+        },
+        _cellHeight: {
+          type: Number,
+        },
+        width: {
+          type: Number,
+          // notify: true,
+          value: 20
+        },
+        height: {
+          type: Number,
+          // notify: true,
+          value: 20
+        },
+        // Either `cell` or `canvas` is valid.
+        // `cell`: specify size by cell-length, canvas size is calculated based on cell-length and `cellSize`
+        // `canvas`: specify size by canvas size, cell-length is calculated based on canvas size and `cellSize`
+        mode: {
+          type: String,
+          // notify: true,
+          value: 'cell'
+        },
+        cellSize: {
+          type: Number,
+          // notify: true,
+          value: 4
+        },
+
+        isPlaying:{
+          type: Boolean,
+          value: false
+        }
+      },
+
+      observers: [
+        '_handleSizeChanged(width, height, cellSize, mode)'
+      ],
+
+      ready: function(){
+      },
+
+
+      _handleSizeChanged: function(width, height, cellSize, mode){
+        if(mode === 'cell'){
+          this._canvasWidth = width * cellSize;
+          this._canvasHeight = height * cellSize;
+          this._cellWidth = width;
+          this._cellHeight = height;
+        }
+        else if(mode === 'canvas'){
+          this._canvasWidth = width;
+          this._canvasHeight = height;
+          this._cellWidth = Math.floor(width / cellSize);
+          this._cellHeight = Math.floor(height / cellSize);
+        }
+      }
+    });
+  </script>
+</dom-module>

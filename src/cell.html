@@ -1,0 +1,49 @@
+<script>
+  var Cell = function(x, y){
+    this.x = x;
+    this.y = y;
+    this.state = 0; //dead => not colored
+    this._state = 0; //cache
+  };
+
+  Cell._getCellStateAt = function(x, y){
+    if( x < 0 || y < 0 || x >= this.gameManager.CELL_LENGTH_X || y >= this.gameManager.CELL_LENGTH_Y ){
+      return 0;
+    }
+    return this.gameManager.cells[ x + y * this.gameManager.CELL_LENGTH_X]._state;
+  };
+  Cell.getCellAt = function (x, y){
+    if( x < 0 || y < 0 || x >= this.gameManager.CELL_LENGTH_X || y >= this.gameManager.CELL_LENGTH_Y ){
+      return null;
+    }
+    return this.gameManager.cells[ x + y * this.gameManager.CELL_LENGTH_X];
+  };
+
+  Cell.prototype.draw = function(){
+    if(this.state){
+      Cell.gameManager.context.fillStyle = '#ff0000';
+      Cell.gameManager.context.fillRect(this.x * Cell.gameManager.CELL_SIZE, this.y * Cell.gameManager.CELL_SIZE, Cell.gameManager.CELL_SIZE, Cell.gameManager.CELL_SIZE);
+    }
+  };
+  Cell.prototype.update = function(){
+    var aliveCount = 0;
+
+    var directions = [[-1, -1], [0, -1], [1, -1],
+                      [-1, 0], [1, 0],
+                      [-1, 1], [0, 1], [1, 1]];
+    directions.forEach(function(d){
+      aliveCount += Cell._getCellStateAt(this.x + d[0], this.y + d[1]);
+    }.bind(this));
+
+    if(this._state){ //1, alive
+      if(aliveCount <= 1 || aliveCount >= 4){
+        this.state = 0;
+      }
+    }
+    else{ // 0, dead
+      if(aliveCount === 3){
+        this.state = 1;
+      }
+    }
+  };
+</script>
