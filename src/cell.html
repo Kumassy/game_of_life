@@ -19,12 +19,12 @@
   //   return this.gameManager.cells[ x + y * this.gameManager.CELL_LENGTH_X];
   // };
 
-  Cell.prototype.draw = function(){
-    if(this.state){
-      Cell.gameManager.context.fillStyle = '#ff0000';
-      Cell.gameManager.context.fillRect(this.x * Cell.gameManager.CELL_SIZE, this.y * Cell.gameManager.CELL_SIZE, Cell.gameManager.CELL_SIZE, Cell.gameManager.CELL_SIZE);
-    }
-  };
+  // Cell.prototype.draw = function(){
+  //   if(this.state){
+  //     Cell.gameManager.context.fillStyle = '#ff0000';
+  //     Cell.gameManager.context.fillRect(this.x * Cell.gameManager.CELL_SIZE, this.y * Cell.gameManager.CELL_SIZE, Cell.gameManager.CELL_SIZE, Cell.gameManager.CELL_SIZE);
+  //   }
+  // };
   // Cell.prototype.update = function(){
   //   var aliveCount = 0;
   //
@@ -104,8 +104,13 @@
   GameManager.prototype.draw = function(){
     this.cells.forEach(function(cell){
       cell._state = cell.state;
-      cell.draw();
-    });
+
+      // cell.draw();
+      if(cell.state){
+        this.context.fillStyle = '#ff0000';
+        this.context.fillRect(cell.x * this.CELL_SIZE, cell.y * this.CELL_SIZE, this.CELL_SIZE, this.CELL_SIZE);
+      }
+    }.bind(this));
   };
   GameManager.prototype.update = function(){
     var directions = [[-1, -1], [0, -1], [1, -1],
@@ -223,10 +228,12 @@
         if(pattern[i][j] === "1"){
           if(this.getCellAt(startX + j, startY + i)){
             this.getCellAt(startX + j, startY + i).state = 1;
+            console.log("hoge");
           }
         }
       }
     }
+    console.log(pattern);
   };
 
   GameManager.prototype.clearCanvas = function(){

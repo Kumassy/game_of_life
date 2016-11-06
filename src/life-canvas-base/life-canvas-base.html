@@ -64,11 +64,11 @@
 
         isPlaying: {    // isRunning -> isPlaying
           type: Boolean,
-          value: false
+          value: true
         },
         refreshRate: {
           type: Number,
-          value: 30
+          value: 300
         }
       },
 
@@ -77,6 +77,7 @@
       ],
 
       ready: function(){
+        this.mainLoop();
 
       },
 
@@ -107,16 +108,15 @@
       },
 
       mainLoop: function(){
-        this.gameManager.refreshCanvas();
-
         if(this.isPlaying){
+          this.gameManager.refreshCanvas();
           this.gameManager.update();
           this.gameManager.draw();
-        }
 
-        setTimeout(function(){
-          this.mainLoop();
-        }.bind(this), this.refreshRate);
+          setTimeout(function(){
+            this.mainLoop();
+          }.bind(this), this.refreshRate);
+        }
       },
     });
   </script>
