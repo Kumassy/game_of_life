@@ -1,10 +1,11 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../life-canvas-base/life-canvas-base.html">
 
 
 <dom-module id="life-preview-canvas">
   <template>
-    <canvas width$="[[width]]" height$="[[height]]">Your browser doesn't support html5 canvas.</canvas>
-
+    <!-- <canvas width$="[[width]]" height$="[[height]]">Your browser doesn't support html5 canvas.</canvas> -->
+    <life-canvas-base id="canvas" is-playing="[[autoPlay]]" width="[[width]]" height="[[height]]" mode="canvas"></life-canvas-base>
   </template>
 
   <style>
@@ -24,13 +25,27 @@
         },
         rle: {
           type: String,
-          value: '2o2b$o3b$3bo$2b2o!'    // Beacon
+          value: '2o2b$o3b$3bo$2b2o!',    // Beacon
+          observer: '_rleChanged'
         },
         autoPlay: {
           type: Boolean,
           value: false
-        }
+        },
       },
+
+      ready: function(){
+        this._rleChanged;
+      },
+
+      _rleChanged: function(){
+        var canvas = this.$.canvas;
+        // var canvas = document.querySelector('life-canvas-base');
+        canvas.clearCanvas();
+        canvas.injectPattern(2, 2, this.rle);
+      }
+
+
     });
   </script>
 </dom-module>

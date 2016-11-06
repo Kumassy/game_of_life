@@ -58,13 +58,13 @@
           // notify: true,
           value: 4
         },
-        gameManager: {
+        _gameManager: {
           type: Object
         },
 
         isPlaying: {    // isRunning -> isPlaying
           type: Boolean,
-          value: true
+          value: false
         },
         refreshRate: {
           type: Number,
@@ -95,23 +95,24 @@
           this._cellHeight = Math.floor(height / cellSize);
         }
 
-        this.gameManager = new GameManager(this._cellWidth, this._cellHeight, this.cellSize, this.$.canvas);
+        this._gameManager = new GameManager(this._cellWidth, this._cellHeight, this.cellSize, this.$.canvas);
       },
 
 
       // interface
       injectPattern: function(startX, startY, pattern){
-        this.gameManager.injectPattern(startX, startY, pattern);
+        this._gameManager.injectPattern(startX, startY, pattern);
+        this._gameManager.draw();
       },
       clearCanvas: function(){
-        this.gameManager.clearCanvas();
+        this._gameManager.clearCanvas();
       },
 
       mainLoop: function(){
         if(this.isPlaying){
-          this.gameManager.refreshCanvas();
-          this.gameManager.update();
-          this.gameManager.draw();
+          this._gameManager.refreshCanvas();
+          this._gameManager.update();
+          this._gameManager.draw();
 
           setTimeout(function(){
             this.mainLoop();
