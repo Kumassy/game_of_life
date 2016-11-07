@@ -1,122 +1,58 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<!-- <link rel="import" href="../cell.html"> -->
+<link rel="import" href="../life-canvas-base/life-canvas-base.html">
+
 
 <dom-module id="life-canvas">
   <template>
-    <canvas width$="[[app.gameManager.CANVAS_SIZE_X]]" height$="[[app.gameManager.CANVAS_SIZE_Y]]" id="canvas">Your browser doesn't support html5 canvas.</canvas>
-    <!-- <h2>Hello [[prop1]]</h2> -->
+    <!-- <canvas width$="[[app.gameManager.CANVAS_SIZE_X]]" height$="[[app.gameManager.CANVAS_SIZE_Y]]" id="canvas">Your browser doesn't support html5 canvas.</canvas> -->
+    <life-canvas-base id="canvas" is-playing="{{app.controller.isPlaying}}" refresh-rate="[[app.controller.refreshRate]]" width="[[app.width]]" height="[[app.height]]" cell-size="[[app.cellSize]]" mode="cell" on-game-loop-end="_drawPreview"></life-canvas-base>
   </template>
 
   <script>
-    var Cell = function(x, y){
-      this.x = x;
-      this.y = y;
-      this.state = 0; //dead => not colored
-      this._state = 0; //cache
-    };
-
-    Cell._getCellStateAt = function(x, y){
-      if( x < 0 || y < 0 || x >= this.gameManager.CELL_LENGTH_X || y >= this.gameManager.CELL_LENGTH_Y ){
-        return 0;
-      }
-      return this.gameManager.cells[ x + y * this.gameManager.CELL_LENGTH_X]._state;
-    };
-    Cell.getCellAt = function (x, y){
-      if( x < 0 || y < 0 || x >= this.gameManager.CELL_LENGTH_X || y >= this.gameManager.CELL_LENGTH_Y ){
-        return null;
-      }
-      return this.gameManager.cells[ x + y * this.gameManager.CELL_LENGTH_X];
-    };
-
-    Cell.prototype.draw = function(){
-      if(this.state){
-        Cell.gameManager.context.fillStyle = '#ff0000';
-        Cell.gameManager.context.fillRect(this.x * Cell.gameManager.CELL_SIZE, this.y * Cell.gameManager.CELL_SIZE, Cell.gameManager.CELL_SIZE, Cell.gameManager.CELL_SIZE);
-      }
-    };
-    Cell.prototype.update = function(){
-      var aliveCount = 0;
-
-      var directions = [[-1, -1], [0, -1], [1, -1],
-                        [-1, 0], [1, 0],
-                        [-1, 1], [0, 1], [1, 1]];
-      directions.forEach(function(d){
-        aliveCount += Cell._getCellStateAt(this.x + d[0], this.y + d[1]);
-      }.bind(this));
-
-      if(this._state){ //1, alive
-        if(aliveCount <= 1 || aliveCount >= 4){
-          this.state = 0;
-        }
-      }
-      else{ // 0, dead
-        if(aliveCount === 3){
-          this.state = 1;
-        }
-      }
-    };
-
     Polymer({
       is: 'life-canvas',
 
       properties: {
-        prop1: {
-          type: String,
-          value: 'life-canvas',
+        // app: Object,
+        app: {
+          type: Object,
         },
-        app: Object,
+        // main: {
+        //   type: Object,
+        //   value: {}
+        // },
+        isDrawing: {
+          type: Boolean,
+          value: false
+        },
+        mousePos: {
+          type: Object,
+          value: {}
+        }
+
       },
 
       ready: function() {
-        this.app.gameManager = {};
-        Cell.gameManager = this.app.gameManager;
+        // this.initialize();
 
-        // Cell.gameManager.CANVAS_SIZE = 600;
-        // Cell.gameManager.CANVAS_SIZE_X = 800;
-        // Cell.gameManager.CANVAS_SIZE_Y = 600;
-        Cell.gameManager.CELL_LENGTH_X = 200;
-        Cell.gameManager.CELL_LENGTH_Y = 150;
-        Cell.gameManager.CELL_SIZE = 4;
-        // Cell.gameManager.CELL_LENGTH = Math.floor(Cell.gameManager.CANVAS_SIZE / Cell.gameManager.CELL_SIZE);
-        // Cell.gameManager.CELL_LENGTH_X = Math.floor(Cell.gameManager.CANVAS_SIZE_X / Cell.gameManager.CELL_SIZE);
-        // Cell.gameManager.CELL_LENGTH_Y = Math.floor(Cell.gameManager.CANVAS_SIZE_Y / Cell.gameManager.CELL_SIZE);
-        // Cell.gameManager.canvas = document.getElementById('canvas');
-        Cell.gameManager.canvas = this.$.canvas;
-        Cell.gameManager.context = Cell.gameManager.canvas.getContext('2d');
-
-        Cell.gameManager.isDrawing = false;
-
-        // Cell.gameManager.cells = new Array(Cell.gameManager.CELL_LENGTH_X * Cell.gameManager.CELL_LENGTH_Y);
-        // for(var i=0; i < Cell.gameManager.cells.length; i++){
-        //   Cell.gameManager.cells[i] = new Cell( i % Cell.gameManager.CELL_LENGTH_X, Math.floor(i / Cell.gameManager.CELL_LENGTH_X ));
-        //   if( Math.random() > 0.5){
-        //     // Cell.gameManager.cells[i].state = 1;
-        //   }
-        // }
-        this.initialize();
-
-        Cell.gameManager.canvas.addEventListener('click', this._plotOnClick(this), false);
-        Cell.gameManager.canvas.addEventListener('mousemove', this._handlePlotSeq(this), false);
-        Cell.gameManager.canvas.addEventListener('mousemove', this._updateMousePos(this), false);
-        Cell.gameManager.canvas.addEventListener('mousedown', this._handlePlotStart(this), false);
-        Cell.gameManager.canvas.addEventListener('mouseup', this._handlePlotEnd(this), false);
-        // Cell.gameManager.canvas.addEventListener('touchmove', this._handlePlotSeq(this), false);
-        // Cell.gameManager.canvas.addEventListener('touchdown', this._handlePlotStart(this), false);
-        // Cell.gameManager.canvas.addEventListener('touchup', this._handlePlotEnd(this), false);
-
+        this.$.canvas.getCanvas().addEventListener('click', this._plotOnClick(this), false);
+        this.$.canvas.getCanvas().addEventListener('mousemove', this._handlePlotSeq(this), false);
+        this.$.canvas.getCanvas().addEventListener('mousemove', this._updateMousePos(this), false);
+        this.$.canvas.getCanvas().addEventListener('mousedown', this._handlePlotStart(this), false);
+        this.$.canvas.getCanvas().addEventListener('mouseup', this._handlePlotEnd(this), false);
 
         this.app.controller = {};
-        this.app.controller.isRunning = true;
-        this.app.controller.refreshRate = 30;
-        this.app.gameManager.mousePos = {};
-        this.app.gameManager.mousePos.x = -1;
-        this.app.gameManager.mousePos.y = -1;
+        this.set('app.controller.isPlaying', true);
+        this.set('app.controller.refreshRate', 30);
+        this.mousePos.x = -1;
+        this.mousePos.y = -1;
 
-        //
-        // // fix for the 1st initialization of canvas size
-        // this.notifyPath('app.gameManager.CANVAS_SIZE_X');
-        // this.notifyPath('app.gameManager.CANVAS_SIZE_Y');
+        this.set('app.width', 200);
+        this.set('app.height', 150);
+        this.set('app.cellSize', 4);
 
-        this.mainLoop();
+        // this.mainLoop();
       },
 
       _toCellCoordinates: function(e){
@@ -124,248 +60,69 @@
         var x = e.clientX - rect.left;
         var y = e.clientY - rect.top;
 
-        return [Math.floor(x / this.app.gameManager.CELL_SIZE), Math.floor(y / this.app.gameManager.CELL_SIZE)];
+        return [Math.floor(x / this.$.canvas.cellSize), Math.floor(y / this.$.canvas.cellSize)];
       },
 
 
       _plotOnClick: function(self){
         return function(e){
-          // self.injectPattern(Math.floor(x / self.app.gameManager.CELL_SIZE), Math.floor(y / self.app.gameManager.CELL_SIZE), self.app.catalog[self.app.selected]);
-          // self.injectPattern.apply(self, [...self._toCellCoordinates(e), self.app.catalog[self.app.selected]]);
-          // self.injectPattern.apply(self, [...self._toCellCoordinates(e), self.app._cthis.app._selectedPattern.payloadatalog[self.app._selected].payload]);
           if(!self.app._selectedPattern || Object.keys(self.app._selectedPattern).length === 0 ) return;
           self.injectPattern.apply(self, [...self._toCellCoordinates(e), self.app._selectedPattern.payload]);
-          self._draw();
+          // self._draw();
         };
       },
       _handlePlotStart: function(self){
         return function(e){
-          self.app.gameManager.isDrawing = true;
+          self.isDrawing = true;
         };
       },
       _handlePlotSeq: function(self){
         return function(e){
-          if (!self.app.gameManager.isDrawing) return;
+          if (!self.isDrawing) return;
 
           self._plotOnClick(self)(e);
         };
       },
-
       _updateMousePos: function(self){
         return function(e){
-          self.app.gameManager.mousePos.x = self._toCellCoordinates(e)[0];
-          self.app.gameManager.mousePos.y = self._toCellCoordinates(e)[1];
+          self.mousePos.x = self._toCellCoordinates(e)[0];
+          self.mousePos.y = self._toCellCoordinates(e)[1];
         };
       },
-
       _handlePlotEnd: function(self){
         return function(e){
-          self.app.gameManager.isDrawing = false;
+          self.isDrawing = false;
         };
-      },
-
-
-      _draw: function(){
-        this.app.gameManager.cells.forEach(function(c){
-          c._state = c.state;
-          c.draw();
-        });
       },
 
       _drawPreview: function(){
         // if( !this.app.catalog || !this.app.selected) return;
         if( !this.app._catalog || !this.app._selectedPattern || Object.keys(this.app._selectedPattern).length === 0) return;
-        var startX = this.app.gameManager.mousePos.x;
-        var startY = this.app.gameManager.mousePos.y;
-        // var pattern = this.app.catalog[this.app.selected];
-        // var pattern = this.app._catalog[this.app._selected].payload;
+        var startX = this.mousePos.x;
+        var startY = this.mousePos.y;
         var pattern = this.app._selectedPattern.payload;
 
-        if(!Array.isArray(pattern)){
-          pattern = this._parseRLE(pattern);
-        }
-        for(i = 0; i < pattern.length; i++){
-          for(j = 0; j < pattern[i].length; j++){
-            if(pattern[i][j] === "1"){
-              if(Cell.getCellAt(startX + j, startY + i)){
-                // ^ use Cell.getCellAt() to check boundaries
-                Cell.gameManager.context.fillStyle = 'rgba(255, 0, 0, 0.3)';
-                Cell.gameManager.context.fillRect((startX + j) * Cell.gameManager.CELL_SIZE, (startY + i) * Cell.gameManager.CELL_SIZE, Cell.gameManager.CELL_SIZE, Cell.gameManager.CELL_SIZE);
-              }
-            }
-          }
-        }
+        this.$.canvas.injectOverlay(startX, startY, pattern);
       },
 
-      mainLoop: function(){
-        this.app.gameManager.context.fillStyle = '#eeeeee';
-        this.app.gameManager.context.fillRect(0, 0, this.app.gameManager.canvas.width, this.app.gameManager.canvas.height);
-
-        if(this.app.controller.isRunning){
-          this.app.gameManager.cells.forEach(function(c){
-            c.update();
-          });
-
-        }
-        this._draw();
-        this._drawPreview();
-
-        setTimeout(function(){
-          this.mainLoop();
-        }.bind(this), this.app.controller.refreshRate);
+      getCanvasDataURL: function(){
+        return this.$.canvas.getCanvasDataURL();
       },
 
-      _parseRLE: function(src){
-        var result = [];
-        var line = "";
-        for(var pattern = src; pattern.length > 0; pattern = pattern.substring(consumed.length)){
-          var regexResult = pattern.match(/(\d*)([bo\$!])/);
-
-          var consumed = regexResult[0];
-          var length = regexResult[1] || 1;
-          var type = regexResult[2];
-
-          if(type === 'o'){
-            line += "1".repeat(length);
-          }
-          else if(type === 'b'){
-            line += "0".repeat(length);
-          }
-          else if(type === '$'){
-            for(var i = length; i > 0; i--){
-              result.push(line);
-              line = "";
-            }
-          }
-          else if(type === '!'){
-            result.push(line);
-            break;
-          }
-        }
-        return result;
+      getRLE: function(){
+        return this.$.canvas.getRLE();
       },
 
-      _encodeRLE: function(){
-        var accumulator = [];
-        var line = [];
-        for(i = 0; i < this.app.gameManager.CELL_LENGTH_Y; i++){
-          for(j = 0; j < this.app.gameManager.CELL_LENGTH_X; j++){
-            line.push(Cell.getCellAt(j, i).state);
-          }
-
-          var t = line.join('');
-          if(t.includes('1')){
-            accumulator.push(t);
-          }
-          else{
-            accumulator.push('');
-          }
-          line = [];
-        }
-        // console.log(accumulator);
-        // var accumulator = this.app.gameManager.cells.reduce(function(accumulator, cell, index, array){
-        //   return cell.status;
-        // },"");
-
-        accumulator = accumulator.map(function(a){
-          if(a === ''){
-            return '$';
-          }
-          else{
-            return a + '$';
-          }
-        });
-        // console.log('Phase 1');
-        // console.log(encode_1);
-
-        var rawPattern = accumulator.join('').replace(/0/g, 'b').replace(/1/g, 'o');;
-        // console.log('Phase 2');
-        // console.log(encode_2);
-
-
-        var focusing = '';
-        var count = 0;
-        var result = '';
-        for(var stream = rawPattern; stream.length > 0; stream = stream.substring(1)){
-          if(stream[0] === focusing){
-            count++;
-          }
-          else{
-            if(count === 0){
-              // corner case: will be execute on the very first character of the stream
-              focusing = stream[0];
-              count = 1;
-            }
-            else if(count === 1){
-              result += '' + focusing;
-              focusing = stream[0];
-              count = 1;
-            }
-            else if(count > 1){
-              result += '' + count + focusing;
-              focusing = stream[0];
-              count = 1;
-            }
-          }
-        }
-        result += '!';
-
-        return result;
+      initialize: function(){
+        this.$.canvas.initialize();
       },
 
-      // interface
       injectPattern: function(startX, startY, pattern){
-        if(!Array.isArray(pattern)){
-          pattern = this._parseRLE(pattern);
-        }
-
-        var i, j; // i => vertical, j => horizontal
-        for(i = 0; i < pattern.length; i++){
-          for(j = 0; j < pattern[i].length; j++){
-            if(pattern[i][j] === "1"){
-              if(Cell.getCellAt(startX + j, startY + i)){
-                Cell.getCellAt(startX + j, startY + i).state = 1;
-              }
-            }
-          }
-        }
+        this.$.canvas.injectPattern(startX, startY, pattern);
       },
       clearCanvas: function(){
-        this.app.gameManager.cells.forEach(function(c){
-          c.state = 0;
-          c._state = 0;
-        });
-        this._draw();
+        this.$.canvas.clearCanvas();
       },
-      initialize: function(){
-        // Cell.gameManager.CELL_LENGTH_X = Math.floor(Cell.gameManager.CANVAS_SIZE_X / Cell.gameManager.CELL_SIZE);
-        // Cell.gameManager.CELL_LENGTH_Y = Math.floor(Cell.gameManager.CANVAS_SIZE_Y / Cell.gameManager.CELL_SIZE);
-
-
-        Cell.gameManager.cells = new Array(this.app.gameManager.CELL_LENGTH_X * this.app.gameManager.CELL_LENGTH_Y);
-        for(var i=0; i < Cell.gameManager.cells.length; i++){
-          Cell.gameManager.cells[i] = new Cell( i % Cell.gameManager.CELL_LENGTH_X, Math.floor(i / Cell.gameManager.CELL_LENGTH_X ));
-        }
-
-        // console.log("initialize!!");
-        // console.log(Cell.gameManager.CANVAS_SIZE_X);
-
-
-        this.resizeCanvas();
-
-      },
-      resizeCanvas: function(){
-        Cell.gameManager.CANVAS_SIZE_X = Cell.gameManager.CELL_LENGTH_X * Cell.gameManager.CELL_SIZE;
-        Cell.gameManager.CANVAS_SIZE_Y = Cell.gameManager.CELL_LENGTH_Y * Cell.gameManager.CELL_SIZE;
-        // fix for the 1st initialization of canvas size
-        this.notifyPath('app.gameManager.CANVAS_SIZE_X');
-        this.notifyPath('app.gameManager.CANVAS_SIZE_Y');
-
-        this.app.gameManager.context.fillStyle = '#eeeeee';
-        this.app.gameManager.context.fillRect(0, 0, this.app.gameManager.canvas.width, this.app.gameManager.canvas.height);
-        // this._draw();
-      }
-
 
     });
   </script>

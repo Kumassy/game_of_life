@@ -3,6 +3,7 @@
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/social-icons.html">
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
 
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
@@ -14,6 +15,7 @@
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
 
 <link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
 <link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
@@ -23,7 +25,10 @@
 
 
 <link rel="import" href="../life-icon-toggle/life-icon-toggle.html">
-
+<link rel="import" href="../life-save-dialog/life-save-dialog.html">
+<link rel="import" href="../life-brush-editor/life-brush-editor.html">
+<link rel="import" href="../life-preview-canvas/life-preview-canvas.html">
+<link rel="import" href="../life-canvas/life-canvas.html">
 
 
 <dom-module id="life-app">
@@ -35,18 +40,8 @@
             <div main-title>All Patterns</div>
           </app-toolbar>
         </app-header>
-        <!-- <paper-listbox style="height: 100%; overflow: auto;" on-iron-select="handleItemChange" selected="0"> -->
         <paper-listbox style="height: 100%; overflow: auto;" selected="0">
-          <!-- <paper-item id="pencil">Pencil</paper-item>
-          <paper-item id="glider">Glider</paper-item>
-          <paper-item id="light_weight_spaceship">Light Weight Spaceship</paper-item>
-          <paper-item id="medium_weight_spaceship">Medium Weight Spaceship</paper-item>
-          <paper-item id="heavy_weight_spaceship">Heavy Weight Spaceship</paper-item>
-          <paper-item id="glider_gun">Glider Gun</paper-item> -->
-
-          <!-- <template is="dom-repeat" items="{{app.localCatalog}}"> -->
           <template is="dom-repeat" items="{{app._catalog}}">
-            <!-- <paper-item id="{{item.id}}" on-tap="_handlePatternListTap" style="justify-content: space-between;"> -->
             <paper-item on-tap="_handlePatternListTap" style="justify-content: space-between;">
               {{item.name}}
               <!-- <paper-icon-button icon="star" alt="favourite this!">
@@ -66,7 +61,6 @@
         <iron-pages selected="[[_tab]]" class="flex">
           <div id="starredPatterns">
             <paper-listbox style="height: 100%; overflow: auto;" selected="0">
-              <!-- <template is="dom-repeat" items="{{app.localCatalog}}" filter="_isPatternStarred" observe="starred"> -->
               <template is="dom-repeat" items="{{app._catalog}}" filter="_isPatternStarred" observe="starred">
                 <paper-item on-tap="_handlePatternListTap" style="justify-content: space-between;">
                   {{item.name}}
@@ -80,21 +74,24 @@
               <iron-icon icon="add" item-icon></iron-icon>
               New
             </paper-button>
-            <paper-listbox id="savesList" on-iron-select="_handleSelectSaves" selected="{{_selectedSavesIndex}}" style="height: 100%; overflow: auto;">
+            <!-- <paper-listbox id="savesList" on-iron-select="_handleSelectSaves" selected="{{_selectedSavesIndex}}" style="height: 100%; overflow: auto;"> -->
+            <paper-listbox id="savesList" style="height: 100%; overflow: auto;">
               <!-- <paper-item>
                 <paper-icon-item>
                   <iron-icon icon="add" item-icon></iron-icon>
                   New
                 </paper-icon-item>
               </paper-item> -->
-              <template is="dom-repeat" items="{{app.saves}}">
-                <paper-item id="{{item.name}}" style="justify-content: space-between;">
-                  {{item.name}}
+              <template is="dom-repeat" items="{{app.saves}}" id="repeater">
+                <!-- <paper-item id="{{item.name}}" style="justify-content: space-between;"> -->
+                <paper-item on-tap="_handleSaveListTap"  style="justify-content: space-between;">
+                  <span>[[item.title]]</span>
                   <div>
-                    <!-- <paper-icon-button icon="save" >
-                    </paper-icon-button> -->
                     <paper-icon-button icon="info" on-tap="_handleInfoViewForSave">
                     </paper-icon-button>
+
+                    <!-- <paper-icon-button icon="save" >
+                    </paper-icon-button> -->
                     <!-- <paper-icon-button icon="social:share">
                     </paper-icon-button>
                     <paper-icon-button icon="delete">
@@ -132,16 +129,14 @@
 
       <div style="float: left; padding: 0 8px;">
         <div>
-          <paper-dialog id="infoViewDialog">
-            <h2>[[_selectingSaveInfo.name]]</h2>
-            <p style="overflow-wrap: break-word; max-height: 240px; overflow-y: scroll;">[[_selectingSaveInfo.data]]</p>
-            <paper-input label="Share URL" value="[[_selectingSaveShareURL]]"></paper-input>
-            <div class="buttons">
-              <!-- <paper-button dialog-dismiss>Share via Twitter</paper-button> -->
-              <paper-button dialog-confirm autofocus>OK</paper-button>
-            </div>
-          </paper-dialog>
-          <life-canvas app="{{app}}"></life-canvas>
+          <!-- <life-save-dialog id="infoViewDialog" title="{{app._selectedSave.name}}" image-src="[[app._selectedSave.dataUrl]]" share-url="[[app._selectedSave.shareUrl]]" on-title-change="_handleTitleChange"></life-save-dialog> -->
+          <life-save-dialog id="infoViewDialog" target="{{app._selectedSave}}" on-title-change="_handleTitleChange"></life-save-dialog>
+          <life-canvas id="mainCanvas" app="{{app}}"></life-canvas>
+          <!-- <life-preview-canvas width="240" height="240" auto-play rle="2o3b2o4b2o4b2o3b2o3bo7b2ob$obo2bobo3bo6bo5bo3bo5bo2bo$bo6bo4bo4b2o2b2o5bo5bo2b$14bo15bo7b$31bo!"></life-preview-canvas>
+          <life-preview-canvas width="240" height="240" auto-play rle="18bo8b$17b3o7b$12b3o4b2o6b$11bo2b3o2bob2o4b$10bo3bobo2bobo5b$10bo4bobobobob2o2b$12bo4bobo3b2o2b$4o5bobo4bo3bob3o2b$o3b2obob3ob2o9b2ob$o5b2o5bo13b$bo2b2obo2bo2bob2o10b$7bobobobobobo5b4o$bo2b2obo2bo2bo2b2obob2o3bo$o5b2o3bobobo3b2o5bo$o3b2obob2o2bo2bo2bob2o2bob$4o5bobobobobobo7b$10b2obo2bo2bob2o2bob$13bo5b2o5bo$b2o9b2ob3obob2o3bo$2b3obo3bo4bobo5b4o$2b2o3bobo4bo12b$2b2obobobobo4bo10b$5bobo2bobo3bo10b$4b2obo2b3o2bo11b$6b2o4b3o12b$7b3o17b$8bo!"></life-preview-canvas>
+          <life-preview-canvas width="240" height="240" auto-play rle="15b2o3b2o15b3$6b2o21b2o6b$6b2o21b2o6b2$3b2o27b2o3b$3b2o9b2o5b2o9b2o3b$9b3ob2o7b2ob3o9b$8bobo15bobo8b$8b2o17b2o8b$8bo19bo8b2$8bo19bo8b$7b2o19b2o7b$o6bo21bo6bo$o35bo4$o35bo$o6bo21bo6bo$7b2o19b2o7b$8bo19bo8b2$8bo19bo8b$8b2o17b2o8b$8bobo15bobo8b$9b3ob2o7b2ob3o9b$3b2o9b2o5b2o9b2o3b$3b2o27b2o3b2$6b2o21b2o6b$6b2o21b2o6b3$15b2o3b2o!"></life-preview-canvas> -->
+
+          <life-brush-editor rle="[[app._selectedPattern.payload]]"></life-brush-editor>
 
           <nav>
             <paper-button id="togglecontroller" on-tap="_togglePlaying" toggles style="float: left;">Pause</paper-button>
@@ -152,12 +147,9 @@
         </div>
         <div style="clear: both;">
           <div>Use arrow key to increase numbers (you can't type number keys), or you'll get a crash. This bug may be fixed sooner or later.</div>
-          <paper-input label="Canvas width" value="{{app.gameManager.CANVAS_SIZE_X}}" type="number" max="3000" on-change="handleCanvasResize" on-keydown="handleCanvasResize" disabled style="float:left; width: 45%; max-width: 400px; margin-right: 8px;"></paper-input>
-          <paper-input label="Canvas height" value="{{app.gameManager.CANVAS_SIZE_Y}}" type="number" max="3000" on-change="handleCanvasResize" on-keydown="handleCanvasResize" disabled style="float:left; width: 45%; max-width: 400px;"></paper-input>
-          <paper-input label="Cell width" value="{{app.gameManager.CELL_LENGTH_X}}" type="number" max="3000" on-change="handleCanvasResize" on-keydown="handleCanvasResize" style="float:left; width: 45%; max-width: 400px; margin-right: 8px;"></paper-input>
-          <paper-input label="Cell height" value="{{app.gameManager.CELL_LENGTH_Y}}" type="number" max="3000" on-change="handleCanvasResize" on-keydown="handleCanvasResize" style="float:left; width: 45%; max-width: 400px;"></paper-input>
-          <paper-input label="Cell size" value="{{app.gameManager.CELL_SIZE}}" type="number" min="1" max="10" on-change="handleCellResize" on-keydown="handleCellResize" style="float:left; width: 45%; max-width: 400px;"></paper-input>
-          <!-- <span>[[app.gameManager.CANVAS_SIZE_X]]</span> -->
+          <paper-input label="Cell width" value="{{app.width}}" type="number" max="3000" style="float:left; width: 45%; max-width: 400px; margin-right: 8px;"></paper-input>
+          <paper-input label="Cell height" value="{{app.height}}" type="number" max="3000" style="float:left; width: 45%; max-width: 400px;"></paper-input>
+          <paper-input label="Cell size" value="{{app.cellSize}}" type="number" min="1" max="10" style="float:left; width: 45%; max-width: 400px;"></paper-input>
         </div>
       </div>
 
@@ -212,69 +204,17 @@
         },
         _selectingSaveInfo: {
           type: Object,
+          notify: true,
           value: {}
         },
-        _selectingSaveShareURL: {
-          type: String,
-          computed: '_computeShareURL(_selectingSaveInfo)'
-        }
+        // _selectingSaveShareURL: {
+        //   type: String,
+        //   computed: '_computeShareURL(_selectingSaveInfo)'
+        // }
       },
 
       ready: function() {
-        this.app.catalog = {};
         this.app._catalog = [];
-        // this.app.controller = {};
-
-        // this.app.controller.isRunning = true;
-        // this.app.controller.refreshRate = 30;
-
-        this.app.catalog.pencil = [
-          "1"
-        ];
-        this.app.catalog.glider = [
-          "010",
-          "001",
-          "111"];
-        this.app.catalog.light_weight_spaceship = [
-          "01001",
-          "10000",
-          "10001",
-          "11110"];
-        this.app.catalog.medium_weight_spaceship = [
-          "000100",
-          "010001",
-          "100000",
-          "100001",
-          "111110"];
-        this.app.catalog.heavy_weight_spaceship = [
-          "0001100",
-          "0100001",
-          "1000000",
-          "1000001",
-          "1111110"];
-        this.app.catalog.glider_gun = [
-          "000000000000000000000000100000000000",
-          "000000000000000000000010100000000000",
-          "000000000000110000001100000000000011",
-          "000000000001000100001100000000000011",
-          "110000000010000010001100000000000000",
-          "110000000010001011000010100000000000",
-          "000000000010000010000000100000000000",
-          "000000000001000100000000000000000000",
-          "000000000000110000000000000000000000"];
-        // this.app.catalog.test = "24bo$22bobo$12b2o6b2o12b2o$11bo3bo4b2o12b2o$2o8bo5bo3b2o$2o8bo3bob2o4bobo$10bo5bo7bo$11bo3bo$12b2o!";
-        // this.app.catalog.test = "28bo60b$27bobo59b$27bobo18b2o39b$25b3ob2o17b2o39b$24bo64b$25b3ob2o58b$27bob2o58b4$56b2o31b$56b2o31b12$21bo67b$20bobo66b$20bobo66b$18b3ob2o65b$17bo71b$18b3ob2o65b$20bob2o65b3$4bo57b3o24b$3bobo57bo25b$3bobo57bo2bo22b$b3ob2o56bo2bo22b$o63bobo22b$b3ob2o72b2o8b$3bob2o72b2o8b3$63bo        25b$62bobo24b$63bo25b$80bo8b$79bo7b2o$61b4o22b2o$61b2o3bo10bo11b$62bo        4bo9bobo9b$64bob2o10bo10b$65bo23b3$73bobob2o10b$56bo16bobo13b$55b3o17b        o2bo10b$2b2o70bo3bo10b$2b2o51b3o16b4o2b2o7b$56b2ob2o14bo5b2o6b$58bo21b        o8b3$32b3o54b$33bo55b$10b2o21bo2bo52b$10b2o21bo2bo52b$34bobo52b$49b2o        38b$49b2o38b$55bo33b$54b3o32b$33bo19b2ob2o31b$32bobo18bobo33b$33bo19bo        35b3$31b4o54b$31b2o3bo13bo38b$32bo4bo11bobo37b$34bob2o11bo39b$35bo15b        2o36b$52bo36b$49b3o37b$50b2o37b$47bo41b$47b2o40b$47b2o40b$37b2o6b2o42b        $37b2o4b2o44b$43b2obo42b$45b2o42b5$45b2o42b$45b2o!";
-
-        // this.app.catalog.test = "2b3o3b3o2b2$o4bobo4bo$o4bobo4bo$o4bobo4bo$2b3o3b3o2b2$2b3o3b3o2b$o4bobo4bo$o4bobo4bo$o4bobo4bo2$2b3o3b3o!";
-        // this.app.catalog.test = "11b2o5b4o$9b2ob2o3bo3bo$9b4o8bo$10b2o5bo2bob2$8bo13b$7b2o8b2o3b$6bo9bo2bo2b$7b5o4bo2bo2b$8b4o3b2ob2o2b$11bo4b2o4b4$18b4o$o2bo13bo3bo$4bo16bo$o3bo12bo2bob$b4o!";
-
-
-        // this.app.saves = [];
-        //   {
-        //     name: "test",
-        //     data: "RLE format",
-        //   },
-        // ];
 
         // this.push('app.saves', {
         //   name: "test",
@@ -290,19 +230,16 @@
 
         if(this.params.state){
           if(this.params.state === 'playing'){
-            // this.app.controller.isRunning = true;
-            // this.$.togglecontroller.textContent = "Pause";
             this._startPlaying();
           }
           else if(this.params.state === 'paused'){
-            // this.app.controller.isRunning = false;
-            // this.$.togglecontroller.textContent = "Resume";
             this._stopPlaying();
           }
         }
 
         if(this.params.data){
-          var lifeCanvas = document.querySelector('life-canvas')
+          // var lifeCanvas = document.querySelector('life-canvas')
+          var lifeCanvas = this.$.mainCanvas;
           lifeCanvas.clearCanvas();
           lifeCanvas.injectPattern(0, 0, this.params.data);
         }
@@ -310,37 +247,22 @@
 
       _startPlaying: function(){
         this.$.togglecontroller.textContent = "Pause";
-        this.app.controller.isRunning = true;
+        this.set('app.controller.isPlaying', true);
       },
       _stopPlaying: function(){
         this.$.togglecontroller.textContent = "Resume";
-        this.app.controller.isRunning = false;
+        this.set('app.controller.isPlaying', false);
       },
       _isPlaying: function(){
-        return this.app.controller.isRunning;
+        return this.get('app.controller.isPlaying');
       },
       _togglePlaying: function(){
         this._isPlaying() ? this._stopPlaying() : this._startPlaying();
       },
 
-      // handleTap: function(e, detail) {
-      //   // var rect = e.target.getBoundingClientRect();
-      //   // var x = e.clientX - rect.left;
-      //   // var y = e.clientY - rect.top;
-      //
-      //   // document.querySelector('life-canvas').injectPattern( 50, 50, this.app.catalog.glider);
-      //   // document.querySelector('life-canvas').injectPattern( 50, 50, this.app.catalog.light_weight_spaceship);
-      //   // document.querySelector('life-canvas').injectPattern( 50, 50, this.app.catalog.heavy_weight_spaceship);
-      //
-      //
-      //
-      //   // this.$.togglecontroller.textContent = (this.app.controller.isRunning ?  "Resume" : "Pause");
-      //   // this.app.controller.isRunning = !this.app.controller.isRunning;
-      //   this._togglePlaying();
-      // },
-
       handleClear: function(e, datail) {
-        document.querySelector('life-canvas').clearCanvas();
+        // document.querySelector('life-canvas').clearCanvas();
+        this.$.mainCanvas.clearCanvas();
       },
 
       // handleItemChange: function(e){
@@ -353,99 +275,6 @@
 
       handleResponse: function(r){
         // console.log(r.detail.response);
-
-        // this.app.catalog = Object.assign(this.app.catalog, r.detail.response)
-
-        this.set('app.localCatalog', r.detail.response);
-        // this.catalog2 = r.detail.response;
-
-        r.detail.response.forEach(function(r){
-          this.app.catalog[r.id] = r.payload;
-
-        }.bind(this));
-
-
-
-        // this.app.catalog.unshift()
-        //
-        // this.app.catalog.pencil = [
-        //   "1"
-        // ];
-        // this.app.catalog.glider = [
-        //   "010",
-        //   "001",
-        //   "111"];
-        // this.app.catalog.light_weight_spaceship = [
-        //   "01001",
-        //   "10000",
-        //   "10001",
-        //   "11110"];
-        // this.app.catalog.medium_weight_spaceship = [
-        //   "000100",
-        //   "010001",
-        //   "100000",
-        //   "100001",
-        //   "111110"];
-        // this.app.catalog.heavy_weight_spaceship = [
-        //   "0001100",
-        //   "0100001",
-        //   "1000000",
-        //   "1000001",
-        //   "1111110"];
-        // this.app.catalog.glider_gun = [
-        //   "000000000000000000000000100000000000",
-        //   "000000000000000000000010100000000000",
-        //   "000000000000110000001100000000000011",
-        //   "000000000001000100001100000000000011",
-        //   "110000000010000010001100000000000000",
-        //   "110000000010001011000010100000000000",
-        //   "000000000010000010000000100000000000",
-        //   "000000000001000100000000000000000000",
-        //   "000000000000110000000000000000000000"];
-
-        this.app.localCatalog.forEach(function(lc){
-          lc.starred = false;
-        });
-
-        // this.set('app._catalog', r.detail.response);
-        // this.app._catalog = r.detail.response;
-        // this.app._catalog.unshift({
-        //   id: 'pencil',
-        //   name: 'Pencil',
-        //   payload: ["1"]
-        // });
-        // this.app._catalog.unshift({
-        //   id: 'glider',
-        //   name: 'Glider',
-        //   payload: [
-        //     "010",
-        //     "001",
-        //     "111"]
-        // });
-        // this.app._catalog.unshift({
-        //   id: 'light_weight_spaceship',
-        //   name: 'Light Weight Spaceship',
-        //   payload: [
-        //     "01001",
-        //     "10000",
-        //     "10001",
-        //     "11110"]
-        // });
-        // this.app._catalog.unshift({
-        //   id: 'glider_gun',
-        //   name: 'Glider Gun',
-        //   payload: [
-        //     "000000000000000000000000100000000000",
-        //     "000000000000000000000010100000000000",
-        //     "000000000000110000001100000000000011",
-        //     "000000000001000100001100000000000011",
-        //     "110000000010000010001100000000000000",
-        //     "110000000010001011000010100000000000",
-        //     "000000000010000010000000100000000000",
-        //     "000000000001000100000000000000000000",
-        //     "000000000000110000000000000000000000"]
-        // });
-
 
         this.app._catalog = [
           {
@@ -493,73 +322,54 @@
         this.notifyPath('app._catalog');
 
         // this.app._selectedPattern = {};
-        this.app._selectedPattern = this.app._catalog[0];
-      },
-
-      handleCanvasResize: function(){
-        // if(this.app.gameManager.CANVAS_SIZE_X > 3000){
-        //   this.app.gameManager.CANVAS_SIZE_X = 3000;
-        //   this.notifyPath('app.gameManager.CANVAS_SIZE_X');
-        // }
-        // if(this.app.gameManager.CANVAS_SIZE_Y > 3000){
-        //   this.app.gameManager.CANVAS_SIZE_Y = 3000;
-        //   this.notifyPath('app.gameManager.CANVAS_SIZE_Y');
-        // // }
-        // if(this._isPlaying()){
-        //   // stop
-        //   this.handleTap();
-        // }
-        this._stopPlaying();
-        document.querySelector('life-canvas').initialize();
-      },
-
-      handleCellResize: function(){
-        document.querySelector('life-canvas').resizeCanvas();
+        // this.app._selectedPattern = this.app._catalog[0];
+        this.set('app._selectedPattern', this.app._catalog[0]);
       },
 
       _handleCreateNewSave: function(){
-        // console.log("handle!");
+        var lifeCanvas = this.$.mainCanvas;
 
-        var rle = document.querySelector('life-canvas')._encodeRLE();
-        // console.log(r);
-        // this.app.saves.push({
-        //   name: "hogehoge",
-        //   data: r
-        // });
+        var rle = lifeCanvas.getRLE();
+        var dataUrl = lifeCanvas.getCanvasDataURL();
 
         var date = new Date();
         var timestamp = ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2) + ':' + ('0' + date.getHours()).slice(-2);
         this.push('app.saves', {
-          name: timestamp,
-          data: rle
+          title: timestamp,
+          rle: rle,
+          dataUrl: dataUrl,
+          shareUrl: 'http://kumassy.com/life2/?state=paused&data=' + rle,
+          createdAt: new Date(),
+          updatedAt: new Date(),
         });
       },
 
-      _handleSelectSaves: function(e){
-        // console.log(e);
-        // console.log(e.model);
-        // console.log(this._selectedSavesIndex);
-        // console.log(this.app.saves[this._selectedSavesIndex].data);
+      // _handleSelectSaves: function(e){
+      _handleSaveListTap: function(e){
+        this.app._selectedSave = e.model.get('item');
       },
       _handlePatternListTap: function(e){
-        console.log(e);
-        console.log(e.model);
-        // console.log(this.$.domRepeat.modelForElement(e.target));
-        // console.log(e.model.get('name'));
-
-        // this.app.selected = e.model.get('item.id');
-        // this.app._selected = e.model.get('index');
-        this.app._selectedPattern = e.model.get('item');
+        this.set('app._selectedPattern', e.model.get('item'));
       },
-      _handleInfoViewForSave: function(){
-        console.log(this._selectedSavesIndex);
-        this._selectingSaveInfo = this.app.saves[this._selectedSavesIndex];
+      _handleInfoViewForSave: function(e){
+        // console.log(this._selectedSavesIndex);
+        // this._selectingSaveInfo = this.app.saves[this._selectedSavesIndex];
+
+        this.set('app._selectedSave', e.model.get('item'));
+        this.set('app._selectedSaveIndex', e.model.get('index'));
+
         this.$.endDrawer.toggle();
         this.$.infoViewDialog.open();
+        // console.log(this.app.saves);
       },
-      _computeShareURL: function(_selectingSaveInfo){
-        return 'http://kumassy.com/life2/?state=paused&data=' + _selectingSaveInfo.data;
+      _handleTitleChange: function(e){
+        if(this.app && this.app.hasOwnProperty('_selectedSaveIndex')){
+          this.notifyPath(['app', 'saves', this.app._selectedSaveIndex, 'title']);
+        }
       },
+      // _computeShareURL: function(_selectingSaveInfo){
+      //   return 'http://kumassy.com/life2/?state=paused&data=' + _selectingSaveInfo.rle;
+      // },
       _isPatternStarred: function(item){
         return item.starred;
       }

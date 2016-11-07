@@ -1,0 +1,144 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../cell.html">
+
+
+<!-- - encode RLE
+- decode RLE
+- inject pattern
+- update/draw/ basic mainLoop
+- initialize
+- clear
+- resize -->
+
+<dom-module id="life-canvas-base">
+  <template>
+    <canvas id="canvas" width$="[[_canvasWidth]]" height$="[[_canvasHeight]]">Your browser doesn't support html5 canvas.</canvas>
+
+  </template>
+
+  <style>
+  </style>
+
+  <script>
+    Polymer({
+      is: 'life-canvas-base',
+      properties: {
+        _canvasWidth: {
+          type: Number,
+        },
+        _canvasHeight: {
+          type: Number,
+        },
+        _cellWidth: {
+          type: Number,
+        },
+        _cellHeight: {
+          type: Number,
+        },
+        width: {
+          type: Number,
+          // notify: true,
+          value: 20
+        },
+        height: {
+          type: Number,
+          // notify: true,
+          value: 20
+        },
+        // Either `cell` or `canvas` is valid.
+        // `cell`: specify size by cell-length, canvas size is calculated based on cell-length and `cellSize`
+        // `canvas`: specify size by canvas size, cell-length is calculated based on canvas size and `cellSize`
+        mode: {
+          type: String,
+          // notify: true,
+          value: 'cell'
+        },
+        cellSize: {
+          type: Number,
+          // notify: true,
+          value: 4
+        },
+        _gameManager: {
+          type: Object
+        },
+
+        isPlaying: {    // isRunning -> isPlaying
+          type: Boolean,
+          value: false
+        },
+        refreshRate: {
+          type: Number,
+          value: 300
+        }
+      },
+
+      observers: [
+        '_handleSizeChanged(width, height, cellSize, mode)'
+      ],
+
+      ready: function(){
+        this.mainLoop();
+
+      },
+
+      _handleSizeChanged: function(width, height, cellSize, mode){
+        if(mode === 'cell'){
+          this._canvasWidth = width * cellSize;
+          this._canvasHeight = height * cellSize;
+          this._cellWidth = width;
+          this._cellHeight = height;
+        }
+        else if(mode === 'canvas'){
+          this._canvasWidth = width;
+          this._canvasHeight = height;
+          this._cellWidth = Math.floor(width / cellSize);
+          this._cellHeight = Math.floor(height / cellSize);
+        }
+
+        this.initialize();
+      },
+
+      initialize: function(){
+        this._gameManager = new GameManager(this._cellWidth, this._cellHeight, this.cellSize, this.$.canvas);
+      },
+
+      getCanvas: function(){
+        return this.$.canvas;
+
+      },
+
+      getCanvasDataURL: function(){
+        // return this._gameManager.canvas.toDataURL();
+        return this.$.canvas.toDataURL();
+      },
+
+      getRLE: function(){
+        return this._gameManager._encodeRLE();
+      },
+
+      // interface
+      injectPattern: function(startX, startY, pattern){
+        this._gameManager.injectPattern(startX, startY, pattern);
+        this._gameManager.draw();
+      },
+      injectOverlay: function(startX, startY, pattern){
+        this._gameManager.injectOverlay(startX, startY, pattern);
+      },
+      clearCanvas: function(){
+        this._gameManager.clearCanvas();
+      },
+
+      mainLoop: function(){
+        if(this.isPlaying){
+          this._gameManager.refreshCanvas();
+          this._gameManager.draw();
+          this._gameManager.update();
+          this.fire('game-loop-end');
+        }
+        setTimeout(function(){
+          this.mainLoop();
+        }.bind(this), this.refreshRate);
+      },
+    });
+  </script>
+</dom-module>
