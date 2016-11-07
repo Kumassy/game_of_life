@@ -95,14 +95,34 @@
           this._cellHeight = Math.floor(height / cellSize);
         }
 
+        this.initialize();
+      },
+
+      initialize: function(){
         this._gameManager = new GameManager(this._cellWidth, this._cellHeight, this.cellSize, this.$.canvas);
       },
 
+      getCanvas: function(){
+        return this.$.canvas;
+
+      },
+
+      getCanvasDataURL: function(){
+        // return this._gameManager.canvas.toDataURL();
+        return this.$.canvas.toDataURL();
+      },
+
+      getRLE: function(){
+        return this._gameManager._encodeRLE();
+      },
 
       // interface
       injectPattern: function(startX, startY, pattern){
         this._gameManager.injectPattern(startX, startY, pattern);
         this._gameManager.draw();
+      },
+      injectOverlay: function(startX, startY, pattern){
+        this._gameManager.injectOverlay(startX, startY, pattern);
       },
       clearCanvas: function(){
         this._gameManager.clearCanvas();
@@ -111,13 +131,13 @@
       mainLoop: function(){
         if(this.isPlaying){
           this._gameManager.refreshCanvas();
-          this._gameManager.update();
           this._gameManager.draw();
-
-          setTimeout(function(){
-            this.mainLoop();
-          }.bind(this), this.refreshRate);
+          this._gameManager.update();
+          this.fire('game-loop-end');
         }
+        setTimeout(function(){
+          this.mainLoop();
+        }.bind(this), this.refreshRate);
       },
     });
   </script>

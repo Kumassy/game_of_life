@@ -118,11 +118,19 @@
                       [-1, 1], [0, 1], [1, 1]];
 
     this.cells.forEach(function(cell){
-      var aliveCount = directions.reduce(function(accumulator, direction, index, array){
-        accumulator += this._getCellStateAt(cell.x + direction[0], cell.y + direction[1]);
-      }.bind(this), 0);
+      var aliveCount = 0;
+      directions.forEach(function(d){
+        aliveCount += this._getCellStateAt(cell.x + d[0], cell.y + d[1]);
+      }.bind(this));
       cell.update(aliveCount);
     }.bind(this));
+    // this.cells.forEach(function(cell){
+    //   var aliveCount = directions.reduce(function(accumulator, direction, index, array){
+    //     accumulator += this._getCellStateAt(cell.x + direction[0], cell.y + direction[1]);
+    //   }.bind(this), 0);
+    //   cell.update(aliveCount);
+    //   console.log(aliveCount);
+    // }.bind(this));
   };
 
 
@@ -228,12 +236,28 @@
         if(pattern[i][j] === "1"){
           if(this.getCellAt(startX + j, startY + i)){
             this.getCellAt(startX + j, startY + i).state = 1;
-            console.log("hoge");
           }
         }
       }
     }
-    console.log(pattern);
+    // console.log(pattern);
+  };
+
+  GameManager.prototype.injectOverlay = function(startX, startY, pattern){
+    if(!Array.isArray(pattern)){
+      pattern = this._parseRLE(pattern);
+    }
+    for(i = 0; i < pattern.length; i++){
+      for(j = 0; j < pattern[i].length; j++){
+        if(pattern[i][j] === "1"){
+          if(this.getCellAt(startX + j, startY + i)){
+            // ^ use Cell.getCellAt() to check boundaries
+            this.context.fillStyle = 'rgba(255, 0, 0, 0.3)';
+            this.context.fillRect((startX + j) * this.CELL_SIZE, (startY + i) * this.CELL_SIZE, this.CELL_SIZE, this.CELL_SIZE);
+          }
+        }
+      }
+    }
   };
 
   GameManager.prototype.clearCanvas = function(){
