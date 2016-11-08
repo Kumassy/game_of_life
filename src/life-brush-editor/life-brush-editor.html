@@ -1,7 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
 <link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
-
+<link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
 
 <link rel="import" href="../life-canvas-base/life-canvas-base.html">
 <link rel="import" href="../life-preview-canvas/life-preview-canvas.html">
@@ -14,9 +14,14 @@
       </paper-toolbar>
       <!-- <life-canvas-base></life-canvas-base> -->
       <life-preview-canvas width="240" height="240" auto-play rle="[[rle]]"></life-preview-canvas>
-      <div class="fit">content fits 100% below the header</div>
-    </paper-header-panel>
 
+      <div>R</div>
+      <paper-slider class="red" value="{{red}}" max="255" editable></paper-slider>
+      <div>G</div>
+      <paper-slider class="green" value="{{green}}" max="255" editable></paper-slider>
+      <div>B</div>
+      <paper-slider class="blue" value="{{blue}}" max="255" editable></paper-slider>
+    </paper-header-panel>
   </template>
 
   <style>
@@ -30,19 +35,55 @@
       @apply(--shadow-elevation-2dp);
       z-index: 4;
     }
+
+    paper-slider.red {
+      --paper-slider-knob-color: var(--paper-red-500);
+      --paper-slider-active-color: var(--paper-red-500);
+    }
+    paper-slider.green {
+      --paper-slider-knob-color: var(--paper-green-500);
+      --paper-slider-active-color: var(--paper-green-500);
+    }
+    paper-slider.blue {
+      --paper-slider-knob-color: var(--paper-light-blue-500);
+      --paper-slider-active-color: var(--paper-light-blue-500);
+    }
   </style>
 
   <script>
     Polymer({
       is: 'life-brush-editor',
       properties: {
-        // app: {
-        //   type: Object
-        // },
+        app: {
+          type: Object
+        },
         rle: {
           type: String,
           value: '15b2o3b2o15b3$6b2o21b2o6b$6b2o21b2o6b2$3b2o27b2o3b$3b2o9b2o5b2o9b2o3b$9b3ob2o7b2ob3o9b$8bobo15bobo8b$8b2o17b2o8b$8bo19bo8b2$8bo19bo8b$7b2o19b2o7b$o6bo21bo6bo$o35bo4$o35bo$o6bo21bo6bo$7b2o19b2o7b$8bo19bo8b2$8bo19bo8b$8b2o17b2o8b$8bobo15bobo8b$9b3ob2o7b2ob3o9b$3b2o9b2o5b2o9b2o3b$3b2o27b2o3b2$6b2o21b2o6b$6b2o21b2o6b3$15b2o3b2o!',
-        }
+        },
+        red: {
+          type: Number,
+          value: 255
+        },
+        green: {
+          type: Number,
+          value: 0
+        },
+        blue: {
+          type: Number,
+          value: 0
+        },
+      },
+
+      observers: [
+        '_handleColorChanged(red, green, blue)'
+      ],
+
+      _handleColorChanged: function(red, green, blue){
+        // if(this.app){
+          // this.app.color = 'rgb(' + red + ', ' + green + ', ' + blue + ')';
+        // }
+        this.set('app.color', 'rgb(' + red + ', ' + green + ', ' + blue + ')');
       },
     });
   </script>

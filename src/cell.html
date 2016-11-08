@@ -4,6 +4,7 @@
     this.y = y;
     this.state = 0; //dead => not colored
     this._state = 0; //cache
+    this.color = 'rgb(255, 0, 0)';
   };
 
   Cell.prototype.update = function(aliveCount){
@@ -58,7 +59,8 @@
 
       // cell.draw();
       if(cell.state){
-        this.context.fillStyle = '#ff0000';
+        // this.context.fillStyle = '#ff0000';
+        this.context.fillStyle = cell.color;
         this.context.fillRect(cell.x * this.CELL_SIZE, cell.y * this.CELL_SIZE, this.CELL_SIZE, this.CELL_SIZE);
       }
     }.bind(this));
@@ -169,7 +171,7 @@
   };
 
 
-  GameManager.prototype.injectPattern = function(startX, startY, pattern){
+  GameManager.prototype.injectPattern = function(startX, startY, pattern, color){
     if(!Array.isArray(pattern)){
       pattern = this._parseRLE(pattern);
     }
@@ -180,6 +182,7 @@
         if(pattern[i][j] === "1"){
           if(this.getCellAt(startX + j, startY + i)){
             this.getCellAt(startX + j, startY + i).state = 1;
+            this.getCellAt(startX + j, startY + i).color = color;
           }
         }
       }

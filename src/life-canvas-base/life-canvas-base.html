@@ -117,8 +117,8 @@
       },
 
       // interface
-      injectPattern: function(startX, startY, pattern){
-        this._gameManager.injectPattern(startX, startY, pattern);
+      injectPattern: function(startX, startY, pattern, color){
+        this._gameManager.injectPattern(startX, startY, pattern, color);
         this._gameManager.draw();
       },
       injectOverlay: function(startX, startY, pattern){

@@ -118,7 +118,7 @@
       },
 
       injectPattern: function(startX, startY, pattern){
-        this.$.canvas.injectPattern(startX, startY, pattern);
+        this.$.canvas.injectPattern(startX, startY, pattern, this.app.color);
       },
       clearCanvas: function(){
         this.$.canvas.clearCanvas();
