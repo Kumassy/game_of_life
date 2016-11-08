@@ -29,6 +29,7 @@
 <link rel="import" href="../life-brush-editor/life-brush-editor.html">
 <link rel="import" href="../life-preview-canvas/life-preview-canvas.html">
 <link rel="import" href="../life-canvas/life-canvas.html">
+<link rel="import" href="../life-input-image/life-input-image.html">
 
 
 <dom-module id="life-app">
@@ -146,10 +147,12 @@
           </nav>
         </div>
         <div style="clear: both;">
-          <div>Use arrow key to increase numbers (you can't type number keys), or you'll get a crash. This bug may be fixed sooner or later.</div>
           <paper-input label="Cell width" value="{{app.width}}" type="number" max="3000" style="float:left; width: 45%; max-width: 400px; margin-right: 8px;"></paper-input>
           <paper-input label="Cell height" value="{{app.height}}" type="number" max="3000" style="float:left; width: 45%; max-width: 400px;"></paper-input>
           <paper-input label="Cell size" value="{{app.cellSize}}" type="number" min="1" max="10" style="float:left; width: 45%; max-width: 400px;"></paper-input>
+        </div>
+        <div>
+          <life-input-image app="{{app}}"></life-input-image>
         </div>
       </div>
 

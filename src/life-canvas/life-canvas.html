@@ -124,6 +124,28 @@
         this.$.canvas.clearCanvas();
       },
 
+      setColors: function(){
+        var gm = this.$.canvas._gameManager;
+        console.log(gm);
+        if(this.app._colors.width < gm.CELL_WIDTH || this.app._colors.height < gm.CELL_HEIGHT){
+          console.log("error!!");
+          return;
+        }
+
+        for(var i = 0; i < gm.CELL_HEIGHT; i++){
+          for(var j = 0; j < gm.CELL_WIDTH; j++){
+            gm.getCellAt(j, i).color = this.app._colors.payload[i][j];
+            gm.getCellAt(j, i).state = 1;
+          }
+        }
+        gm.draw();
+
+        console.log("done!");
+
+
+
+      },
+
     });
   </script>
 </dom-module>
