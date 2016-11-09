@@ -23,55 +23,59 @@
             // データURIを取得
             var dataUri = this.result;
 
+            var image = new Image();
+            image.src = dataUri;
+            self.set('app.backgroundImage', image);
+
             // HTMLに書き出し (src属性にデータURIを指定)
             // document.getElementById( "output" ).innerHTML += '<img src="' + dataUri + '">';
             // console.log(dataUri);
 
-            var image = new Image();
-            image.onload = function() {
-                var canvas = document.createElement('canvas');
-                canvas.width = image.width;
-                canvas.height = image.height;
-
-                var context = canvas.getContext('2d');
-                context.drawImage(image, 0, 0);
-
-                var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-
-
-
-                var colors = [];
-                var line = [];
-                for(var i = 0; i < image.height; i++){
-                  for(var j = 0; j < image.width; j++){
-                    // Now you can access pixel data from imageData.data.
-                    // It's a one-dimensional array of RGBA values.
-                    // Here's an example of how to get a pixel's color at (x,y)
-                    // var index = (y*imageData.width + x) * 4;
-                    // var index = (i*imageData.width + j) * 4;
-                    // var red = imageData.data[index];
-                    // var green = imageData.data[index + 1];
-                    // var blue = imageData.data[index + 2];
-                    // var alpha = imageData.data[index + 3];
-
-                    // line.push(self._formatRGB(red, green, blue));
-
-                    var pixel = context.getImageData(j, i, 1, 1);
-                    var data = pixel.data;
-                    var rgba = 'rgba(' + data[0] + ',' + data[1] +
-                               ',' + data[2] + ',' + (data[3] / 255) + ')';
-                    line.push(rgba);
-                  }
-                  colors.push(line);
-                  line = [];
-                }
-                console.log(colors);
-                self.set('app._colors', {});
-                self.set('app._colors.width', image.width);
-                self.set('app._colors.height', image.height);
-                self.set('app._colors.payload', colors);
-            };
-            image.src = dataUri;
+            // var image = new Image();
+            // image.onload = function() {
+            //     var canvas = document.createElement('canvas');
+            //     canvas.width = image.width;
+            //     canvas.height = image.height;
+            //
+            //     var context = canvas.getContext('2d');
+            //     context.drawImage(image, 0, 0);
+            //
+            //     var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+            //
+            //
+            //
+            //     var colors = [];
+            //     var line = [];
+            //     for(var i = 0; i < image.height; i++){
+            //       for(var j = 0; j < image.width; j++){
+            //         // Now you can access pixel data from imageData.data.
+            //         // It's a one-dimensional array of RGBA values.
+            //         // Here's an example of how to get a pixel's color at (x,y)
+            //         // var index = (y*imageData.width + x) * 4;
+            //         // var index = (i*imageData.width + j) * 4;
+            //         // var red = imageData.data[index];
+            //         // var green = imageData.data[index + 1];
+            //         // var blue = imageData.data[index + 2];
+            //         // var alpha = imageData.data[index + 3];
+            //
+            //         // line.push(self._formatRGB(red, green, blue));
+            //
+            //         var pixel = context.getImageData(j, i, 1, 1);
+            //         var data = pixel.data;
+            //         var rgba = 'rgba(' + data[0] + ',' + data[1] +
+            //                    ',' + data[2] + ',' + (data[3] / 255) + ')';
+            //         line.push(rgba);
+            //       }
+            //       colors.push(line);
+            //       line = [];
+            //     }
+            //     console.log(colors);
+            //     self.set('app._colors', {});
+            //     self.set('app._colors.width', image.width);
+            //     self.set('app._colors.height', image.height);
+            //     self.set('app._colors.payload', colors);
+            // };
+            // image.src = dataUri;
           };
 
           // console.log("on change");

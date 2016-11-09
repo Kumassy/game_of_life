@@ -69,6 +69,9 @@
         refreshRate: {
           type: Number,
           value: 300
+        },
+        background: {
+          type: String
         }
       },
 
@@ -130,7 +133,7 @@
 
       mainLoop: function(){
         if(this.isPlaying){
-          this._gameManager.refreshCanvas();
+          this._gameManager.refreshCanvas(this.background);
           this._gameManager.draw();
           this._gameManager.update();
           this.fire('game-loop-end');

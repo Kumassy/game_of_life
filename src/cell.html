@@ -48,9 +48,16 @@
     return this.cells[ x + y * this.CELL_WIDTH ]._state;
   };
 
-  GameManager.prototype.refreshCanvas = function(){
-    this.context.fillStyle = '#eeeeee';
-    this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+  GameManager.prototype.refreshCanvas = function(backgroundImage){
+    if(backgroundImage){
+      this.context.fillStyle = '#eeeeee';
+      this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+      this.context.drawImage(backgroundImage, 0, 0);
+    }
+    else{
+      this.context.fillStyle = '#eeeeee';
+      this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    }
   };
 
   GameManager.prototype.draw = function(){
