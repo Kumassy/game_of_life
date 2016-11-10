@@ -6,7 +6,7 @@
 <dom-module id="life-canvas">
   <template>
     <!-- <canvas width$="[[app.gameManager.CANVAS_SIZE_X]]" height$="[[app.gameManager.CANVAS_SIZE_Y]]" id="canvas">Your browser doesn't support html5 canvas.</canvas> -->
-    <life-canvas-base id="canvas" is-playing="{{app.controller.isPlaying}}" refresh-rate="[[app.controller.refreshRate]]" width="[[app.width]]" height="[[app.height]]" cell-size="[[app.cellSize]]" mode="cell" on-game-loop-end="_drawPreview" background="[[app.backgroundImage]]"></life-canvas-base>
+    <life-canvas-base id="canvas" is-playing="{{app.controller.isPlaying}}" refresh-rate="[[app.controller.refreshRate]]" width="[[app.width]]" height="[[app.height]]" cell-size="[[app.cellSize]]" mode="cell" on-game-loop-end="_drawPreview" background="[[app.backgroundImage]]" color="[[app.color]]" background-color="[[app.backgroundColor]]"></life-canvas-base>
   </template>
 
   <script>
@@ -51,6 +51,10 @@
         this.set('app.width', 200);
         this.set('app.height', 150);
         this.set('app.cellSize', 4);
+
+        this.set('app.color', 'rgb(255, 0, 0)');
+        this.set('app.colora', 'rgba(255, 0, 0, 0.3)');
+        this.set('app.backgroundColor', 'rgb(238, 238, 238)');
 
         // this.mainLoop();
       },
@@ -102,7 +106,7 @@
         var startY = this.mousePos.y;
         var pattern = this.app._selectedPattern.payload;
 
-        this.$.canvas.injectOverlay(startX, startY, pattern);
+        this.$.canvas.injectOverlay(startX, startY, pattern, this.app.colora);
       },
 
       getCanvasDataURL: function(){

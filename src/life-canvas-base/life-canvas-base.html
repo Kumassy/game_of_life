@@ -72,6 +72,14 @@
         },
         background: {
           type: String
+        },
+        color: {
+          type: String,
+          value: 'rgb(255, 0, 0)'
+        },
+        backgroundColor: {
+          type: String,
+          value: 'rgb(238, 238, 238)'
         }
       },
 
@@ -122,10 +130,10 @@
       // interface
       injectPattern: function(startX, startY, pattern, color){
         this._gameManager.injectPattern(startX, startY, pattern, color);
-        this._gameManager.draw();
+        this._gameManager.draw(color);
       },
-      injectOverlay: function(startX, startY, pattern){
-        this._gameManager.injectOverlay(startX, startY, pattern);
+      injectOverlay: function(startX, startY, pattern, color){
+        this._gameManager.injectOverlay(startX, startY, pattern, color);
       },
       clearCanvas: function(){
         this._gameManager.clearCanvas();
@@ -133,8 +141,9 @@
 
       mainLoop: function(){
         if(this.isPlaying){
-          this._gameManager.refreshCanvas(this.background);
-          this._gameManager.draw();
+          // this._gameManager.refreshCanvas(this.background);
+          this._gameManager.refreshCanvas(this.backgroundColor, this.background);
+          this._gameManager.draw(this.color);
           this._gameManager.update();
           this.fire('game-loop-end');
         }

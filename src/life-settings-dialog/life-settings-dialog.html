@@ -1,0 +1,100 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
+
+
+<dom-module id="life-settings-dialog">
+  <template>
+    <paper-dialog id="dialog">
+      <!-- <paper-toolbar>
+        <div>Settings</div>
+      </paper-toolbar> -->
+      <h2>Settings</h2>
+
+      <!-- <div>R</div> -->
+      <paper-slider class="red" value="{{cellRed}}" max="255" editable></paper-slider>
+      <!-- <div>G</div> -->
+      <paper-slider class="green" value="{{cellGreen}}" max="255" editable></paper-slider>
+      <!-- <div>B</div> -->
+      <paper-slider class="blue" value="{{cellBlue}}" max="255" editable></paper-slider>
+
+      <!-- <div>R</div> -->
+      <paper-slider class="red" value="{{bgRed}}" max="255" editable></paper-slider>
+      <!-- <div>G</div> -->
+      <paper-slider class="green" value="{{bgGreen}}" max="255" editable></paper-slider>
+      <!-- <div>B</div> -->
+      <paper-slider class="blue" value="{{bgBlue}}" max="255" editable></paper-slider>
+    </paper-dialog>
+  </template>
+
+  <style>
+    paper-slider.red {
+      --paper-slider-knob-color: var(--paper-red-500);
+      --paper-slider-active-color: var(--paper-red-500);
+    }
+    paper-slider.green {
+      --paper-slider-knob-color: var(--paper-green-500);
+      --paper-slider-active-color: var(--paper-green-500);
+    }
+    paper-slider.blue {
+      --paper-slider-knob-color: var(--paper-light-blue-500);
+      --paper-slider-active-color: var(--paper-light-blue-500);
+    }
+  </style>
+
+  <script>
+    Polymer({
+      is: 'life-settings-dialog',
+      properties: {
+        app: {
+          type: Object
+        },
+        cellRed: {
+          type: Number,
+          value: 255
+        },
+        cellGreen: {
+          type: Number,
+          value: 0
+        },
+        cellBlue: {
+          type: Number,
+          value: 0
+        },
+        bgRed: {
+          type: Number,
+          value: 238
+        },
+        bgGreen: {
+          type: Number,
+          value: 238
+        },
+        bgBlue: {
+          type: Number,
+          value: 238
+        },
+
+      },
+
+      observers: [
+        '_handleCellColorChanged(cellRed, cellGreen, cellBlue)',
+        '_handleBGColorChanged(bgRed, bgGreen, bgBlue)'
+      ],
+
+      _handleCellColorChanged: function(red, green, blue){
+        this.set('app.color', 'rgb(' + red + ', ' + green + ', ' + blue + ')');
+        this.set('app.colora', 'rgba(' + red + ', ' + green + ', ' + blue + ', 0.3)');
+      },
+      _handleBGColorChanged: function(red, green, blue){
+        this.set('app.backgroundColor', 'rgb(' + red + ', ' + green + ', ' + blue + ')');
+      },
+      open: function(){
+        this.$.dialog.open();
+      }
+
+    });
+  </script>
+</dom-module>

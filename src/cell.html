@@ -48,26 +48,27 @@
     return this.cells[ x + y * this.CELL_WIDTH ]._state;
   };
 
-  GameManager.prototype.refreshCanvas = function(backgroundImage){
+  GameManager.prototype.refreshCanvas = function(backgroundColor, backgroundImage){
     if(backgroundImage){
-      this.context.fillStyle = '#eeeeee';
+      this.context.fillStyle = backgroundColor || '#eeeeee';
       this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
       this.context.drawImage(backgroundImage, 0, 0);
     }
     else{
-      this.context.fillStyle = '#eeeeee';
+      this.context.fillStyle = backgroundColor || '#eeeeee';
       this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
   };
 
-  GameManager.prototype.draw = function(){
+  GameManager.prototype.draw = function(color){
     this.cells.forEach(function(cell){
       cell._state = cell.state;
 
       // cell.draw();
       if(cell.state){
         // this.context.fillStyle = '#ff0000';
-        this.context.fillStyle = cell.color;
+        // this.context.fillStyle = cell.color;
+        this.context.fillStyle = color;
         this.context.fillRect(cell.x * this.CELL_SIZE, cell.y * this.CELL_SIZE, this.CELL_SIZE, this.CELL_SIZE);
       }
     }.bind(this));
@@ -197,7 +198,7 @@
     // console.log(pattern);
   };
 
-  GameManager.prototype.injectOverlay = function(startX, startY, pattern){
+  GameManager.prototype.injectOverlay = function(startX, startY, pattern, color){
     if(!Array.isArray(pattern)){
       pattern = this._parseRLE(pattern);
     }
@@ -206,7 +207,8 @@
         if(pattern[i][j] === "1"){
           if(this.getCellAt(startX + j, startY + i)){
             // ^ use Cell.getCellAt() to check boundaries
-            this.context.fillStyle = 'rgba(255, 0, 0, 0.3)';
+            // this.context.fillStyle = 'rgba(255, 0, 0, 0.3)';
+            this.context.fillStyle = color;
             this.context.fillRect((startX + j) * this.CELL_SIZE, (startY + i) * this.CELL_SIZE, this.CELL_SIZE, this.CELL_SIZE);
           }
         }
