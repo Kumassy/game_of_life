@@ -14,6 +14,7 @@
       </paper-toolbar> -->
       <h2>Settings</h2>
 
+      <h3>Cell Color</h3>
       <!-- <div>R</div> -->
       <paper-slider class="red" value="{{cellRed}}" max="255" editable></paper-slider>
       <!-- <div>G</div> -->
@@ -21,6 +22,7 @@
       <!-- <div>B</div> -->
       <paper-slider class="blue" value="{{cellBlue}}" max="255" editable></paper-slider>
 
+      <h3>Background Color</h3>
       <!-- <div>R</div> -->
       <paper-slider class="red" value="{{bgRed}}" max="255" editable></paper-slider>
       <!-- <div>G</div> -->
@@ -31,6 +33,9 @@
   </template>
 
   <style>
+    paper-slider {
+      min-width: 320px;
+    }
     paper-slider.red {
       --paper-slider-knob-color: var(--paper-red-500);
       --paper-slider-active-color: var(--paper-red-500);
