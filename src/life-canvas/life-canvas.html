@@ -41,6 +41,8 @@
         this.$.canvas.getCanvas().addEventListener('mousemove', this._updateMousePos(this), false);
         this.$.canvas.getCanvas().addEventListener('mousedown', this._handlePlotStart(this), false);
         this.$.canvas.getCanvas().addEventListener('mouseup', this._handlePlotEnd(this), false);
+        this.$.canvas.getCanvas().addEventListener('mouseenter', this._handleMouseEnter(this), false);
+        this.$.canvas.getCanvas().addEventListener('mouseleave', this._handleMouseLeave(this), false);
 
         this.app.controller = {};
         this.set('app.controller.isPlaying', true);
@@ -98,10 +100,21 @@
           self.isDrawing = false;
         };
       },
+      _handleMouseEnter: function(self){
+        return function(e){
+          console.log("enter!!");
+          self.onHover = true;
+        };
+      },
+      _handleMouseLeave: function(self){
+        return function(e){
+          self.onHover = false;
+        };
+      },
 
       _drawPreview: function(){
         // if( !this.app.catalog || !this.app.selected) return;
-        if( !this.app._catalog || !this.app._selectedPattern || Object.keys(this.app._selectedPattern).length === 0) return;
+        if(!this.app._catalog || !this.app._selectedPattern || Object.keys(this.app._selectedPattern).length === 0 || !this.onHover) return;
         var startX = this.mousePos.x;
         var startY = this.mousePos.y;
         var pattern = this.app._selectedPattern.payload;

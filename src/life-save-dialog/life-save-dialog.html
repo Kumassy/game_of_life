@@ -9,7 +9,9 @@
     <paper-dialog>
       <paper-input label="Title" value="{{target.title}}"></paper-input>
       <div style="position: relative;">
-        <img src="[[target.dataUrl]]" style="max-height: 60vh; max-width: 100%; width: auto;">
+        <a href="[[_downloadURL]]" download="[[_downloadFileName]]">
+          <img src="[[target.dataUrl]]" style="max-height: 60vh; max-width: 100%; width: auto;">
+        </a>
       </div>
       <!-- <span>[[target.createdAt]]</span>
       <span>[[target.updatedAt]]</span> -->
@@ -26,12 +28,28 @@
       properties: {
         target: {
           type: Object
+        },
+
+        _downloadURL: {
+          type: String,
+          computed: '_computeDownloadURL(target.dataUrl)'
+        },
+        _downloadFileName: {
+          type: String,
+          computed: '_computeDownloadFileName(target.title)'
         }
       },
 
       observers: [
         '_titleChanged(target.title)'
       ],
+
+      _computeDownloadURL: function(dataUrl){
+        return dataUrl.replace('image/png', 'application/octet-stream');
+      },
+      _computeDownloadFileName: function(title){
+        return title + '.png';
+      },
 
       _titleChanged: function(){
         this.set('target.updatedAt', new Date());
