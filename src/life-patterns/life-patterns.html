@@ -1,4 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
 
 <link rel="import" href="../life-preview-canvas/life-preview-canvas.html">
 
@@ -6,11 +8,29 @@
 <dom-module id="life-patterns">
   <template>
     <template is="dom-repeat" items="[[catalogForPage]]">
-      <life-preview-canvas width="240" height="240" auto-play rle="[[item.payload]]"></life-preview-canvas>
+      <paper-card class="dark">
+        <div class="card-content">
+          <life-preview-canvas width="240" height="240" auto-play rle="[[item.payload]]"></life-preview-canvas>
+
+          <div role="listbox">
+            <paper-item>[[item.name]]</paper-item>
+            <paper-item>[[item.author]]</paper-item>
+            <paper-item>[[item.comments]]</paper-item>
+            <paper-item>[[item.meta.rule]]</paper-item>
+            <paper-item>[[item.meta.x]]</paper-item>
+            <paper-item>[[item.meta.y]]</paper-item>
+          </div>
+        </div>
+      </paper-card>
     </template>
   </template>
 
   <style>
+    paper-card {
+     box-sizing: border-box;
+     margin: 4px;
+     flex: 0 0 auto;
+   }
   </style>
 
   <script>
