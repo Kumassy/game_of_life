@@ -1,9 +1,13 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<link rel="import" href="../../bower_components/app-route/app-route.html">
-<link rel="import" href="../../bower_components/app-route/app-location.html">
+<!-- <link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/app-route/app-location.html"> -->
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 
 <link rel="import" href="../life-app/life-app.html">
+<link rel="import" href="../life-patterns/life-patterns.html">
+
+<script src="../../bower_components/page/page.js"></script>
 
 <dom-module id="app-shell">
   <template>
@@ -22,8 +26,17 @@
     <!-- <app-route route="{{route}}" pattern="/:page" data="{{data}}"></app-route> -->
     <!-- <app-route route="{{route}}" pattern="/" query-params="{{params}}"></app-route> -->
 
-    <life-app params="{{params}}">
-    </life-app>
+    <iron-pages attr-for-selected="data-route" selected="{{route}}">
+      <section id="main" data-route="main">
+        <life-app params="{{params}}" app="{{app}}">
+        </life-app>
+      </section>
+      <section id="patterns" data-route="patterns">
+        <h2>All Patterns</h2>
+        <life-patterns app="{{app}}"></life-patterns>
+      </section>
+    </iron-pages>
+
   </template>
 
   <script>
@@ -31,11 +44,16 @@
       is: 'app-shell',
       properties: {
         route: {
-          type: Object,
+          // type: Object,
+          type: String,
           // observer: '_routeChanged'
         },
         params: {
           type: Object
+        },
+        app: {
+          type: Object,
+          value: {}
         }
       },
 
@@ -50,6 +68,18 @@
         }
         this.params = arg;
         console.log(this.params);
+
+        page.base('/life2');
+        page('/', function(){
+          this.route = 'main';
+          console.log("main!!");
+        }.bind(this));
+
+        page('/patterns', function(){
+          this.route = 'patterns';
+          console.log("patterns!!");
+        }.bind(this));
+        page();
       },
 
       // _routeChanged: function(newValue, oldValue){

@@ -17,7 +17,8 @@
     "paper-input": "PolymerElements/paper-input#^1.1.20",
     "paper-header-panel": "PolymerElements/paper-header-panel#^1.1.7",
     "paper-swatch-picker": "^1.0.2",
-    "paper-dialog-scrollable": "PolymerElements/paper-dialog-scrollable#^1.1.5"
+    "paper-dialog-scrollable": "PolymerElements/paper-dialog-scrollable#^1.1.5",
+    "paper-card": "PolymerElements/paper-card#^1.1.4"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
