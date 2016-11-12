@@ -33,7 +33,7 @@
       </section>
       <section id="patterns" data-route="patterns">
         <h2>All Patterns</h2>
-        <life-patterns app="{{app}}"></life-patterns>
+        <life-patterns current-page="[[params.page]]" app="{{app}}"></life-patterns>
       </section>
     </iron-pages>
 
@@ -77,6 +77,14 @@
 
         page('/patterns', function(){
           this.route = 'patterns';
+          this.set('params.page', 0);
+          console.log("patterns!!");
+        }.bind(this));
+
+        page('/patterns/page/:page', function(data){
+          this.route = 'patterns';
+          this.set('params.page', data.params.page);
+          console.log(this.params.page);
           console.log("patterns!!");
         }.bind(this));
         page();
