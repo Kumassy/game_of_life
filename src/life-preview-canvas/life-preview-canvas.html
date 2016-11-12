@@ -5,7 +5,8 @@
 <dom-module id="life-preview-canvas">
   <template>
     <!-- <canvas width$="[[width]]" height$="[[height]]">Your browser doesn't support html5 canvas.</canvas> -->
-    <life-canvas-base id="canvas" is-playing="[[autoPlay]]" width="[[width]]" height="[[height]]" mode="canvas" cell-size="[[cellSize]]"></life-canvas-base>
+    <!-- <life-canvas-base id="canvas" is-playing="[[autoPlay]]" width="[[width]]" height="[[height]]" mode="canvas" cell-size="[[cellSize]]"></life-canvas-base> -->
+    <life-canvas-base id="canvas" is-playing="[[onHover]]" width="[[width]]" height="[[height]]" mode="canvas" cell-size="[[cellSize]]"></life-canvas-base>
   </template>
 
   <style>
@@ -26,7 +27,7 @@
         rle: {
           type: String,
           value: '2o2b$o3b$3bo$2b2o!',    // Beacon
-          observer: '_rleChanged'
+          // observer: '_rleChanged'
         },
         autoPlay: {
           type: Boolean,
@@ -34,54 +35,103 @@
         },
         patternWidth: {
           type: Number,
-          value: 20
+          // value: 20
         },
         patternHeight: {
           type: Number,
-          value: 20
+          // value: 20
         },
         cellSize: {
           type: Number,
           value: 2,
-          computed: '_computeCellSize(patternWidth, patternHeight)'
+          // computed: '_computeCellSize(patternWidth, patternHeight)'
+        },
+        onHover: {
+          type: Boolean,
+          value: false
         }
       },
 
+      observers: [
+        '_handleAutoAdjust(patternWidth, patternHeight, rle)'
+      ],
+
       ready: function(){
-        this._computeCellSize(this.patternWidth, this.patternHeight);
+        // this._computeCellSize(this.patternWidth, this.patternHeight);
+
+        // console.log(this.$.canvas.getCanvas());
+        // this.$.canvas.getCanvas().addEventListener('click', function(e){ console.log("hoge") }, false);
+        this.$.canvas.getCanvas().addEventListener('mouseenter', this._handleMouseEnter(this), false);
+        this.$.canvas.getCanvas().addEventListener('mouseleave', this._handleMouseLeave(this), false);
       },
 
-      _computeCellSize: function(patternWidth, patternHeight){
+      _handleMouseEnter: function(self){
+        return function(e){
+          console.log("hover!!");
+          self.onHover = true;
+        };
+      },
+      _handleMouseLeave: function(self){
+        return function(e){
+          self.onHover = false;
+        };
+      },
+      // _handleClick: function(){
+      //   console.log("handle Click");
+      // },
+
+      _handleAutoAdjust: function(patternWidth, patternHeight, rle){
         var cellSize = 1;
         if(patternWidth > this.width || patternHeight > this.height){
           cellSize = 1;
         }
         else{
-          // console.log(Math.max(Math.floor(this.width / (patternWidth * 1.4)), Math.floor(this.height / (patternHeight * 1.4)), 1));
-
           var _cellSize = Math.min(Math.floor(this.width / (patternWidth * 1.4)), Math.floor(this.height / (patternHeight * 1.4)));
-          cellSize = [1, _cellSize, 8].sort(function(a, b){ return a-b;})[1];
-          // cellSize = Math.max(Math.floor(this.width / (patternWidth * 1.4)), Math.floor(this.height / (patternHeight * 1.4)), 1);
+          cellSize = [1, _cellSize, 8].sort(function(a, b){ return a - b;})[1];
         }
+        this.cellSize = cellSize;
 
-        // console.log(cellSize);
 
-        this._rleChanged();
-        return cellSize;
-      },
-
-      _rleChanged: function(){
         var canvas = this.$.canvas;
-        // var canvas = document.querySelector('life-canvas-base');
         canvas.clearCanvas();
-        // canvas.injectPattern(2, 2, this.rle);
 
-        if(!this.width || !this.height || !this.patternWidth || !this.patternHeight) return;
         var x = Math.floor((this.width / this.cellSize) / 2 - this.patternWidth / 2);
         var y = Math.floor((this.height / this.cellSize) / 2 - this.patternHeight / 2);
-        console.log("width: " + this.patternWidth + "; height: " + this.patternHeight + ";x: " + x + "; y: " + y);
+        // console.log("width: " + this.patternWidth + "; height: " + this.patternHeight + ";x: " + x + "; y: " + y);
         canvas.injectPattern(x, y, this.rle);
-      }
+      },
+
+      // _computeCellSize: function(patternWidth, patternHeight){
+      //   var cellSize = 1;
+      //   if(patternWidth > this.width || patternHeight > this.height){
+      //     cellSize = 1;
+      //   }
+      //   else{
+      //     // console.log(Math.max(Math.floor(this.width / (patternWidth * 1.4)), Math.floor(this.height / (patternHeight * 1.4)), 1));
+      //
+      //     var _cellSize = Math.min(Math.floor(this.width / (patternWidth * 1.4)), Math.floor(this.height / (patternHeight * 1.4)));
+      //     cellSize = [1, _cellSize, 8].sort(function(a, b){ return a - b;})[1];
+      //     // cellSize = Math.max(Math.floor(this.width / (patternWidth * 1.4)), Math.floor(this.height / (patternHeight * 1.4)), 1);
+      //   }
+      //
+      //   // console.log(cellSize);
+      //
+      //   this._rleChanged();
+      //   return cellSize;
+      // },
+      //
+      // _rleChanged: function(){
+      //   var canvas = this.$.canvas;
+      //   // var canvas = document.querySelector('life-canvas-base');
+      //   canvas.clearCanvas();
+      //   // canvas.injectPattern(2, 2, this.rle);
+      //
+      //   if(!this.width || !this.height || !this.patternWidth || !this.patternHeight) return;
+      //   var x = Math.floor((this.width / this.cellSize) / 2 - this.patternWidth / 2);
+      //   var y = Math.floor((this.height / this.cellSize) / 2 - this.patternHeight / 2);
+      //   console.log("width: " + this.patternWidth + "; height: " + this.patternHeight + ";x: " + x + "; y: " + y);
+      //   canvas.injectPattern(x, y, this.rle);
+      // }
 
 
     });
