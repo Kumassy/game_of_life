@@ -69,23 +69,24 @@
         this.params = arg;
         console.log(this.params);
 
-        page.base('/life2');
+        page.base('/life');
         page('/', function(){
           this.route = 'main';
-          console.log("main!!");
+          // console.log("main!!");
         }.bind(this));
 
         page('/patterns', function(){
           this.route = 'patterns';
           this.set('params.page', 0);
-          console.log("patterns!!");
+          // console.log("patterns!!");
+          page.redirect('patterns/page/0');
         }.bind(this));
 
         page('/patterns/page/:page', function(data){
           this.route = 'patterns';
           this.set('params.page', data.params.page);
-          console.log(this.params.page);
-          console.log("patterns!!");
+          // console.log(this.params.page);
+          // console.log("patterns!!");
         }.bind(this));
         page();
       },
