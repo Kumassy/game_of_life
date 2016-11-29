@@ -6,7 +6,6 @@
 
 <link rel="import" href="../life-app/life-app.html">
 <link rel="import" href="../life-patterns/life-patterns.html">
-
 <script src="../../bower_components/page/page.js"></script>
 
 <dom-module id="app-shell">
@@ -79,7 +78,7 @@
           this.route = 'patterns';
           this.set('params.page', 0);
           // console.log("patterns!!");
-          page.redirect('patterns/page/0');
+          page.redirect('/patterns/page/0');
         }.bind(this));
 
         page('/patterns/page/:page', function(data){
@@ -88,7 +87,9 @@
           // console.log(this.params.page);
           // console.log("patterns!!");
         }.bind(this));
-        page();
+        page({
+          hashbang: true
+        });
       },
 
       // _routeChanged: function(newValue, oldValue){
