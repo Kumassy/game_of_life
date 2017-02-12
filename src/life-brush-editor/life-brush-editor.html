@@ -3,29 +3,74 @@
 <link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
 <link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
 
+<link rel="import" href="../../bower_components/paper-styles/default-theme.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
 <link rel="import" href="../life-canvas-base/life-canvas-base.html">
 <link rel="import" href="../life-preview-canvas/life-preview-canvas.html">
 
 <dom-module id="life-brush-editor">
   <template>
-    <paper-header-panel class="flex">
-      <paper-toolbar>
+    <!-- <paper-header-panel class="flex"> -->
+      <!-- <paper-toolbar>
         <div>Hello World!</div>
-      </paper-toolbar>
-      <!-- <life-canvas-base></life-canvas-base> -->
-      <life-preview-canvas id="canvas" width="240" height="240" auto-play rle="[[pattern.payload]]" pattern-width="[[pattern.meta.x]]" pattern-height="[[pattern.meta.y]]"></life-preview-canvas>
+      </paper-toolbar> -->
 
-      <div>R</div>
+
+      <!-- <life-canvas-base></life-canvas-base> -->
+      <!-- <life-preview-canvas id="canvas" width="240" height="240" auto-play rle="[[pattern.payload]]" pattern-width="[[pattern.meta.x]]" pattern-height="[[pattern.meta.y]]"></life-preview-canvas> -->
+
+      <!-- <div>R</div>
       <paper-slider class="red" value="{{red}}" max="255" editable></paper-slider>
       <div>G</div>
       <paper-slider class="green" value="{{green}}" max="255" editable></paper-slider>
       <div>B</div>
-      <paper-slider class="blue" value="{{blue}}" max="255" editable></paper-slider>
-    </paper-header-panel>
+      <paper-slider class="blue" value="{{blue}}" max="255" editable></paper-slider> -->
+    <!-- </paper-header-panel> -->
+
+
+    <div class="toolbar">
+      <paper-icon-button icon="create"></paper-icon-button>
+      <paper-icon-button icon="delete"></paper-icon-button>
+      <div class="padding"></div>
+      <paper-icon-button icon="settings"></paper-icon-button>
+    </div>
+
+    <div class="dummy-image" style="width: 240px; height: 240px; background: #eee"></div>
   </template>
 
   <style>
-    paper-header-panel{
+    :host {
+      display: block;
+      position: relative;
+      box-sizing: border-box;
+      -moz-box-sizing: border-box;
+
+      @apply(--layout-horizontal);
+    }
+    .toolbar {
+      width: 64px;
+      padding: 12px 0;
+
+      background: var(--primary-color);
+      color: var(--dark-theme-text-color);
+
+      @apply(--layout-vertical);
+      @apply(--layout-center);
+    }
+    /*.toolbar paper-icon-button[icon="settings"] {
+      @apply(--layout-self-end);
+    }*/
+    .toolbar .padding {
+      @apply(--layout-flex);
+    }
+    /*paper-header-panel{
       position: fixed;
       right: 8px;
       bottom: 8px;
@@ -34,9 +79,9 @@
       background: #fff;
       @apply(--shadow-elevation-2dp);
       z-index: 4;
-    }
+    }*/
 
-    paper-slider.red {
+    /*paper-slider.red {
       --paper-slider-knob-color: var(--paper-red-500);
       --paper-slider-active-color: var(--paper-red-500);
     }
@@ -47,7 +92,7 @@
     paper-slider.blue {
       --paper-slider-knob-color: var(--paper-light-blue-500);
       --paper-slider-active-color: var(--paper-light-blue-500);
-    }
+    }*/
   </style>
 
   <script>
