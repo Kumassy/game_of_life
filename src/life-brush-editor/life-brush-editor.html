@@ -34,31 +34,29 @@
       <paper-slider class="blue" value="{{blue}}" max="255" editable></paper-slider> -->
     <!-- </paper-header-panel> -->
 
-    <!-- <paper-header-panel mode="seamed"> -->
-      <paper-toolbar>
-        <div class="title">Brush Editor</div>
-      </paper-toolbar>
+    <paper-toolbar>
+      <div class="title">Brush Editor</div>
+    </paper-toolbar>
 
-      <div class="content fit">
-        <div class="toolbar">
-          <paper-icon-button icon="create"></paper-icon-button>
-          <paper-icon-button icon="delete"></paper-icon-button>
-          <div class="padding"></div>
-          <paper-icon-button icon="settings"></paper-icon-button>
-        </div>
-        <div class="preview">
-          <div class="dummy-image" style="width: 200px; height: 200px; background: #eee"></div>
-          <div class="brush-info">
-            <div class="brush-title">
-              1 x 1 Pencil
-            </div>
-            <div class="brush-meta">
-              1 x 1
-            </div>
+    <div class="content">
+      <div class="toolbar">
+        <paper-icon-button icon="create"></paper-icon-button>
+        <paper-icon-button icon="delete"></paper-icon-button>
+        <div class="padding"></div>
+        <paper-icon-button icon="settings"></paper-icon-button>
+      </div>
+      <div class="preview">
+        <div class="dummy-image" style="width: 200px; height: 200px; background: #eee"></div>
+        <div class="brush-info">
+          <div class="brush-title">
+            1 x 1 Pencil
+          </div>
+          <div class="brush-meta">
+            1 x 1
           </div>
         </div>
       </div>
-    <!-- </paper-header-panel> -->
+    </div>
   </template>
 
   <style>
@@ -73,14 +71,6 @@
 
       /*@apply(--layout-horizontal);*/
     }
-    /*paper-header-panel {
-      width: 300px;
-      height: 300px;
-      @apply(--shadow-elevation-2dp);
-
-      --paper-header-panel {
-      }
-    }*/
     .content {
       @apply(--layout-horizontal);
     }
@@ -103,6 +93,9 @@
     .toolbar .padding {
       @apply(--layout-flex);
     }
+
+
+
     /*paper-header-panel{
       position: fixed;
       right: 8px;
