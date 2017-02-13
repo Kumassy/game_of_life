@@ -13,8 +13,16 @@
       }
 
       :host ::content .dropdown-content {
+        position: relative;
+        left: 46px;
+        padding: 12px;
+
+        box-sizing: border-box;
+        border-radius: 2px;
+
         background: #fff;
         color: var(--primary-text-color);
+        @apply(--shadow-elevation-2dp);
       }
     </style>
 
