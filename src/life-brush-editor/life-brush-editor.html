@@ -20,23 +20,6 @@
 
 <dom-module id="life-brush-editor">
   <template>
-    <!-- <paper-header-panel class="flex"> -->
-      <!-- <paper-toolbar>
-        <div>Hello World!</div>
-      </paper-toolbar> -->
-
-
-      <!-- <life-canvas-base></life-canvas-base> -->
-      <!-- <life-preview-canvas id="canvas" width="240" height="240" auto-play rle="[[pattern.payload]]" pattern-width="[[pattern.meta.x]]" pattern-height="[[pattern.meta.y]]"></life-preview-canvas> -->
-
-      <!-- <div>R</div>
-      <paper-slider class="red" value="{{red}}" max="255" editable></paper-slider>
-      <div>G</div>
-      <paper-slider class="green" value="{{green}}" max="255" editable></paper-slider>
-      <div>B</div>
-      <paper-slider class="blue" value="{{blue}}" max="255" editable></paper-slider> -->
-    <!-- </paper-header-panel> -->
-
     <paper-toolbar>
       <div class="title">Brush Editor</div>
     </paper-toolbar>
@@ -55,17 +38,6 @@
             <iron-icon icon="star"></iron-icon>
           </div>
         </dropdown-wrapper>
-        <!-- <iron-dropdown horizontal-align="right" vertical-align="top" opened>
-          <div class="dropdown-content">
-            <paper-icon-button icon="settings"></paper-icon-button>
-            <paper-icon-button icon="settings"></paper-icon-button>
-            <paper-icon-button icon="settings"></paper-icon-button>
-            <paper-icon-button icon="settings"></paper-icon-button>
-            <paper-icon-button icon="settings"></paper-icon-button>
-            <paper-icon-button icon="settings"></paper-icon-button>
-            <paper-icon-button icon="settings"></paper-icon-button>
-          </div>
-        </iron-dropdown> -->
 
         <dropdown-wrapper>
           <paper-icon-button icon="delete" class="dropdown-trigger"></paper-icon-button>
@@ -137,32 +109,6 @@
     .toolbar .padding {
       @apply(--layout-flex);
     }
-
-
-
-    /*paper-header-panel{
-      position: fixed;
-      right: 8px;
-      bottom: 8px;
-      width: 320px;
-      height: 320px;
-      background: #fff;
-      @apply(--shadow-elevation-2dp);
-      z-index: 4;
-    }*/
-
-    /*paper-slider.red {
-      --paper-slider-knob-color: var(--paper-red-500);
-      --paper-slider-active-color: var(--paper-red-500);
-    }
-    paper-slider.green {
-      --paper-slider-knob-color: var(--paper-green-500);
-      --paper-slider-active-color: var(--paper-green-500);
-    }
-    paper-slider.blue {
-      --paper-slider-knob-color: var(--paper-light-blue-500);
-      --paper-slider-active-color: var(--paper-light-blue-500);
-    }*/
   </style>
 
   <script>
@@ -179,18 +125,7 @@
         pattern: {
           type: Object
         },
-        red: {
-          type: Number,
-          value: 255
-        },
-        green: {
-          type: Number,
-          value: 0
-        },
-        blue: {
-          type: Number,
-          value: 0
-        },
+
       },
 
       observers: [
