@@ -6,6 +6,7 @@
 <link rel="import" href="../../bower_components/paper-styles/default-theme.html">
 <link rel="import" href="../../bower_components/paper-styles/shadow.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/social-icons.html">
@@ -65,9 +66,28 @@
             <paper-icon-button icon="settings"></paper-icon-button>
           </div>
         </iron-dropdown> -->
-        <paper-icon-button icon="delete"></paper-icon-button>
+
+        <dropdown-wrapper>
+          <paper-icon-button icon="delete" class="dropdown-trigger"></paper-icon-button>
+          <div class="dropdown-content">
+            <iron-icon icon="mail"></iron-icon>
+            <iron-icon icon="mail"></iron-icon>
+            <iron-icon icon="mail"></iron-icon>
+            <iron-icon icon="mail"></iron-icon>
+            <iron-icon icon="mail"></iron-icon>
+            <iron-icon icon="mail"></iron-icon>
+            <iron-icon icon="mail"></iron-icon>
+          </div>
+        </dropdown-wrapper>
+
         <div class="padding"></div>
-        <paper-icon-button icon="settings"></paper-icon-button>
+
+        <dropdown-wrapper>
+          <paper-icon-button icon="settings" class="dropdown-trigger"></paper-icon-button>
+          <div class="dropdown-content">
+            <paper-checkbox>Hover to play</paper-checkbox>
+          </div>
+        </dropdown-wrapper>
       </div>
       <div class="preview">
         <div class="dummy-image" style="width: 200px; height: 200px; background: #eee"></div>
