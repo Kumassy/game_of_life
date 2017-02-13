@@ -29,26 +29,18 @@
         <dropdown-wrapper>
           <paper-icon-button icon="create" class="dropdown-trigger"></paper-icon-button>
           <div class="dropdown-content">
-            <iron-icon icon="star"></iron-icon>
-            <iron-icon icon="star"></iron-icon>
-            <iron-icon icon="star"></iron-icon>
-            <iron-icon icon="star"></iron-icon>
-            <iron-icon icon="star"></iron-icon>
-            <iron-icon icon="star"></iron-icon>
-            <iron-icon icon="star"></iron-icon>
+            <template is="dom-repeat" items="[[brushes]]">
+              <img src="[[item.thumbnail]]" alt="[[item.name]]" on-tap="_itemChanged">
+            </template>
           </div>
         </dropdown-wrapper>
 
         <dropdown-wrapper>
           <paper-icon-button icon="delete" class="dropdown-trigger"></paper-icon-button>
           <div class="dropdown-content">
-            <iron-icon icon="mail"></iron-icon>
-            <iron-icon icon="mail"></iron-icon>
-            <iron-icon icon="mail"></iron-icon>
-            <iron-icon icon="mail"></iron-icon>
-            <iron-icon icon="mail"></iron-icon>
-            <iron-icon icon="mail"></iron-icon>
-            <iron-icon icon="mail"></iron-icon>
+            <template is="dom-repeat" items="[[erasers]]">
+              <img src="[[item.thumbnail]]" alt="[[item.name]]" on-tap="_itemChanged">
+            </template>
           </div>
         </dropdown-wrapper>
 
@@ -57,7 +49,7 @@
         <dropdown-wrapper>
           <paper-icon-button icon="settings" class="dropdown-trigger"></paper-icon-button>
           <div class="dropdown-content">
-            <paper-checkbox>Hover to play</paper-checkbox>
+            <paper-checkbox checked="{{hoverToPlay}}">Hover to play</paper-checkbox>
           </div>
         </dropdown-wrapper>
       </div>
@@ -65,10 +57,10 @@
         <div class="dummy-image" style="width: 200px; height: 200px; background: #eee"></div>
         <div class="brush-info">
           <div class="brush-title">
-            1 x 1 Pencil
+            [[selectedItem.name]]
           </div>
           <div class="brush-meta">
-            1 x 1
+            [[selectedItem.meta.x]] x [[selectedItem.meta.y]]
           </div>
         </div>
       </div>
@@ -77,12 +69,12 @@
 
   <style>
     :host {
-      display: block;
+      display: inline-block;
       position: relative;
       box-sizing: border-box;
       -moz-box-sizing: border-box;
 
-      width: 300px;
+      /*width: 300px;*/
       @apply(--shadow-elevation-2dp)
 
       /*@apply(--layout-horizontal);*/
@@ -109,6 +101,17 @@
     .toolbar .padding {
       @apply(--layout-flex);
     }
+
+    .preview .brush-info {
+      padding: 4px;
+    }
+    .preview .brush-info .brush-title{
+      color: var(--primary-text-color);
+    }
+    .preview .brush-info .brush-meta{
+      color: var(--secondary-text-color);
+      font-size: small;
+    }
   </style>
 
   <script>
@@ -126,11 +129,140 @@
           type: Object
         },
 
+        brushes: {
+          type: Object,
+          value: function(){
+            return [{
+              name: '1 x 1 Pencil',
+              thumbnail: 'dummy.png',
+              payload: [
+                "1"
+              ],
+              meta: {
+                x: 1,
+                y: 1
+              }
+            },
+            {
+              name: '2 x 2 Pencil',
+              thumbnail: 'dummy.png',
+              payload: [
+                "11",
+                "11"
+              ],
+              meta: {
+                x: 2,
+                y: 2
+              }
+            },
+            {
+              name: '3 x 3 Pencil',
+              thumbnail: 'dummy.png',
+              payload: [
+                "111",
+                "111",
+                "111"
+              ],
+              meta: {
+                x: 3,
+                y: 3
+              }
+            },
+            {
+              name: '4 x 4 Pencil',
+              thumbnail: 'dummy.png',
+              payload: [
+                "1111",
+                "1111",
+                "1111",
+                "1111"
+              ],
+              meta: {
+                x: 4,
+                y: 4
+              }
+            }];
+          }
+        },
+
+        erasers: {
+          type: Object,
+          value: function(){
+            return [{
+              name: '1 x 1 Eraser',
+              thumbnail: 'dummy.png',
+              payload: [
+                "-1"
+              ],
+              meta: {
+                x: 1,
+                y: 1
+              }
+            },
+            {
+              name: '2 x 2 Eraser',
+              thumbnail: 'dummy.png',
+              payload: [
+                "-1-1",
+                "-1-1"
+              ],
+              meta: {
+                x: 2,
+                y: 2
+              }
+            },
+            {
+              name: '3 x 3 Eraser',
+              thumbnail: 'dummy.png',
+              payload: [
+                "-1-1-1",
+                "-1-1-1",
+                "-1-1-1"
+              ],
+              meta: {
+                x: 3,
+                y: 3
+              }
+            },
+            {
+              name: '4 x 4 Eraser',
+              thumbnail: 'dummy.png',
+              payload: [
+                "-1-1-1-1",
+                "-1-1-1-1",
+                "-1-1-1-1",
+                "-1-1-1-1"
+              ],
+              meta: {
+                x: 4,
+                y: 4
+              }
+            }];
+          }
+        },
+
+        selectedItem: {
+          type: Object,
+          value: function(){
+            return {};
+          }
+        },
+
+        hoverToPlay: {
+          type: Boolean,
+          value: false,
+        }
+
+
       },
 
       observers: [
         '_handleColorChanged(red, green, blue)'
       ],
+
+      _itemChanged: function(e){
+        this.set('selectedItem', e.model.get('item'));
+      },
 
       _handleColorChanged: function(red, green, blue){
         // if(this.app){

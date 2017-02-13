@@ -20,9 +20,15 @@
         box-sizing: border-box;
         border-radius: 2px;
 
+        @apply(--layout-horizontal);
+
         background: #fff;
         color: var(--primary-text-color);
         @apply(--shadow-elevation-2dp);
+      }
+
+      :host ::content .dropdown-content > * {
+        margin: 4px;
       }
     </style>
 
