@@ -16,12 +16,13 @@
 
 <link rel="import" href="../life-canvas-base/life-canvas-base.html">
 <link rel="import" href="../life-preview-canvas/life-preview-canvas.html">
+<link rel="import" href="../life-behaviors/life-draggable-behavior.html">
 <link rel="import" href="dropdown-wrapper.html">
 
 <dom-module id="life-brush-editor">
   <template>
-    <div id="container" style="top: 0px; left: 0px;" on-mousedown="_handleMouseDown" on-mousemove="_handleMouseMove" on-mouseup="_handleMouseUp">
-      <paper-toolbar>
+    <div id="container">
+      <paper-toolbar id="handle">
         <div class="title">Brush Editor</div>
       </paper-toolbar>
 
@@ -129,6 +130,7 @@
   <script>
     Polymer({
       is: 'life-brush-editor',
+      behaviors: [LifeDraggableBehavior],
       properties: {
         app: {
           type: Object
@@ -265,47 +267,65 @@
           value: false,
         },
 
-        _isDragging: {
-          type: Boolean,
-          value: false,
-        },
-        _dragStartPos: {
+        // _isDragging: {
+        //   type: Boolean,
+        //   value: false,
+        // },
+        // _dragStartPos: {
+        //   type: Object,
+        //   value: function() {
+        //     return {
+        //       x: null,
+        //       y: null
+        //     }
+        //   }
+        // },
+        _targetContainer: {
           type: Object,
           value: function() {
-            return {
-              x: null,
-              y: null
-            }
+            return this.$.container;
           }
-        }
-
-
+        },
+        _handle: {
+          type: Object,
+          value: function() {
+            return this.$.handle;
+          }
+        },
       },
 
       observers: [
         '_handleColorChanged(red, green, blue)'
       ],
 
-      _handleMouseDown: function(event) {
-        console.log("drag!!");
-        this._isDragging = true;
-        this._dragStartPos = {
-          x: event.clientX - parseInt(this.$.container.style.left.replace("px","")),
-          y: event.clientY - parseInt(this.$.container.style.top.replace("px",""))
-        };
-      },
-      _handleMouseMove: function(event) {
-        if(this._isDragging) {
-          this.$.container.style.left = (event.clientX - this._dragStartPos.x) + "px";
-          this.$.container.style.top = (event.clientY - this._dragStartPos.y) + "px";
 
-          Polymer.dom(this.root).querySelector('#container').style.left = (event.clientX - this._dragStartPos.x) + "px";
-          Polymer.dom(this.root).querySelector('#container').style.top = (event.clientY - this._dragStartPos.y) + "px";
-        }
-      },
-      _handleMouseUp: function(event) {
-        this._isDragging = false;
-      },
+      // attached: function(){
+      //   this.$.container.setAttribute('style', "top: 0px; left: 0px;");
+      //   this.listen(this.$.handle, 'mousedown', '_handleMouseDown');
+      //   this.listen(this.$.handle, 'mousemove', '_handleMouseMove');
+      //   this.listen(this.$.handle, 'mouseup', '_handleMouseUp');
+      // },
+
+      // _handleMouseDown: function(event) {
+      //   console.log("drag!!");
+      //   this._isDragging = true;
+      //   this._dragStartPos = {
+      //     x: event.clientX - parseInt(this.$.container.style.left.replace("px","")),
+      //     y: event.clientY - parseInt(this.$.container.style.top.replace("px",""))
+      //   };
+      // },
+      // _handleMouseMove: function(event) {
+      //   if(this._isDragging) {
+      //     this.$.container.style.left = (event.clientX - this._dragStartPos.x) + "px";
+      //     this.$.container.style.top = (event.clientY - this._dragStartPos.y) + "px";
+      //
+      //     Polymer.dom(this.root).querySelector('#container').style.left = (event.clientX - this._dragStartPos.x) + "px";
+      //     Polymer.dom(this.root).querySelector('#container').style.top = (event.clientY - this._dragStartPos.y) + "px";
+      //   }
+      // },
+      // _handleMouseUp: function(event) {
+      //   this._isDragging = false;
+      // },
 
       _itemChanged: function(e){
         this.set('selectedItem', e.model.get('item'));

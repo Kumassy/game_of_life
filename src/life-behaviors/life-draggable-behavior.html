@@ -1,0 +1,57 @@
+<script type="text/javascript">
+  LifeDraggableBehavior = {
+    properties: {
+      _isDragging: {
+        type: Boolean,
+        value: false,
+      },
+      _dragStartPos: {
+        type: Object,
+        value: function() {
+          return {
+            x: null,
+            y: null
+          }
+        }
+      },
+      _targetContainer: {
+        type: Object,
+        value: function() {
+          return null;
+        }
+      },
+      _handle: {
+        type: Object,
+        value: function() {
+          return null;
+        }
+      }
+    },
+
+    attached: function(){
+      this._targetContainer.setAttribute('style', "top: 0px; left: 0px;");
+      this.listen(this._handle, 'mousedown', '_handleMouseDown');
+      this.listen(document, 'mousemove', '_handleMouseMove'); // global
+      this.listen(this._handle, 'mouseup', '_handleMouseUp');
+    },
+
+    _handleMouseDown: function(event) {
+      console.log("drag!!");
+      this._isDragging = true;
+      this._dragStartPos = {
+        x: event.clientX - parseInt(this._targetContainer.style.left.replace("px","")),
+        y: event.clientY - parseInt(this._targetContainer.style.top.replace("px",""))
+      };
+    },
+    _handleMouseMove: function(event) {
+      if(this._isDragging) {
+        this._targetContainer.style.left = (event.clientX - this._dragStartPos.x) + "px";
+        this._targetContainer.style.top = (event.clientY - this._dragStartPos.y) + "px";      }
+    },
+    _handleMouseUp: function(event) {
+      this._isDragging = false;
+    },
+
+  }
+
+</script>
