@@ -26,7 +26,7 @@
         <div class="title">Brush Editor</div>
       </paper-toolbar>
 
-      <div class="content" id="content">
+      <div class="content">
         <div class="toolbar">
           <dropdown-wrapper>
             <paper-icon-button icon="create" class="dropdown-trigger"></paper-icon-button>
@@ -72,25 +72,20 @@
 
   <style>
     :host {
-      /*display: inline-block;
-      position: relative;
-      box-sizing: border-box;
-      -moz-box-sizing: border-box;
-
-      @apply(--shadow-elevation-2dp)*/
-
     }
     #container {
       display: inline-block;
-      /*position: relative;*/
-      position: fixed;
+      position: relative;
+      /*position: fixed;*/
       box-sizing: border-box;
       -moz-box-sizing: border-box;
 
       /*width: 300px;*/
-      @apply(--shadow-elevation-2dp)
-
-      /*@apply(--layout-horizontal);*/
+      @apply(--shadow-elevation-2dp);
+      background: var(--primary-background-color);
+    }
+    #handle {
+      cursor: move;
     }
     .content {
       @apply(--layout-horizontal);
@@ -267,19 +262,6 @@
           value: false,
         },
 
-        // _isDragging: {
-        //   type: Boolean,
-        //   value: false,
-        // },
-        // _dragStartPos: {
-        //   type: Object,
-        //   value: function() {
-        //     return {
-        //       x: null,
-        //       y: null
-        //     }
-        //   }
-        // },
         _targetContainer: {
           type: Object,
           value: function() {
@@ -298,34 +280,6 @@
         '_handleColorChanged(red, green, blue)'
       ],
 
-
-      // attached: function(){
-      //   this.$.container.setAttribute('style', "top: 0px; left: 0px;");
-      //   this.listen(this.$.handle, 'mousedown', '_handleMouseDown');
-      //   this.listen(this.$.handle, 'mousemove', '_handleMouseMove');
-      //   this.listen(this.$.handle, 'mouseup', '_handleMouseUp');
-      // },
-
-      // _handleMouseDown: function(event) {
-      //   console.log("drag!!");
-      //   this._isDragging = true;
-      //   this._dragStartPos = {
-      //     x: event.clientX - parseInt(this.$.container.style.left.replace("px","")),
-      //     y: event.clientY - parseInt(this.$.container.style.top.replace("px",""))
-      //   };
-      // },
-      // _handleMouseMove: function(event) {
-      //   if(this._isDragging) {
-      //     this.$.container.style.left = (event.clientX - this._dragStartPos.x) + "px";
-      //     this.$.container.style.top = (event.clientY - this._dragStartPos.y) + "px";
-      //
-      //     Polymer.dom(this.root).querySelector('#container').style.left = (event.clientX - this._dragStartPos.x) + "px";
-      //     Polymer.dom(this.root).querySelector('#container').style.top = (event.clientY - this._dragStartPos.y) + "px";
-      //   }
-      // },
-      // _handleMouseUp: function(event) {
-      //   this._isDragging = false;
-      // },
 
       _itemChanged: function(e){
         this.set('selectedItem', e.model.get('item'));
