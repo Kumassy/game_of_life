@@ -20,47 +20,49 @@
 
 <dom-module id="life-brush-editor">
   <template>
-    <paper-toolbar>
-      <div class="title">Brush Editor</div>
-    </paper-toolbar>
+    <div id="container" style="top: 0px; left: 0px;" on-mousedown="_handleMouseDown" on-mousemove="_handleMouseMove" on-mouseup="_handleMouseUp">
+      <paper-toolbar>
+        <div class="title">Brush Editor</div>
+      </paper-toolbar>
 
-    <div class="content">
-      <div class="toolbar">
-        <dropdown-wrapper>
-          <paper-icon-button icon="create" class="dropdown-trigger"></paper-icon-button>
-          <div class="dropdown-content">
-            <template is="dom-repeat" items="[[brushes]]">
-              <img src="[[item.thumbnail]]" alt="[[item.name]]" on-tap="_itemChanged">
-            </template>
-          </div>
-        </dropdown-wrapper>
+      <div class="content" id="content">
+        <div class="toolbar">
+          <dropdown-wrapper>
+            <paper-icon-button icon="create" class="dropdown-trigger"></paper-icon-button>
+            <div class="dropdown-content">
+              <template is="dom-repeat" items="[[brushes]]">
+                <img src="[[item.thumbnail]]" alt="[[item.name]]" on-tap="_itemChanged">
+              </template>
+            </div>
+          </dropdown-wrapper>
 
-        <dropdown-wrapper>
-          <paper-icon-button icon="delete" class="dropdown-trigger"></paper-icon-button>
-          <div class="dropdown-content">
-            <template is="dom-repeat" items="[[erasers]]">
-              <img src="[[item.thumbnail]]" alt="[[item.name]]" on-tap="_itemChanged">
-            </template>
-          </div>
-        </dropdown-wrapper>
+          <dropdown-wrapper>
+            <paper-icon-button icon="delete" class="dropdown-trigger"></paper-icon-button>
+            <div class="dropdown-content">
+              <template is="dom-repeat" items="[[erasers]]">
+                <img src="[[item.thumbnail]]" alt="[[item.name]]" on-tap="_itemChanged">
+              </template>
+            </div>
+          </dropdown-wrapper>
 
-        <div class="padding"></div>
+          <div class="padding"></div>
 
-        <dropdown-wrapper>
-          <paper-icon-button icon="settings" class="dropdown-trigger"></paper-icon-button>
-          <div class="dropdown-content">
-            <paper-checkbox checked="{{hoverToPlay}}">Hover to play</paper-checkbox>
-          </div>
-        </dropdown-wrapper>
-      </div>
-      <div class="preview">
-        <div class="dummy-image" style="width: 200px; height: 200px; background: #eee"></div>
-        <div class="brush-info">
-          <div class="brush-title">
-            [[selectedItem.name]]
-          </div>
-          <div class="brush-meta">
-            [[selectedItem.meta.x]] x [[selectedItem.meta.y]]
+          <dropdown-wrapper>
+            <paper-icon-button icon="settings" class="dropdown-trigger"></paper-icon-button>
+            <div class="dropdown-content">
+              <paper-checkbox checked="{{hoverToPlay}}">Hover to play</paper-checkbox>
+            </div>
+          </dropdown-wrapper>
+        </div>
+        <div class="preview">
+          <div class="dummy-image" style="width: 200px; height: 200px; background: #eee"></div>
+          <div class="brush-info">
+            <div class="brush-title">
+              [[selectedItem.name]]
+            </div>
+            <div class="brush-meta">
+              [[selectedItem.meta.x]] x [[selectedItem.meta.y]]
+            </div>
           </div>
         </div>
       </div>
@@ -69,8 +71,18 @@
 
   <style>
     :host {
-      display: inline-block;
+      /*display: inline-block;
       position: relative;
+      box-sizing: border-box;
+      -moz-box-sizing: border-box;
+
+      @apply(--shadow-elevation-2dp)*/
+
+    }
+    #container {
+      display: inline-block;
+      /*position: relative;*/
+      position: fixed;
       box-sizing: border-box;
       -moz-box-sizing: border-box;
 
@@ -251,6 +263,20 @@
         hoverToPlay: {
           type: Boolean,
           value: false,
+        },
+
+        _isDragging: {
+          type: Boolean,
+          value: false,
+        },
+        _dragStartPos: {
+          type: Object,
+          value: function() {
+            return {
+              x: null,
+              y: null
+            }
+          }
         }
 
 
@@ -259,6 +285,27 @@
       observers: [
         '_handleColorChanged(red, green, blue)'
       ],
+
+      _handleMouseDown: function(event) {
+        console.log("drag!!");
+        this._isDragging = true;
+        this._dragStartPos = {
+          x: event.clientX - parseInt(this.$.container.style.left.replace("px","")),
+          y: event.clientY - parseInt(this.$.container.style.top.replace("px",""))
+        };
+      },
+      _handleMouseMove: function(event) {
+        if(this._isDragging) {
+          this.$.container.style.left = (event.clientX - this._dragStartPos.x) + "px";
+          this.$.container.style.top = (event.clientY - this._dragStartPos.y) + "px";
+
+          Polymer.dom(this.root).querySelector('#container').style.left = (event.clientX - this._dragStartPos.x) + "px";
+          Polymer.dom(this.root).querySelector('#container').style.top = (event.clientY - this._dragStartPos.y) + "px";
+        }
+      },
+      _handleMouseUp: function(event) {
+        this._isDragging = false;
+      },
 
       _itemChanged: function(e){
         this.set('selectedItem', e.model.get('item'));
