@@ -1,11 +1,13 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../life-canvas-base/life-canvas-base.html">
+<!-- <link rel="import" href="../life-canvas-base/life-canvas-base.html"> -->
+<link rel="import" href="../life-behaviors/life-canvas-behavior.html">
 
 
 <dom-module id="life-preview-canvas">
   <template>
-    <!-- <canvas width$="[[width]]" height$="[[height]]">Your browser doesn't support html5 canvas.</canvas> -->
-    <life-canvas-base id="canvas" is-playing="[[autoPlay]]" width="[[width]]" height="[[height]]" mode="canvas" cell-size="[[cellSize]]"></life-canvas-base>
+    <!-- <canvas width$="[[width]]" height$="[[height]]">Your browser doesn't support html5 canvas.</canvas>
+    <life-canvas-base id="canvas" is-playing="[[autoPlay]]" width="[[width]]" height="[[height]]" mode="canvas" cell-size="[[cellSize]]"></life-canvas-base> -->
+    <canvas id="canvas" width$="[[_canvasWidth]]" height$="[[_canvasHeight]]">Your browser doesn't support html5 canvas</canvas>
     <!-- <life-canvas-base id="canvas" is-playing="[[onHover]]" width="[[width]]" height="[[height]]" mode="canvas" cell-size="[[cellSize]]"></life-canvas-base> -->
   </template>
 
@@ -15,37 +17,66 @@
   <script>
     Polymer({
       is: 'life-preview-canvas',
+      behaviors: [LifeCanvasBehavior],
       properties: {
-        width: {
-          type: Number,
-          value: 40
-        },
-        height: {
-          type: Number,
-          value: 40
-        },
-        rle: {
+        mode: {
           type: String,
-          value: '2o2b$o3b$3bo$2b2o!',    // Beacon
-          // observer: '_rleChanged'
+          value: 'canvas'
         },
+        canvas: {
+          type: Object,
+          value: function() {
+            return this.$.canvas;
+          }
+        },
+        // width: {
+        //   type: Number,
+        //   value: 40
+        // },
+        // height: {
+        //   type: Number,
+        //   value: 40
+        // },
         autoPlay: {
           type: Boolean,
           value: false
         },
-        patternWidth: {
-          type: Number,
-          // value: 20
+        // rle: {
+        //   type: String,
+        //   value: '2o2b$o3b$3bo$2b2o!',    // Beacon
+        //   // observer: '_rleChanged'
+        // },
+        // patternWidth: {
+        //   type: Number,
+        //   // value: 20
+        // },
+        // patternHeight: {
+        //   type: Number,
+        //   // value: 20
+        // },
+        pattern: {
+          type: Object,
+          value: function() {
+            return {
+              id: 'glider',
+              name: 'Glider',
+              payload: [
+                "010",
+                "001",
+                "111"],
+              meta: {
+                x: 3,
+                y: 3
+              }
+            };
+          }
         },
-        patternHeight: {
-          type: Number,
-          // value: 20
-        },
-        cellSize: {
-          type: Number,
-          value: 2,
-          // computed: '_computeCellSize(patternWidth, patternHeight)'
-        },
+
+        // cellSize: {
+        //   type: Number,
+        //   value: 2,
+        //   // computed: '_computeCellSize(patternWidth, patternHeight)'
+        // },
         onHover: {
           type: Boolean,
           value: false
@@ -53,7 +84,9 @@
       },
 
       observers: [
-        '_handleAutoAdjust(patternWidth, patternHeight, rle)'
+        // '_handleAutoAdjust(patternWidth, patternHeight, rle)'
+        '_handleAutoAdjust(pattern)',
+        '_mapAutoPlay(autoPlay)'
       ],
 
       ready: function(){
@@ -61,13 +94,13 @@
 
         // console.log(this.$.canvas.getCanvas());
         // this.$.canvas.getCanvas().addEventListener('click', function(e){ console.log("hoge") }, false);
-        this.$.canvas.getCanvas().addEventListener('mouseenter', this._handleMouseEnter(this), false);
-        this.$.canvas.getCanvas().addEventListener('mouseleave', this._handleMouseLeave(this), false);
+        this.canvas.addEventListener('mouseenter', this._handleMouseEnter(this), false);
+        this.canvas.addEventListener('mouseleave', this._handleMouseLeave(this), false);
       },
 
       _handleMouseEnter: function(self){
         return function(e){
-          console.log("hover!!");
+          // console.log("hover!!");
           self.onHover = true;
         };
       },
@@ -80,25 +113,35 @@
       //   console.log("handle Click");
       // },
 
-      _handleAutoAdjust: function(patternWidth, patternHeight, rle){
-        var cellSize = 1;
+      // _handleAutoAdjust: function(patternWidth, patternHeight, rle){
+      _handleAutoAdjust: function(pattern){
+        let cellSize = 1;
+        const patternWidth = pattern.meta.x;
+        const patternHeight = pattern.meta.y;
+
+
         if(patternWidth > this.width || patternHeight > this.height){
           cellSize = 1;
         }
         else{
           var _cellSize = Math.min(Math.floor(this.width / (patternWidth * 1.4)), Math.floor(this.height / (patternHeight * 1.4)));
-          cellSize = [1, _cellSize, 8].sort(function(a, b){ return a - b;})[1];
+          cellSize = [1, _cellSize, 8].sort((a, b) => a - b)[1];
         }
         this.cellSize = cellSize;
 
 
-        var canvas = this.$.canvas;
-        canvas.clearCanvas();
+        // var canvas = this.$.canvas;
+        // canvas.clearCanvas();
+        this.clearCanvas();
 
-        var x = Math.floor((this.width / this.cellSize) / 2 - this.patternWidth / 2);
-        var y = Math.floor((this.height / this.cellSize) / 2 - this.patternHeight / 2);
+        var x = Math.floor((this._canvasWidth / this.cellSize) / 2 - patternWidth / 2);
+        var y = Math.floor((this._canvasHeight / this.cellSize) / 2 - patternHeight / 2);
         // console.log("width: " + this.patternWidth + "; height: " + this.patternHeight + ";x: " + x + "; y: " + y);
-        canvas.injectPattern(x, y, this.rle);
+        this.drawPattern(x, y, pattern.payload);
+      },
+
+      _mapAutoPlay: function(autoPlay) {
+        this.isPlaying = autoPlay;
       },
 
       // _computeCellSize: function(patternWidth, patternHeight){

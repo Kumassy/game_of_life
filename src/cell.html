@@ -61,7 +61,7 @@
   };
 
   GameManager.prototype.draw = function(color){
-    this.cells.forEach(function(cell){
+    this.cells.forEach((cell) => {
       cell._state = cell.state;
 
       // cell.draw();
@@ -71,20 +71,20 @@
         this.context.fillStyle = color;
         this.context.fillRect(cell.x * this.CELL_SIZE, cell.y * this.CELL_SIZE, this.CELL_SIZE, this.CELL_SIZE);
       }
-    }.bind(this));
+    });
   };
   GameManager.prototype.update = function(){
     var directions = [[-1, -1], [0, -1], [1, -1],
                       [-1, 0], [1, 0],
                       [-1, 1], [0, 1], [1, 1]];
 
-    this.cells.forEach(function(cell){
+    this.cells.forEach((cell) => {
       var aliveCount = 0;
-      directions.forEach(function(d){
+      directions.forEach((d) => {
         aliveCount += this._getCellStateAt(cell.x + d[0], cell.y + d[1]);
-      }.bind(this));
+      });
       cell.update(aliveCount);
-    }.bind(this));
+    });
   };
 
 
@@ -118,7 +118,8 @@
     return result;
   };
 
-  GameManager.prototype._encodeRLE = function(){
+  // GameManager.prototype._encodeRLE = function(){
+  GameManager.prototype.toRLE = function(){
     var accumulator = [];
     var line = [];
     for(i = 0; i < this.CELL_HEIGHT; i++){
@@ -179,7 +180,8 @@
   };
 
 
-  GameManager.prototype.injectPattern = function(startX, startY, pattern, color){
+  // GameManager.prototype.injectPattern = function(startX, startY, pattern, color){
+  GameManager.prototype.drawPattern = function(startX, startY, pattern, color){
     if(!Array.isArray(pattern)){
       pattern = this._parseRLE(pattern);
     }
@@ -198,7 +200,8 @@
     // console.log(pattern);
   };
 
-  GameManager.prototype.injectOverlay = function(startX, startY, pattern, color){
+  // GameManager.prototype.injectOverlay = function(startX, startY, pattern, color){
+  GameManager.prototype.drawOverlay = function(startX, startY, pattern, color){
     if(!Array.isArray(pattern)){
       pattern = this._parseRLE(pattern);
     }

@@ -11,7 +11,8 @@
   <template>
     <template is="dom-repeat" items="[[catalogForPage]]">
       <div class="card">
-        <life-preview-canvas width="240" height="240" auto-play rle="[[item.payload]]" pattern-width="[[item.meta.x]]" pattern-height="[[item.meta.y]]"></life-preview-canvas>
+        <!-- <life-preview-canvas width="240" height="240" auto-play rle="[[item.payload]]" pattern-width="[[item.meta.x]]" pattern-height="[[item.meta.y]]"></life-preview-canvas> -->
+        <life-preview-canvas width="240" height="240" auto-play pattern="[[item]]"></life-preview-canvas>
 
         <!-- <div role="listbox">
           <paper-item>[[item.name]]</paper-item>
