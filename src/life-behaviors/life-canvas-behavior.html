@@ -62,6 +62,10 @@
         type: String,
         value: 'rgb(255, 0, 0)'
       },
+      overlayColor: {
+        type: String,
+        value: 'rgba(255, 0, 0, 0.3)'
+      },
       backgroundColor: {
         type: String,
         value: 'rgb(238, 238, 238)'
@@ -111,12 +115,15 @@
     },
 
     // interface
-    drawPattern: function(startX, startY, pattern, color){
-      this._gameManager.drawPattern(startX, startY, pattern, color);
-      this._gameManager.draw(color);
+    drawPattern: function(startX, startY, pattern){
+      this._gameManager.drawPattern(startX, startY, pattern, this.cellColor);
+      this._gameManager.draw(this.cellColor);
     },
-    drawOverlay: function(startX, startY, pattern, color){
-      this._gameManager.drawOverlay(startX, startY, pattern, color);
+    drawPatternAsOverlay: function(startX, startY, pattern){
+      this._gameManager.drawOverlay(startX, startY, pattern, this.overlayColor);
+    },
+    drawPreview: function() {
+      return null;
     },
     clearCanvas: function(){
       this._gameManager.clearCanvas();
@@ -128,7 +135,8 @@
         this._gameManager.refreshCanvas(this.backgroundColor);
         this._gameManager.draw(this.cellColor);
         this._gameManager.update();
-        this.fire('game-loop-end');
+        // this.fire('game-loop-end');
+        this.drawPreview();
       }
       // setTimeout(this.mainLoop, this.refreshRate);
       setTimeout(() => this.mainLoop(), this.refreshRate);
