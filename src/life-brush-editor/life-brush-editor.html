@@ -301,7 +301,11 @@
       _itemChanged: function(e){
         this.set('selectedItem', e.model.get('item'));
         this.$.canvas.clearCanvas();
-        this.$.canvas.drawPattern(-1, -1, this.selectedItem, 'center');
+        this.$.canvas.drawPattern(this.selectedItem,
+                                    {
+                                      location: 'center',
+                                      coordinate: 'canvas',
+                                    });
       },
 
       _handleColorChanged: function(red, green, blue){

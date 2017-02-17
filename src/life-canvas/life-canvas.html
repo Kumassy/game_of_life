@@ -70,7 +70,14 @@
       _plotOnClick: function(self){
         return function(e){
           if(!self.brush || Object.keys(self.brush).length === 0 ) return;
-          self.drawPattern.apply(self, [...self._toCellCoordinates(e), self.brush]);
+          // self.drawPattern.apply(self, [...self._toCellCoordinates(e), self.brush]);
+          self.drawPattern(self.brush,
+                             {
+                               location: 'top-left',
+                               coordinate: 'cursor',
+                               x: self._toCellCoordinates(e)[0],
+                               y: self._toCellCoordinates(e)[1],
+                             });
           // self._draw();
         };
       },

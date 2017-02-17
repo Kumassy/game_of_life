@@ -116,12 +116,21 @@
     },
 
     // interface
-    drawPattern: function(startX, startY, pattern, location){
-      let x = startX;
-      let y = startY;
-      if(location === 'center'){
+    // drawPattern: function(startX, startY, pattern, location){
+    drawPattern: function(pattern, location){
+      // location {
+      //   location: 'center' | 'top-left'
+      //   coordinate: 'canvas' | 'cursor'
+      // }
+
+      let x, y;
+      if(location.location === 'center' && location.coordinate === 'canvas'){
         x = Math.floor((this._canvasWidth / this.cellSize) / 2 - pattern.meta.x / 2);
         y = Math.floor((this._canvasHeight / this.cellSize) / 2 - pattern.meta.y / 2);
+      }
+      else if(location.location === 'top-left' && location.coordinate === 'cursor'){
+        x = location.x;
+        y = location.y;
       }
 
       this._gameManager.drawPattern(x, y, pattern.payload, this.cellColor);
