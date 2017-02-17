@@ -23,9 +23,9 @@
         },
 
         // app: Object,
-        app: {
-          type: Object,
-        },
+        // app: {
+        //   type: Object,
+        // },
         isDrawing: {
           type: Boolean,
           value: false
@@ -39,6 +39,12 @@
             }
           }
         },
+
+        brush: {
+          type: Object,
+          value: {}
+        },
+
 
       },
 
@@ -63,8 +69,8 @@
 
       _plotOnClick: function(self){
         return function(e){
-          if(!self.app._selectedPattern || Object.keys(self.app._selectedPattern).length === 0 ) return;
-          self.drawPattern.apply(self, [...self._toCellCoordinates(e), self.app._selectedPattern.payload]);
+          if(!self.brush || Object.keys(self.brush).length === 0 ) return;
+          self.drawPattern.apply(self, [...self._toCellCoordinates(e), self.brush]);
           // self._draw();
         };
       },
@@ -105,10 +111,11 @@
 
       drawPreview: function(){
         // if( !this.app.catalog || !this.app.selected) return;
-        if(!this.app._catalog || !this.app._selectedPattern || Object.keys(this.app._selectedPattern).length === 0 || !this.onHover) return;
+        // if(!this.app._catalog || !this.app._selectedPattern || Object.keys(this.app._selectedPattern).length === 0 || !this.onHover) return;
+        if(!this.brush || Object.keys(this.brush).length === 0 || !this.onHover) return;
         var startX = this.mousePos.x;
         var startY = this.mousePos.y;
-        var pattern = this.app._selectedPattern.payload;
+        var pattern = this.brush;
 
         this.drawPatternAsOverlay(startX, startY, pattern);
       },

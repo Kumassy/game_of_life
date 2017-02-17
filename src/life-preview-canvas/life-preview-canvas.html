@@ -130,10 +130,11 @@
         // canvas.clearCanvas();
         this.clearCanvas();
 
-        var x = Math.floor((this._canvasWidth / this.cellSize) / 2 - patternWidth / 2);
-        var y = Math.floor((this._canvasHeight / this.cellSize) / 2 - patternHeight / 2);
-        // console.log("width: " + this.patternWidth + "; height: " + this.patternHeight + ";x: " + x + "; y: " + y);
-        this.drawPattern(x, y, pattern.payload);
+        // var x = Math.floor((this._canvasWidth / this.cellSize) / 2 - patternWidth / 2);
+        // var y = Math.floor((this._canvasHeight / this.cellSize) / 2 - patternHeight / 2);
+        // // console.log("width: " + this.patternWidth + "; height: " + this.patternHeight + ";x: " + x + "; y: " + y);
+        // this.drawPattern(x, y, pattern.payload);
+        this.drawPattern(-1, -1, pattern, 'center');
       },
 
       _mapAutoPlay: function(autoPlay) {

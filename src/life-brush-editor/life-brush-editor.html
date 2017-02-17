@@ -14,7 +14,8 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-dropdown/iron-dropdown.html">
 
-<link rel="import" href="../life-preview-canvas/life-preview-canvas.html">
+<!-- <link rel="import" href="../life-preview-canvas/life-preview-canvas.html"> -->
+<link rel="import" href="../life-canvas/life-canvas.html">
 <link rel="import" href="../life-behaviors/life-draggable-behavior.html">
 <link rel="import" href="dropdown-wrapper.html">
 
@@ -55,7 +56,15 @@
           </dropdown-wrapper>
         </div>
         <div class="preview">
-          <div class="dummy-image" style="width: 200px; height: 200px; background: #eee"></div>
+          <!-- <div class="dummy-image" style="width: 200px; height: 200px; background: #eee"></div> -->
+          <life-canvas id="canvas"
+                        width="200"
+                        height="200"
+                        mode="canvas"
+                        refresh-rate="30"
+                        cell-size="4"
+                        brush="[[selectedItem]]">
+          </life-canvas>
           <div class="brush-info">
             <div class="brush-title">
               [[selectedItem.name]]
@@ -133,8 +142,17 @@
         //   type: String,
         //   value: '15b2o3b2o15b3$6b2o21b2o6b$6b2o21b2o6b2$3b2o27b2o3b$3b2o9b2o5b2o9b2o3b$9b3ob2o7b2ob3o9b$8bobo15bobo8b$8b2o17b2o8b$8bo19bo8b2$8bo19bo8b$7b2o19b2o7b$o6bo21bo6bo$o35bo4$o35bo$o6bo21bo6bo$7b2o19b2o7b$8bo19bo8b2$8bo19bo8b$8b2o17b2o8b$8bobo15bobo8b$9b3ob2o7b2ob3o9b$3b2o9b2o5b2o9b2o3b$3b2o27b2o3b2$6b2o21b2o6b$6b2o21b2o6b3$15b2o3b2o!',
         // },
-        pattern: {
-          type: Object
+        // pattern: {
+        //   type: Object
+        // },
+
+
+        // pattern list from life wiki
+        stamps: {
+          type: Array,
+          value: function() {
+            return [];
+          }
         },
 
         brushes: {
@@ -282,6 +300,8 @@
 
       _itemChanged: function(e){
         this.set('selectedItem', e.model.get('item'));
+        this.$.canvas.clearCanvas();
+        this.$.canvas.drawPattern(-1, -1, this.selectedItem, 'center');
       },
 
       _handleColorChanged: function(red, green, blue){
