@@ -135,6 +135,7 @@
 
       this._gameManager.drawPattern(x, y, pattern.payload, this.cellColor);
       this._gameManager.draw(this.cellColor);
+      this.fire('draw');
     },
     drawPatternAsOverlay: function(startX, startY, pattern){
       this._gameManager.drawOverlay(startX, startY, pattern.payload, this.overlayColor);

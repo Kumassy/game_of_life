@@ -63,7 +63,9 @@
                         mode="canvas"
                         refresh-rate="30"
                         cell-size="4"
-                        brush="[[selectedItem]]">
+                        brush="[[selectedItem]]"
+
+                        on-draw="_updateBrush">
           </life-canvas>
           <div class="brush-info">
             <div class="brush-title">
@@ -274,6 +276,12 @@
           }
         },
 
+        brush: {
+          type: Object,
+          notify: true,
+          value: {}
+        },
+
         hoverToPlay: {
           type: Boolean,
           value: false,
@@ -294,7 +302,7 @@
       },
 
       observers: [
-        '_handleColorChanged(red, green, blue)'
+        // '_handleColorChanged(red, green, blue)'
       ],
 
 
@@ -308,12 +316,24 @@
                                     });
       },
 
-      _handleColorChanged: function(red, green, blue){
-        // if(this.app){
-          // this.app.color = 'rgb(' + red + ', ' + green + ', ' + blue + ')';
-        // }
-        this.set('app.color', 'rgb(' + red + ', ' + green + ', ' + blue + ')');
+      _updateBrush: function() {
+        this.brush = {
+          id: 'brush',
+          name: 'Brush',
+          payload: this.$.canvas.getRLE(),
+          meta: {
+            x: this.$.canvas._cellHorizontalNum,
+            y: this.$.canvas._cellVerticalNum
+          }
+        };
       },
+
+      // _handleColorChanged: function(red, green, blue){
+      //   // if(this.app){
+      //     // this.app.color = 'rgb(' + red + ', ' + green + ', ' + blue + ')';
+      //   // }
+      //   this.set('app.color', 'rgb(' + red + ', ' + green + ', ' + blue + ')');
+      // },
     });
   </script>
 </dom-module>
