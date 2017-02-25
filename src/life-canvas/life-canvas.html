@@ -44,7 +44,10 @@
           type: Object,
           value: {}
         },
-
+        editable: {
+          type: Boolean,
+          value: true
+        },
 
       },
 
@@ -69,7 +72,7 @@
 
       _plotOnClick: function(self){
         return function(e){
-          if(!self.brush || Object.keys(self.brush).length === 0 ) return;
+          if(!self.brush || Object.keys(self.brush).length === 0 || !self.editable) return;
           // self.drawPattern.apply(self, [...self._toCellCoordinates(e), self.brush]);
           self.drawPattern(self.brush,
                              {
