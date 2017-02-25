@@ -125,6 +125,16 @@
     .toolbar .padding {
       @apply(--layout-flex);
     }
+    .toolbar .dropdown-content:last-child:after {
+      content: '';
+      display: block;
+      width: 64px;
+      height: 64px;
+      margin: 4px;
+
+      border: 4px dotted var(--google-blue-300);
+      border-radius: 4px;
+    }
 
     .preview .brush-info {
       padding: 4px;
@@ -297,6 +307,13 @@
 
         hoverToPlay: {
           type: Boolean,
+          value: false,
+        },
+
+        isBrushModified: {
+          type: Boolean,
+          reflectToAttribute: true,
+          observer: 'updateStyles',
           value: false,
         },
 
