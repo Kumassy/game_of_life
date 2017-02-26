@@ -34,6 +34,7 @@
               <template is="dom-repeat" items="[[brushes]]">
                 <img src="[[item.thumbnail]]" alt="[[item.name]]" on-tap="_itemChanged">
               </template>
+              <div id="add-brush" on-tap="_storeBrush">Save Brush</div>
             </div>
           </dropdown-wrapper>
 
@@ -125,7 +126,7 @@
     .toolbar .padding {
       @apply(--layout-flex);
     }
-    .toolbar .dropdown-content:last-child:after {
+    /*.toolbar .dropdown-content:last-child:after {
       content: '';
       display: block;
       width: 64px;
@@ -134,6 +135,20 @@
 
       border: 4px dotted var(--google-blue-300);
       border-radius: 4px;
+    }*/
+    .toolbar #add-brush {
+      display: none;
+      width: 64px;
+      height: 64px;
+      margin: 4px;
+
+      border: 3px dotted var(--google-blue-300);
+      box-sizing: border-box;
+      border-radius: 4px;
+    }
+
+    :host[is-brush-modified] .toolbar #add-brush {
+      display: block;
     }
 
     .preview .brush-info {
@@ -338,12 +353,15 @@
 
       _itemChanged: function(e){
         this.set('selectedItem', e.model.get('item'));
-        this.$.canvas.clearCanvas();
-        this.$.canvas.drawPattern(this.selectedItem,
-                                    {
-                                      location: 'center',
-                                      coordinate: 'canvas',
-                                    });
+        if(!this.editMode){
+          this.$.canvas.clearCanvas();
+          this.$.canvas.drawPattern(this.selectedItem,
+                                      {
+                                        location: 'center',
+                                        coordinate: 'canvas',
+                                      });
+          this.isBrushModified = false;
+        }
       },
 
       _updateBrush: function() {
@@ -356,6 +374,24 @@
             y: this.$.canvas._cellVerticalNum
           }
         };
+
+        if(this.editMode && this.isBrushModified === false){
+          setTimeout(() => this.isBrushModified = true, 500);
+        }
+      },
+
+      _storeBrush: function(event) {
+        this.push('brushes', {
+          name: 'Custom Brush',
+          thumbnail: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABABAMAAABYR2ztAAAAFVBMVEXu7u4zMzOnp6fW1ta/v7+QkJB5eXku6svuAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAZklEQVRIie3OsQmAQAyF4UdO93gEsQ7iAMeJvaADCO6/g8HWDCCSv0rxJQTIsuzniaLjMynRAjC7IQxWqpsADAoSUw9pFAnAhsGIcsLJEgFC9fJ1iL8z2hv0qzmqxXDsiC5kWfapbpUgB70gIFoDAAAAAElFTkSuQmCC',
+          payload: this.$.canvas.getRLE(),
+          meta: {
+            x: this.$.canvas._cellHorizontalNum,
+            y: this.$.canvas._cellVerticalNum
+          }
+        });
+
+        this.isBrushModified = false;
       },
 
       // _handleColorChanged: function(red, green, blue){
