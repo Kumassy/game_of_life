@@ -28,7 +28,7 @@
 
       <div class="content">
         <div class="toolbar">
-          <dropdown-wrapper>
+          <dropdown-wrapper class="brushes">
             <paper-icon-button icon="create" class="dropdown-trigger"></paper-icon-button>
             <div class="dropdown-content">
               <template is="dom-repeat" items="[[brushes]]">
@@ -149,6 +149,11 @@
 
     :host[is-brush-modified] .toolbar #add-brush {
       display: block;
+    }
+
+    .toolbar .brushes .dropdown-content > * {
+      width: 64px;
+      height: 64px;
     }
 
     .preview .brush-info {
@@ -383,7 +388,7 @@
       _storeBrush: function(event) {
         this.push('brushes', {
           name: 'Custom Brush',
-          thumbnail: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABABAMAAABYR2ztAAAAFVBMVEXu7u4zMzOnp6fW1ta/v7+QkJB5eXku6svuAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAZklEQVRIie3OsQmAQAyF4UdO93gEsQ7iAMeJvaADCO6/g8HWDCCSv0rxJQTIsuzniaLjMynRAjC7IQxWqpsADAoSUw9pFAnAhsGIcsLJEgFC9fJ1iL8z2hv0qzmqxXDsiC5kWfapbpUgB70gIFoDAAAAAElFTkSuQmCC',
+          thumbnail: this.$.canvas.getCanvasDataURL(),
           payload: this.$.canvas.getRLE(),
           meta: {
             x: this.$.canvas._cellHorizontalNum,
