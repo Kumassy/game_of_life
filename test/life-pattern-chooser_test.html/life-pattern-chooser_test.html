@@ -120,8 +120,8 @@
           assert.equal(element.patternsPerPage, 3);
           assert.equal(element.pageCount, 2);
 
-          assert.equal(element.canGoNext, true);
-          assert.equal(element.canGoBack, false);
+          assert.equal(element.canGoNext, false);
+          assert.equal(element.canGoBack, true);
         });
 
         test('should open inner dialog', () => {
