@@ -31,6 +31,13 @@ Dir.glob("*.rle").each do |filename|
 
         elsif md[1].match %r(http://(www.)?conwaylife.com/forums/)          
           url << md[1]
+        elsif md[1].match %r((www.)?conwaylife.com/forums/)          
+          url << "http://#{md[1]}"
+
+        elsif md[1].match %r(http://(www.)?conwaylife.com/patterns/)
+          url << md[1]
+        elsif md[1].match %r((www.)?conwaylife.com/patterns/)
+          url << "http://#{md[1]}"
 
         elsif md[1].match %r(http://home.interserv.com/~mniemiec/)
           url << md[1]
@@ -40,11 +47,10 @@ Dir.glob("*.rle").each do |filename|
         elsif md[1].match %r(www.nathanieljohnston.com/index.php/2009/08/generating-sequences-of-primes-in-conways-game-of-life/)  
           url << "http://#{md[1]}"
 
-        elsif md[1].match %r(http://(www.)?conwaylife.com/patterns/)
-          url << md[1]
-        elsif md[1].match %r((www.)?conwaylife.com/patterns/)
-          url << "http://#{md[1]}"
-          
+ 
+
+        elsif URI.extract(md[1]).length > 0
+          url << URI.extract(md[1]).first
         else
           comments << md[1]
         end
