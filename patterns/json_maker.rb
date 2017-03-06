@@ -17,15 +17,34 @@ Dir.glob("*.rle").each do |filename|
     offset = "" # P R, top-left corner coordinates
     rule = "" # r
     id = "" # simplified `name`, which is used for HTML id
-    url = ""
+    url = []
 
     meta = {} # e.g.: x = 71, y = 65, rule = 23/3
     payload = []
 
     file.each_line do |line|
-      if md = line.match(/^#[Cc] (.*)/)
-        if URI.extract(md[1]).length > 0
-          url = URI.extract(md[1]).first
+      if md = line.match(/^#[Cc] (.*)/)       
+        if md[1].match %r(http://(www.)?conwaylife.com/wiki/)
+          url << md[1]
+        elsif md[1].match %r((www.)?conwaylife.com/wiki/)
+          url << "http://#{md[1]}"
+
+        elsif md[1].match %r(http://(www.)?conwaylife.com/forums/)          
+          url << md[1]
+
+        elsif md[1].match %r(http://home.interserv.com/~mniemiec/)
+          url << md[1]
+        elsif md[1].match %r(home.interserv.com/~mniemiec/)
+          url << "http://#{md[1]}"
+
+        elsif md[1].match %r(www.nathanieljohnston.com/index.php/2009/08/generating-sequences-of-primes-in-conways-game-of-life/)  
+          url << "http://#{md[1]}"
+
+        elsif md[1].match %r(http://(www.)?conwaylife.com/patterns/)
+          url << md[1]
+        elsif md[1].match %r((www.)?conwaylife.com/patterns/)
+          url << "http://#{md[1]}"
+          
         else
           comments << md[1]
         end
