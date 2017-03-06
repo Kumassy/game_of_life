@@ -47,6 +47,9 @@
             </div>
           </dropdown-wrapper>
 
+
+          <paper-icon-button icon="star" class="dropdown-trigger" on-tap="_openStampPicker"></paper-icon-button>
+
           <div class="padding"></div>
 
           <dropdown-wrapper>
@@ -397,6 +400,10 @@
         });
 
         this.isBrushModified = false;
+      },
+
+      _openStampPicker: function(event) {
+        // TODO
       },
 
       // _handleColorChanged: function(red, green, blue){
