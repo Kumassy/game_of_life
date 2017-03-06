@@ -33,6 +33,8 @@
       </paper-dialog-scrollable>
 
       <div class="buttons">
+        <paper-button disabled="[[!canGoBack]]" on-tap="goBack">Back</paper-button>
+        <paper-button disabled="[[!canGoNext]]" on-tap="goNext">Next</paper-button>
         <paper-button dialog-confirm autofocus>OK</paper-button>
       </div>
     </paper-dialog>
