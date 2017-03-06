@@ -1,0 +1,39 @@
+<script type="text/javascript">
+  LifePatternCatalogBehavior = {
+    properties: {
+      catalog: {
+        type: Array,
+        value: function() {
+          return [];
+        }
+      },
+      currentPatterns: {
+        type: Object,
+        computed: '_computeCurrentPatterns(catalog, currentPage, patternsPerPage)'
+      },
+      currentPage: {
+        type: Number,
+        value: 0
+      },
+      patternsPerPage: {
+        type: Number,
+        value: 12
+      },
+      pageCount: {
+        type: Number,
+        computed: '_computePageCount(catalog, patternsPerPage)'
+      }
+
+    },
+
+    _computePageCount: function(catalog, patternsPerPage){
+      return Math.ceil(catalog.length / patternsPerPage);
+    },
+
+    _computeCurrentPatterns: function(catalog, currentPage, patternsPerPage){
+      return catalog.slice(currentPage * patternsPerPage, currentPage * patternsPerPage + patternsPerPage);
+    }
+
+  }
+
+</script>

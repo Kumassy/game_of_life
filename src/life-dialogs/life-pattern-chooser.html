@@ -1,0 +1,110 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<!-- <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html"> -->
+
+<link rel="import" href="../../bower_components/paper-styles/default-theme.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+
+
+<link rel="import" href="../life-behaviors/life-pattern-catalog-behavior.html">
+<link rel="import" href="../life-preview-canvas/life-preview-canvas.html">
+
+
+<dom-module id="life-pattern-chooser">
+  <template>
+    <paper-dialog id="dialog">
+      <h2>Pattern Chooser</h2>
+      <paper-dialog-scrollable>
+        <div class="patterns">
+          <template is="dom-repeat" items="[[currentPatterns]]">
+            <div class="card">
+              <life-preview-canvas width="240" height="240" auto-play pattern="[[item]]"></life-preview-canvas>
+
+              <div class="card-content">
+                <div class="title">[[item.name]]</div>
+                <div class="author">[[item.author]]</div>
+                <div class="comments">[[item.comments]]</div>
+              </div>
+            </div>
+          </template>
+        </div>
+      </paper-dialog-scrollable>
+
+      <div class="buttons">
+        <paper-button dialog-confirm autofocus>OK</paper-button>
+      </div>
+    </paper-dialog>
+
+
+    <style>
+      .patterns {
+        display: -webkit-flex;
+        display: flex;
+        /*-webkit-flex-direction: column;
+        flex-direction: column;*/
+        -webkit-flex-wrap: wrap;
+        flex-wrap: wrap;
+        /*height: 220vw;*/
+      }
+      .card {
+        /*display: inline-block;*/
+        position: relative;
+        box-sizing: border-box;
+        background-color: var(--paper-card-background-color, --primary-background-color);
+        border-radius: 2px;
+        @apply(--paper-font-common-base);
+        @apply(--paper-card);
+        @apply(--shadow-elevation-2dp);
+
+        margin: 4px;
+        flex: 0 0 auto;
+        max-width: 240px;
+      }
+
+      .card life-preview-canvas {
+        display: block;
+        width: 100%;
+        /*pointer-events: none;*/
+        @apply(--paper-card-header-image);
+      }
+
+      .card .card-content{
+        padding: 16px;
+        position:relative;
+        @apply(--paper-card-content);
+      }
+      .card .card-content .title{
+        /*padding: 16px;*/
+        font-size: 24px;
+        font-weight: 400;
+        color: var(--paper-card-header-color, #000);
+        @apply(--paper-card-header-text);
+      }
+      .card .card-content .author{
+        color: var(--paper-grey-600);
+      }
+      .card .card-content .comments{
+        padding-top: 16px;
+        overflow-wrap: break-word;
+      }
+    </style>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'life-pattern-chooser',
+      behaviors: [LifePatternCatalogBehavior],
+      properties: {
+      },
+
+      open: function() {
+        this.$.dialog.open();
+      },
+
+
+
+    });
+  </script>
+</dom-module>

@@ -16,6 +16,7 @@
 
 <!-- <link rel="import" href="../life-preview-canvas/life-preview-canvas.html"> -->
 <link rel="import" href="../life-canvas/life-canvas.html">
+<link rel="import" href="../life-dialogs/life-pattern-chooser.html">
 <link rel="import" href="../life-behaviors/life-draggable-behavior.html">
 <link rel="import" href="dropdown-wrapper.html">
 
@@ -86,6 +87,7 @@
     </div>
 
     <life-settings-dialog id="settingsDialog" app="{{app}}"></life-settings-dialog>
+    <life-pattern-chooser id="patternChooser" catalog="[[app._catalog]]"></life-pattern-chooser>
   </template>
 
   <style>
@@ -406,7 +408,7 @@
 
       _openStampPicker: function(event) {
         // TODO
-        this.$.settingsDialog.open();
+        this.$.patternChooser.open();
       },
 
       // _handleColorChanged: function(red, green, blue){
