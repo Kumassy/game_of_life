@@ -19,7 +19,7 @@
       <paper-dialog-scrollable>
         <div class="patterns">
           <template is="dom-repeat" items="[[currentPatterns]]">
-            <div class="card">
+            <div class="card" on-tap="_patternSelected">
               <life-preview-canvas width="240" height="240" auto-play pattern="[[item]]"></life-preview-canvas>
 
               <div class="card-content">
@@ -93,8 +93,11 @@
       }
 
       /*TODO*/
-      .checked .card {
+      .card[selected] life-preview-canvas {
         transform: translateZ(0px) scale3d(0.92, 0.86, 1);
+      }
+      .card[selected] {
+        background: lightblue;
       }
     </style>
   </template>
@@ -104,6 +107,25 @@
       is: 'life-pattern-chooser',
       behaviors: [LifePatternCatalogBehavior],
       properties: {
+        _selectedPattern: {
+          type: Object,
+          value: null
+        },
+        _domForSelectedPattern: {
+          type: Object,
+          value: null
+        }
+      },
+
+      _patternSelected: function(e) {
+        if(this._domForSelectedPattern) {
+          this._domForSelectedPattern.removeAttribute('selected');
+        }
+
+        this._domForSelectedPattern = e.currentTarget;
+        this._selectedPattern = e.model.get('item');
+
+        this._domForSelectedPattern.setAttribute('selected', '');
       },
 
       open: function() {
