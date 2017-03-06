@@ -103,6 +103,9 @@
           assert.equal(element.currentPage, 0);
           assert.equal(element.patternsPerPage, 3);
           assert.equal(element.pageCount, 2);
+
+          assert.equal(element.canGoNext, true);
+          assert.equal(element.canGoBack, false);
         });
 
         test('calculating patterns after changing page', () => {
@@ -116,6 +119,9 @@
           assert.equal(element.currentPage, 1);
           assert.equal(element.patternsPerPage, 3);
           assert.equal(element.pageCount, 2);
+
+          assert.equal(element.canGoNext, true);
+          assert.equal(element.canGoBack, false);
         });
 
         test('should open inner dialog', () => {

@@ -22,8 +22,15 @@
       pageCount: {
         type: Number,
         computed: '_computePageCount(catalog, patternsPerPage)'
+      },
+      canGoNext: {
+        type: Boolean,
+        computed: '_checkWhetherCanGoNext(currentPage, pageCount)'
+      },
+      canGoBack: {
+        type: Boolean,
+        computed: '_checkWhetherCanGoBack(currentPage, pageCount)'
       }
-
     },
 
     _computePageCount: function(catalog, patternsPerPage){
@@ -32,7 +39,36 @@
 
     _computeCurrentPatterns: function(catalog, currentPage, patternsPerPage){
       return catalog.slice(currentPage * patternsPerPage, currentPage * patternsPerPage + patternsPerPage);
-    }
+    },
+
+    _checkWhetherCanGoNext: function(currentPage, pageCount) {
+      if(currentPage < pageCount - 1){
+        return true;
+      }
+      else {
+        return false;
+      }
+    },
+    _checkWhetherCanGoBack: function(currentPage, pageCount) {
+      if(currentPage > 0){
+        return true;
+      }
+      else {
+        return false;
+      }
+    },
+
+    next: function() {
+      if(this.canGoNext) {
+        this.currentPage += 1;
+      }
+    },
+
+    back: function() {
+      if(this.canGoBack) {
+        this.currentPage -= 1;
+      }
+    },
 
   }
 
