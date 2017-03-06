@@ -25,7 +25,7 @@
               <div class="card-content">
                 <div class="title">[[item.name]]</div>
                 <div class="author">[[item.author]]</div>
-                <div class="comments">[[item.comments]]</div>
+                <!-- <div class="comments">[[item.comments]]</div> -->
               </div>
             </div>
           </template>
@@ -90,6 +90,11 @@
       .card .card-content .comments{
         padding-top: 16px;
         overflow-wrap: break-word;
+      }
+
+      /*TODO*/
+      .checked .card {
+        transform: translateZ(0px) scale3d(0.92, 0.86, 1);
       }
     </style>
   </template>
