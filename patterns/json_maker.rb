@@ -1,6 +1,8 @@
 require 'json'
+require 'uri'
 
 list = []
+list_lite = []
 # list = {}
 
 Dir.glob("*.rle").each do |filename|
@@ -15,13 +17,18 @@ Dir.glob("*.rle").each do |filename|
     offset = "" # P R, top-left corner coordinates
     rule = "" # r
     id = "" # simplified `name`, which is used for HTML id
+    url = ""
 
     meta = {} # e.g.: x = 71, y = 65, rule = 23/3
     payload = []
 
     file.each_line do |line|
       if md = line.match(/^#[Cc] (.*)/)
-        comments << md[1]
+        if URI.extract(md[1]).length > 0
+          url = URI.extract(md[1]).first
+        else
+          comments << md[1]
+        end
       elsif md = line.match(/^#N (.*)/)
         name = md[1]
       elsif md = line.match(/^#O (.*)/)
@@ -48,11 +55,16 @@ Dir.glob("*.rle").each do |filename|
     info[:rule] = rule
     info[:comments] = comments.join("\n")
     info[:id] = id
+    info[:url] = url
 
     info[:meta] = meta
     info[:payload] = payload.join("")
 
     list << info
+    if info[:meta][:x].to_i < 500 && info[:meta][:y].to_i < 500
+      list_lite << info
+    end
+
     # list[name] = info
     # p info
   end
@@ -60,10 +72,13 @@ end
 # p list.to_json
 
 # p list.keys # 1483
-p list.length
-p Dir.glob("*.rle").length
+# p list.length
+# p Dir.glob("*.rle").length
 # exit(0)
 
 File.open("../patterns.json","w") do |f|
   f.write(list.to_json)
+end
+File.open("../patterns-lite.json","w") do |f|
+  f.write(list_lite.to_json)
 end
