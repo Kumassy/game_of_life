@@ -84,6 +84,8 @@
         </div>
       </div>
     </div>
+
+    <life-settings-dialog id="settingsDialog" app="{{app}}"></life-settings-dialog>
   </template>
 
   <style>
@@ -404,6 +406,7 @@
 
       _openStampPicker: function(event) {
         // TODO
+        this.$.settingsDialog.open();
       },
 
       // _handleColorChanged: function(red, green, blue){
