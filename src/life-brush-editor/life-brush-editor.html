@@ -49,7 +49,7 @@
           </dropdown-wrapper>
 
 
-          <paper-icon-button icon="star" class="dropdown-trigger" on-tap="_openStampPicker"></paper-icon-button>
+          <paper-icon-button icon="star" class="dropdown-trigger" on-tap="_openPatternChooser"></paper-icon-button>
 
           <div class="padding"></div>
 
@@ -87,7 +87,7 @@
     </div>
 
     <life-settings-dialog id="settingsDialog" app="{{app}}"></life-settings-dialog>
-    <life-pattern-chooser id="patternChooser" catalog="[[app._catalog]]"></life-pattern-chooser>
+    <life-pattern-chooser id="patternChooser" catalog="[[app._catalog]]" on-pattern-selected="_patternSelected"></life-pattern-chooser>
   </template>
 
   <style>
@@ -406,9 +406,23 @@
         this.isBrushModified = false;
       },
 
-      _openStampPicker: function(event) {
-        // TODO
+      _openPatternChooser: function(event) {
         this.$.patternChooser.open();
+      },
+      _patternSelected: function(event) {
+        this.selectedItem = event.detail.pattern;
+        this.brush = event.detail.pattern;
+
+        if(!this.editMode){
+          this.$.canvas.clearCanvas();
+          this.$.canvas.drawPattern(this.selectedItem,
+                                      {
+                                        location: 'center',
+                                        coordinate: 'canvas',
+                                      });
+          this.isBrushModified = false;
+        }
+        // this.brush = event.detail.pattern;
       },
 
       // _handleColorChanged: function(red, green, blue){
