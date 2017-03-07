@@ -157,6 +157,28 @@
           });
         });
 
+        test('treating selected attr properly when going next or back', (done) => {
+          element.catalog = catalog;
+          element.patternsPerPage = 3;
+          element.currentPage = 0;
+
+          flush(() => {
+            const card = Polymer.dom(element.root).querySelectorAll('.patterns .card')[0];
+            const goNextButton = element.$.goNext;
+            const goBackButton = element.$.goBack;
+
+            MockInteractions.tap(card);
+            assert.isTrue(card.hasAttribute('selected'), 'card should have selected attr by tap');
+
+            MockInteractions.tap(goNextButton);
+            assert.isFalse(card.hasAttribute('selected'), 'card should remove selected attr by going next page');
+
+            MockInteractions.tap(goBackButton);
+            assert.isTrue(card.hasAttribute('selected'), 'card should restore selected attr by going back to previous page');
+
+            done();
+          });
+        });
 
       });
     </script>
