@@ -52,7 +52,22 @@
         },
         app: {
           type: Object,
-          value: {}
+          value: function() {
+            return {
+              _catalog: [],
+              saves: [],
+              controller: {
+                isPlaying: true,
+                refreshRate: 30,
+              },
+              width: 200,
+              height: 150,
+              cellSize: 4,
+              cellColor: 'rgb(255, 0, 0)',
+              overlayColor: 'rgba(255, 0, 0, 0.3)',
+              backgroundColor: 'rgb(238, 238, 238)',
+            };
+          }
         }
       },
 

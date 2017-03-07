@@ -3,88 +3,447 @@
 <link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
 <link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
 
-<link rel="import" href="../life-canvas-base/life-canvas-base.html">
-<link rel="import" href="../life-preview-canvas/life-preview-canvas.html">
+<link rel="import" href="../../bower_components/paper-styles/default-theme.html">
+<link rel="import" href="../../bower_components/paper-styles/shadow.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-dropdown/iron-dropdown.html">
+
+<!-- <link rel="import" href="../life-preview-canvas/life-preview-canvas.html"> -->
+<link rel="import" href="../life-canvas/life-canvas.html">
+<link rel="import" href="../life-dialogs/life-pattern-chooser.html">
+<link rel="import" href="../life-behaviors/life-draggable-behavior.html">
+<link rel="import" href="dropdown-wrapper.html">
 
 <dom-module id="life-brush-editor">
   <template>
-    <paper-header-panel class="flex">
-      <paper-toolbar>
-        <div>Hello World!</div>
+    <div id="container">
+      <paper-toolbar id="handle">
+        <div class="title">Brush Editor</div>
       </paper-toolbar>
-      <!-- <life-canvas-base></life-canvas-base> -->
-      <life-preview-canvas width="240" height="240" auto-play rle="[[rle]]"></life-preview-canvas>
 
-      <div>R</div>
-      <paper-slider class="red" value="{{red}}" max="255" editable></paper-slider>
-      <div>G</div>
-      <paper-slider class="green" value="{{green}}" max="255" editable></paper-slider>
-      <div>B</div>
-      <paper-slider class="blue" value="{{blue}}" max="255" editable></paper-slider>
-    </paper-header-panel>
+      <div class="content">
+        <div class="toolbar">
+          <dropdown-wrapper class="brushes">
+            <paper-icon-button icon="create" class="dropdown-trigger"></paper-icon-button>
+            <div class="dropdown-content">
+              <template is="dom-repeat" items="[[brushes]]">
+                <img src="[[item.thumbnail]]" alt="[[item.name]]" on-tap="_itemChanged">
+              </template>
+              <div id="add-brush" on-tap="_storeBrush"><iron-icon icon="add-circle"></iron-icon></div>
+            </div>
+          </dropdown-wrapper>
+
+          <!-- <dropdown-wrapper>
+            <paper-icon-button icon="delete" class="dropdown-trigger"></paper-icon-button>
+            <div class="dropdown-content">
+              <template is="dom-repeat" items="[[erasers]]">
+                <img src="[[item.thumbnail]]" alt="[[item.name]]" on-tap="_itemChanged">
+              </template>
+            </div>
+          </dropdown-wrapper> -->
+
+
+          <paper-icon-button icon="star" class="dropdown-trigger" on-tap="_openPatternChooser"></paper-icon-button>
+
+          <div class="padding"></div>
+
+          <dropdown-wrapper>
+            <paper-icon-button icon="settings" class="dropdown-trigger"></paper-icon-button>
+            <div class="dropdown-content">
+              <paper-checkbox checked="{{editMode}}">Edit mode</paper-checkbox>
+              <paper-checkbox checked="{{hoverToPlay}}">Hover to play</paper-checkbox>
+            </div>
+          </dropdown-wrapper>
+        </div>
+        <div class="preview">
+          <!-- <div class="dummy-image" style="width: 200px; height: 200px; background: #eee"></div> -->
+          <life-canvas id="canvas"
+                        width="200"
+                        height="200"
+                        mode="canvas"
+                        editable="[[editMode]]"
+                        refresh-rate="30"
+                        cell-size="4"
+                        brush="[[selectedItem]]"
+
+                        on-draw="_updateBrush">
+          </life-canvas>
+          <div class="brush-info">
+            <div class="brush-title">
+              [[selectedItem.name]]
+            </div>
+            <div class="brush-meta">
+              [[selectedItem.meta.x]] x [[selectedItem.meta.y]]
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <life-settings-dialog id="settingsDialog" app="{{app}}"></life-settings-dialog>
+    <life-pattern-chooser id="patternChooser" catalog="[[app._catalog]]" on-pattern-selected="_patternSelected"></life-pattern-chooser>
   </template>
 
   <style>
-    paper-header-panel{
-      position: fixed;
-      right: 8px;
-      bottom: 8px;
-      width: 320px;
-      height: 320px;
-      background: #fff;
-      @apply(--shadow-elevation-2dp);
-      z-index: 4;
+    :host {
     }
 
-    paper-slider.red {
-      --paper-slider-knob-color: var(--paper-red-500);
-      --paper-slider-active-color: var(--paper-red-500);
+    :host[edit-mode] paper-toolbar {
+      --paper-toolbar-background: var(--accent-color);
     }
-    paper-slider.green {
-      --paper-slider-knob-color: var(--paper-green-500);
-      --paper-slider-active-color: var(--paper-green-500);
+    #container {
+      display: inline-block;
+      position: relative;
+      /*position: fixed;*/
+      box-sizing: border-box;
+      -moz-box-sizing: border-box;
+
+      /*width: 300px;*/
+      @apply(--shadow-elevation-2dp);
+      background: var(--primary-background-color);
     }
-    paper-slider.blue {
-      --paper-slider-knob-color: var(--paper-light-blue-500);
-      --paper-slider-active-color: var(--paper-light-blue-500);
+    #handle {
+      cursor: move;
+    }
+    .content {
+      @apply(--layout-horizontal);
+    }
+    .toolbar {
+      width: 52px;
+      padding: 12px 0;
+
+      /*background: var(--primary-color);*/
+      background: #333;
+      color: var(--dark-theme-text-color);
+
+      @apply(--layout-vertical);
+      @apply(--layout-center);
+
+      @apply(--shadow-elevation-2dp);
+    }
+    /*.toolbar paper-icon-button[icon="settings"] {
+      @apply(--layout-self-end);
+    }*/
+    .toolbar .padding {
+      @apply(--layout-flex);
+    }
+    /*.toolbar .dropdown-content:last-child:after {
+      content: '';
+      display: block;
+      width: 64px;
+      height: 64px;
+      margin: 4px;
+
+      border: 4px dotted var(--google-blue-300);
+      border-radius: 4px;
+    }*/
+    .toolbar #add-brush {
+      display: none;
+      position: relative;
+      width: 64px;
+      height: 64px;
+      margin: 4px;
+
+      border: 3px dotted var(--google-blue-300);
+      box-sizing: border-box;
+      border-radius: 4px;
+    }
+
+    .toolbar #add-brush iron-icon {
+      margin: auto;
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+
+      color: var(--google-blue-300);
+    }
+
+    :host[is-brush-modified] .toolbar #add-brush {
+      display: block;
+    }
+
+    .toolbar .brushes .dropdown-content > * {
+      width: 64px;
+      height: 64px;
+    }
+
+    .preview .brush-info {
+      padding: 4px;
+    }
+    .preview .brush-info .brush-title{
+      color: var(--primary-text-color);
+    }
+    .preview .brush-info .brush-meta{
+      color: var(--secondary-text-color);
+      font-size: small;
     }
   </style>
 
   <script>
     Polymer({
       is: 'life-brush-editor',
+      behaviors: [LifeDraggableBehavior],
       properties: {
         app: {
           type: Object
         },
-        rle: {
-          type: String,
-          value: '15b2o3b2o15b3$6b2o21b2o6b$6b2o21b2o6b2$3b2o27b2o3b$3b2o9b2o5b2o9b2o3b$9b3ob2o7b2ob3o9b$8bobo15bobo8b$8b2o17b2o8b$8bo19bo8b2$8bo19bo8b$7b2o19b2o7b$o6bo21bo6bo$o35bo4$o35bo$o6bo21bo6bo$7b2o19b2o7b$8bo19bo8b2$8bo19bo8b$8b2o17b2o8b$8bobo15bobo8b$9b3ob2o7b2ob3o9b$3b2o9b2o5b2o9b2o3b$3b2o27b2o3b2$6b2o21b2o6b$6b2o21b2o6b3$15b2o3b2o!',
+        // rle: {
+        //   type: String,
+        //   value: '15b2o3b2o15b3$6b2o21b2o6b$6b2o21b2o6b2$3b2o27b2o3b$3b2o9b2o5b2o9b2o3b$9b3ob2o7b2ob3o9b$8bobo15bobo8b$8b2o17b2o8b$8bo19bo8b2$8bo19bo8b$7b2o19b2o7b$o6bo21bo6bo$o35bo4$o35bo$o6bo21bo6bo$7b2o19b2o7b$8bo19bo8b2$8bo19bo8b$8b2o17b2o8b$8bobo15bobo8b$9b3ob2o7b2ob3o9b$3b2o9b2o5b2o9b2o3b$3b2o27b2o3b2$6b2o21b2o6b$6b2o21b2o6b3$15b2o3b2o!',
+        // },
+        // pattern: {
+        //   type: Object
+        // },
+
+
+        // pattern list from life wiki
+        stamps: {
+          type: Array,
+          value: function() {
+            return [];
+          }
         },
-        red: {
-          type: Number,
-          value: 255
+
+        brushes: {
+          type: Object,
+          value: function(){
+            return [{
+              name: '1 x 1 Pencil',
+              thumbnail: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAAFi0lEQVR4Xu3VwU0kURAEUTAB/Lex1wS4ggSLlJdMqd7cS1U/okPz+jzPx4sfAgj8SOBVIL4MBH4nIBBfBwL/ISAQnwcCAvENIJAR8A+ScTN1hIBAjoj2zIyAQDJupo4QEMgR0Z6ZERBIxs3UEQICOSLaMzMCAsm4mTpCQCBHRHtmRkAgGTdTRwgI5Ihoz8wICCTjZuoIAYEcEe2ZGQGBZNxMHSEgkCOiPTMjIJCMm6kjBARyRLRnZgQEknEzdYSAQI6I9syMgEAybqaOEBDIEdGemREQSMbN1BECAjki2jMzAgLJuJk6QkAgR0R7ZkZAIBk3U0cICOSIaM/MCAgk42bqCAGBHBHtmRkBgWTcTB0hIJAjoj0zIyCQjJupIwQEckS0Z2YEBJJxM3WEgECOiPbMjIBAMm6mjhAQyBHRnpkREEjGzdQRAgI5ItozMwICybiZOkJAIEdEe2ZGQCAZN1NHCAjkiGjPzAgIJONm6ggBgRwR7ZkZAYFk3EwdISCQI6I9MyMgkIybqSMEBHJEtGdmBASScTN1hIBAjoj2zIyAQDJupo4QEMgR0Z6ZERBIxs3UEQICOSLaMzMCAsm4mTpCQCBHRHtmRkAgGTdTRwgI5Ihoz8wICCTjZuoIAYEcEe2ZGQGBZNxMHSEgkCOiPTMjIJCMm6kjBARyRLRnZgQEknEzdYSAQI6I9syMgEAybqaOEBDIEdGemREQSMbN1BECAjki2jMzAgLJuJk6QkAgR0R7ZkZAIBk3U0cICOSIaM/MCAgk42bqCAGBHBHtmRkBgWTcTB0hIJAjoj0zIyCQjJupIwQEckS0Z2YEBJJxM3WEgECOiPbMjIBAMm6mjhAQyBHRnpkREEjGzdQRAgI5ItozMwICybiZOkJAIEdEe2ZGQCAZN1NHCAjkiGjPzAgIJONm6ggBgZRFv72/f7vg3/OUL7L+KwGBlL8HgZQF/LFeIGU/AikLEMi2AIFs+/EPsu3HdWUCAikLsH6bgEC2/biuTEAgZQHWbxMQyLYf15UJCKQswPptAgLZ9uO6MgGBlAVYv01AINt+XFcmIJCyAOu3CQhk24/rygQEUhZg/TYBgWz7cV2ZgEDKAqzfJiCQbT+uKxMQSFmA9dsEBLLtx3VlAgIpC7B+m4BAtv24rkxAIGUB1m8TEMi2H9eVCQikLMD6bQIC2fbjujIBgZQFWL9NQCDbflxXJiCQsgDrtwkIZNuP68oEBFIWYP02AYFs+3FdmYBAygKs3yYgkG0/risTEEhZgPXbBASy7cd1ZQICKQuwfpuAQLb9uK5MQCBlAdZvExDIth/XlQkIpCzA+m0CAtn247oyAYGUBVi/TUAg235cVyYgkLIA67cJCGTbj+vKBARSFmD9NgGBbPtxXZmAQMoCrN8mIJBtP64rExBIWYD12wQEsu3HdWUCAikLsH6bgEC2/biuTEAgZQHWbxMQyLYf15UJCKQswPptAgLZ9uO6MgGBlAVYv01AINt+XFcmIJCyAOu3CQhk24/rygQEUhZg/TYBgWz7cV2ZgEDKAqzfJiCQbT+uKxMQSFmA9dsEBLLtx3VlAgIpC7B+m4BAtv24rkxAIGUB1m8TEMi2H9eVCQikLMD6bQIC2fbjujIBgZQFWL9NQCDbflxXJiCQsgDrtwkIZNuP68oEBFIWYP02AYFs+3FdmYBAygKs3yYgkG0/risTEEhZgPXbBASy7cd1ZQICKQuwfpuAQLb9uK5MQCBlAdZvExDIth/XlQkIpCzA+m0CAtn247oyAYGUBVi/TUAg235cVyYgkLIA67cJCGTbj+vKBARSFmD9NgGBbPtxXZmAQMoCrN8mIJBtP64rExBIWYD12wQEsu3HdWUCAikLsH6bgEC2/biuTEAgZQHWbxP4BCfOAf4WuD6mAAAAAElFTkSuQmCC',
+              payload: [
+                "1"
+              ],
+              meta: {
+                x: 1,
+                y: 1
+              }
+            },
+            {
+              name: '2 x 2 Pencil',
+              thumbnail: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAAFiklEQVR4Xu3Vy01EUQwEUQiByT/GRwiQAB+pN92Sz+wt+1ZN6b0/z/P15ocAAj8SeBeIfwYCvxMQiH8HAn8QEIi/BwIC8R9AICPgC5JxM3WEgECOiPbMjIBAMm6mjhAQyBHRnpkREEjGzdQRAgI5ItozMwICybiZOkJAIEdEe2ZGQCAZN1NHCAjkiGjPzAgIJONm6ggBgRwR7ZkZAYFk3EwdISCQI6I9MyMgkIybqSMEBHJEtGdmBASScTN1hIBAjoj2zIyAQDJupo4QEMgR0Z6ZERBIxs3UEQICOSLaMzMCAsm4mTpCQCBHRHtmRkAgGTdTRwgI5Ihoz8wICCTjZuoIAYEcEe2ZGQGBZNxMHSEgkCOiPTMjIJCMm6kjBARyRLRnZgQEknEzdYSAQI6I9syMgEAybqaOEBDIEdGemREQSMbN1BECAjki2jMzAgLJuJk6QkAgR0R7ZkZAIBk3U0cICOSIaM/MCAgk42bqCAGBHBHtmRkBgWTcTB0hIJAjoj0zIyCQjJupIwQEckS0Z2YEBJJxM3WEgECOiPbMjIBAMm6mjhAQyBHRnpkREEjGzdQRAgI5ItozMwICybiZOkJAIEdEe2ZGQCAZN1NHCAjkiGjPzAgIJONm6ggBgRwR7ZkZAYFk3EwdISCQI6I9MyMgkIybqSMEBHJEtGdmBASScTN1hIBAjoj2zIyAQDJupo4QEMgR0Z6ZERBIxs3UEQICOSLaMzMCAsm4mTpCQCBHRHtmRkAgGTdTRwgI5Ihoz8wICCTjZuoIAYEcEe2ZGQGBZNxMHSEgkCOiPTMjIJCMm6kjBARyRLRnZgQEknEzdYSAQI6I9syMgEAybqaOEBDIEdGemREQSMbN1BECAjki2jMzAgLJuJk6QkAgR0R7ZkZAIBk3U0cICOSIaM/MCAgk42bqCAGBlEV/vF5/XvD5POULb68XSNm/QMoC/lkvkLIfgZQFCGRbgEC2/fiClP0IpCzAF2RbgEC2/fiClP0IpCzAF2RbgEC2/fiCbPtxXZmAQMoCrN8mIJBtP64rExBIWYD12wQEsu3HdWUCAikLsH6bgEC2/biuTEAgZQHWbxMQyLYf15UJCKQswPptAgLZ9uO6MgGBlAVYv01AINt+XFcmIJCyAOu3CQhk24/rygQEUhZg/TYBgWz7cV2ZgEDKAqzfJiCQbT+uKxMQSFmA9dsEBLLtx3VlAgIpC7B+m4BAtv24rkxAIGUB1m8TEMi2H9eVCQikLMD6bQIC2fbjujIBgZQFWL9NQCDbflxXJiCQsgDrtwkIZNuP68oEBFIWYP02AYFs+3FdmYBAygKs3yYgkG0/risTEEhZgPXbBASy7cd1ZQICKQuwfpuAQLb9uK5MQCBlAdZvExDIth/XlQkIpCzA+m0CAtn247oyAYGUBVi/TUAg235cVyYgkLIA67cJCGTbj+vKBARSFmD9NgGBbPtxXZmAQMoCrN8mIJBtP64rExBIWYD12wQEsu3HdWUCAikLsH6bgEC2/biuTEAgZQHWbxMQyLYf15UJCKQswPptAgLZ9uO6MgGBlAVYv01AINt+XFcmIJCyAOu3CQhk24/rygQEUhZg/TYBgWz7cV2ZgEDKAqzfJiCQbT+uKxMQSFmA9dsEBLLtx3VlAgIpC7B+m4BAtv24rkxAIGUB1m8TEMi2H9eVCQikLMD6bQIC2fbjujIBgZQFWL9NQCDbflxXJiCQsgDrtwkIZNuP68oEBFIWYP02AYFs+3FdmYBAygKs3yYgkG0/risTEEhZgPXbBASy7cd1ZQICKQuwfpuAQLb9uK5MQCBlAdZvExDIth/XlQkIpCzA+m0CAtn247oyAYGUBVi/TUAg235cVyYgkLIA67cJCGTbj+vKBARSFmD9NoFvLR8N/jJIkrAAAAAASUVORK5CYII=',
+              payload: [
+                "11",
+                "11"
+              ],
+              meta: {
+                x: 2,
+                y: 2
+              }
+            },
+            {
+              name: '3 x 3 Pencil',
+              thumbnail: 'data:image/png;base64,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',
+              payload: [
+                "111",
+                "111",
+                "111"
+              ],
+              meta: {
+                x: 3,
+                y: 3
+              }
+            },
+            {
+              name: '4 x 4 Pencil',
+              thumbnail: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAAFxklEQVR4Xu3V0Y3dRhBEUTkEK/8Y1yHYCdgGWARYBfTRN2d75vS70B8/Pz9///KPAIF/FfhDIH4ZBP5bQCB+HQT+R0Agfh4EBOI3QCAT8D9I5ubUEQGBHFm0Z2YCAsncnDoiIJAji/bMTEAgmZtTRwQEcmTRnpkJCCRzc+qIgECOLNozMwGBZG5OHREQyJFFe2YmIJDMzakjAgI5smjPzAQEkrk5dURAIEcW7ZmZgEAyN6eOCAjkyKI9MxMQSObm1BEBgRxZtGdmAgLJ3Jw6IiCQI4v2zExAIJmbU0cEBHJk0Z6ZCQgkc3PqiIBAjizaMzMBgWRuTh0REMiRRXtmJiCQzM2pIwICObJoz8wEBJK5OXVEQCBHFu2ZmYBAMjenjggI5MiiPTMTEEjm5tQRAYEcWbRnZgICydycOiIgkCOL9sxMQCCZm1NHBARyZNGemQkIJHNz6oiAQI4s2jMzAYFkbk4dERDIkUV7ZiYgkMzNqSMCAjmyaM/MBASSuTl1REAgRxbtmZmAQDI3p44ICOTIoj0zExBI5ubUEQGBHFm0Z2YCAsncnDoiIJAji/bMTEAgmZtTRwQEcmTRnpkJCCRzc+qIgECOLNozMwGBZG5OHREQyJFFe2YmIJDMzakjAgI5smjPzAQEkrk5dURAIEcW7ZmZgEAyN6eOCAjkyKI9MxMQSObm1BEBgRxZtGdmAgLJ3Jw6IiCQI4v2zExAIJmbU0cEBHJk0Z6ZCQgkc3PqiIBAjizaMzMBgWRuTh0REMiRRXtmJiCQzM2pIwICObJoz8wEBJK5OXVEQCBHFu2ZmYBAMjenjggI5MiiPTMTEEjm5tQRAYEcWbRnZgICydycOiIgkCOL9sxMQCCZm1NHBARyZNGemQkIJHNz6oiAQD5e9J+/f7+a+NfPz6vzDj8TEMgzr9dfC+Q14ad/QCCfcv/6JZCPwV+OE8hLwKfHBfJUrPu9QD72F8jH4C/HCeQl4NPjAnkq1v1eIB/7C+Rj8JfjBPIS8OlxgTwV634vkI/9BfIx+MtxAnkJ+PS4QJ6Kdb8XyMf+AvkY/OU4gbwEfHpcIE/Fut8L5GN/gXwM/nKcQF4CPj0ukKdi3e8F8rG/QD4GfzlOIC8Bnx4XyFOx7vcC6fqbPi4gkPEFuV5XQCBdf9PHBQQyviDX6woIpOtv+riAQMYX5HpdAYF0/U0fFxDI+IJcrysgkK6/6eMCAhlfkOt1BQTS9Td9XEAg4wtyva6AQLr+po8LCGR8Qa7XFRBI19/0cQGBjC/I9boCAun6mz4uIJDxBbleV0AgXX/TxwUEMr4g1+sKCKTrb/q4gEDGF+R6XQGBdP1NHxcQyPiCXK8rIJCuv+njAgIZX5DrdQUE0vU3fVxAIOMLcr2ugEC6/qaPCwhkfEGu1xUQSNff9HEBgYwvyPW6AgLp+ps+LiCQ8QW5XldAIF1/08cFBDK+INfrCgik62/6uIBAxhfkel0BgXT9TR8XEMj4glyvKyCQrr/p4wICGV+Q63UFBNL1N31cQCDjC3K9roBAuv6mjwsIZHxBrtcVEEjX3/RxAYGML8j1ugIC6fqbPi4gkPEFuV5XQCBdf9PHBQQyviDX6woIpOtv+riAQMYX5HpdAYF0/U0fFxDI+IJcrysgkK6/6eMCAhlfkOt1BQTS9Td9XEAg4wtyva6AQLr+po8LCGR8Qa7XFRBI19/0cQGBjC/I9boCAun6mz4uIJDxBbleV0AgXX/TxwUEMr4g1+sKCKTrb/q4gEDGF+R6XQGBdP1NHxcQyPiCXK8rIJCuv+njAgIZX5DrdQUE0vU3fVxAIOMLcr2ugEC6/qaPCwhkfEGu1xUQSNff9HEBgYwvyPW6AgLp+ps+LiCQ8QW5XldAIF1/08cFBDK+INfrCgik62/6uIBAxhfkel0BgXT9TR8XEMj4glyvKyCQrr/p4wICGV+Q63UFBNL1N31cQCDjC3K9rsA/P/wl/rxrqIcAAAAASUVORK5CYII=',
+              payload: [
+                "1111",
+                "1111",
+                "1111",
+                "1111"
+              ],
+              meta: {
+                x: 4,
+                y: 4
+              }
+            }];
+          }
         },
-        green: {
-          type: Number,
-          value: 0
+
+        erasers: {
+          type: Object,
+          value: function(){
+            return [{
+              name: '1 x 1 Eraser',
+              thumbnail: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABABAMAAABYR2ztAAAAFVBMVEXu7u4zMzOnp6fW1ta/v7+QkJB5eXku6svuAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAZklEQVRIie3OsQmAQAyF4UdO93gEsQ7iAMeJvaADCO6/g8HWDCCSv0rxJQTIsuzniaLjMynRAjC7IQxWqpsADAoSUw9pFAnAhsGIcsLJEgFC9fJ1iL8z2hv0qzmqxXDsiC5kWfapbpUgB70gIFoDAAAAAElFTkSuQmCC',
+              payload: [
+                "-1"
+              ],
+              meta: {
+                x: 1,
+                y: 1
+              }
+            },
+            {
+              name: '2 x 2 Eraser',
+              thumbnail: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABABAMAAABYR2ztAAAAFVBMVEXu7u4zMzOnp6fW1ta/v7+QkJB5eXku6svuAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAZklEQVRIie3OsQmAQAyF4UdO93gEsQ7iAMeJvaADCO6/g8HWDCCSv0rxJQTIsuzniaLjMynRAjC7IQxWqpsADAoSUw9pFAnAhsGIcsLJEgFC9fJ1iL8z2hv0qzmqxXDsiC5kWfapbpUgB70gIFoDAAAAAElFTkSuQmCC',
+              payload: [
+                "-1-1",
+                "-1-1"
+              ],
+              meta: {
+                x: 2,
+                y: 2
+              }
+            },
+            {
+              name: '3 x 3 Eraser',
+              thumbnail: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABABAMAAABYR2ztAAAAFVBMVEXu7u4zMzOnp6fW1ta/v7+QkJB5eXku6svuAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAZklEQVRIie3OsQmAQAyF4UdO93gEsQ7iAMeJvaADCO6/g8HWDCCSv0rxJQTIsuzniaLjMynRAjC7IQxWqpsADAoSUw9pFAnAhsGIcsLJEgFC9fJ1iL8z2hv0qzmqxXDsiC5kWfapbpUgB70gIFoDAAAAAElFTkSuQmCC',
+              payload: [
+                "-1-1-1",
+                "-1-1-1",
+                "-1-1-1"
+              ],
+              meta: {
+                x: 3,
+                y: 3
+              }
+            },
+            {
+              name: '4 x 4 Eraser',
+              thumbnail: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABABAMAAABYR2ztAAAAFVBMVEXu7u4zMzOnp6fW1ta/v7+QkJB5eXku6svuAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAZklEQVRIie3OsQmAQAyF4UdO93gEsQ7iAMeJvaADCO6/g8HWDCCSv0rxJQTIsuzniaLjMynRAjC7IQxWqpsADAoSUw9pFAnAhsGIcsLJEgFC9fJ1iL8z2hv0qzmqxXDsiC5kWfapbpUgB70gIFoDAAAAAElFTkSuQmCC',
+              payload: [
+                "-1-1-1-1",
+                "-1-1-1-1",
+                "-1-1-1-1",
+                "-1-1-1-1"
+              ],
+              meta: {
+                x: 4,
+                y: 4
+              }
+            }];
+          }
         },
-        blue: {
-          type: Number,
-          value: 0
+
+        selectedItem: {
+          type: Object,
+          value: function(){
+            return {};
+          }
+        },
+
+        brush: {
+          type: Object,
+          notify: true,
+          value: {}
+        },
+
+        editMode: {
+          type: Boolean,
+          reflectToAttribute: true,
+          observer: 'updateStyles',
+          value: false,
+        },
+
+        hoverToPlay: {
+          type: Boolean,
+          value: false,
+        },
+
+        isBrushModified: {
+          type: Boolean,
+          reflectToAttribute: true,
+          observer: 'updateStyles',
+          value: false,
+        },
+
+        _targetContainer: {
+          type: Object,
+          value: function() {
+            return this.$.container;
+          }
+        },
+        _handle: {
+          type: Object,
+          value: function() {
+            return this.$.handle;
+          }
         },
       },
 
       observers: [
-        '_handleColorChanged(red, green, blue)'
+        // '_handleColorChanged(red, green, blue)'
       ],
 
-      _handleColorChanged: function(red, green, blue){
-        // if(this.app){
-          // this.app.color = 'rgb(' + red + ', ' + green + ', ' + blue + ')';
-        // }
-        this.set('app.color', 'rgb(' + red + ', ' + green + ', ' + blue + ')');
+
+      _itemChanged: function(e){
+        this.set('selectedItem', e.model.get('item'));
+        if(!this.editMode){
+          this.$.canvas.clearCanvas();
+          this.$.canvas.drawPattern(this.selectedItem,
+                                      {
+                                        location: 'center',
+                                        coordinate: 'canvas',
+                                      });
+          this.isBrushModified = false;
+        }
       },
+
+      _updateBrush: function() {
+        this.brush = {
+          id: 'brush',
+          name: 'Brush',
+          payload: this.$.canvas.getRLE(this.$.canvas._gameManager.updateRegion()),
+          meta: {
+            x: this.$.canvas._cellHorizontalNum,
+            y: this.$.canvas._cellVerticalNum
+          }
+        };
+
+        if(this.editMode && this.isBrushModified === false){
+          setTimeout(() => this.isBrushModified = true, 500);
+        }
+      },
+
+      _storeBrush: function(event) {
+        this.push('brushes', {
+          name: 'Custom Brush',
+          thumbnail: this.$.canvas.getCanvasDataURL(),
+          payload: this.$.canvas.getRLE(this.$.canvas._gameManager.updateRegion()),
+          meta: {
+            x: this.$.canvas._cellHorizontalNum,
+            y: this.$.canvas._cellVerticalNum
+          }
+        });
+
+        this.isBrushModified = false;
+      },
+
+      _openPatternChooser: function(event) {
+        this.$.patternChooser.open();
+      },
+      _patternSelected: function(event) {
+        this.selectedItem = event.detail.pattern;
+        this.brush = event.detail.pattern;
+
+        if(!this.editMode){
+          this.$.canvas.clearCanvas();
+          this.$.canvas.drawPattern(this.selectedItem,
+                                      {
+                                        location: 'center',
+                                        coordinate: 'canvas',
+                                      });
+          this.isBrushModified = false;
+        }
+        // this.brush = event.detail.pattern;
+      },
+
+      // _handleColorChanged: function(red, green, blue){
+      //   // if(this.app){
+      //     // this.app.color = 'rgb(' + red + ', ' + green + ', ' + blue + ')';
+      //   // }
+      //   this.set('app.color', 'rgb(' + red + ', ' + green + ', ' + blue + ')');
+      // },
     });
   </script>
 </dom-module>
