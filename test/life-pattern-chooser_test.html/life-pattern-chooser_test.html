@@ -9,6 +9,8 @@
     <script src="../../../web-component-tester/browser.js"></script>
 
     <link rel="import" href="../../src/life-dialogs/life-pattern-chooser.html">
+
+    <link rel="import" href="../../bower_components/iron-test-helpers/iron-test-helpers.html">
   </head>
   <body>
 
@@ -19,7 +21,7 @@
     </test-fixture>
 
     <script>
-      suite('life-canvas-base', () => {
+      suite('life-pattern-chooser', () => {
         let element;
         let catalog;
 
@@ -104,8 +106,8 @@
           assert.equal(element.patternsPerPage, 3);
           assert.equal(element.pageCount, 2);
 
-          assert.equal(element.canGoNext, true);
-          assert.equal(element.canGoBack, false);
+          assert.isTrue(element.canGoNext);
+          assert.isFalse(element.canGoBack);
         });
 
         test('calculating patterns after changing page', () => {
@@ -120,14 +122,31 @@
           assert.equal(element.patternsPerPage, 3);
           assert.equal(element.pageCount, 2);
 
-          assert.equal(element.canGoNext, false);
-          assert.equal(element.canGoBack, true);
+          assert.isFalse(element.canGoNext);
+          assert.isTrue(element.canGoBack);
         });
 
-        test('should open inner dialog', () => {
+        test('openning inner dialog', () => {
           element.open();
 
-          assert.equal(element.$.dialog.opened, true);
+          assert.isTrue(element.$.dialog.opened);
+        });
+
+        test('tapping card', (done) => {
+          element.catalog = catalog;
+          element.patternsPerPage = 3;
+          element.currentPage = 0;
+
+          flush(() => {
+            const card = Polymer.dom(element.root).querySelectorAll('.patterns .card')[0];
+            assert.isDefined(card);
+
+            assert.isFalse(card.hasAttribute('selected'), 'card should not have selected attr by default');
+            MockInteractions.tap(card);
+            assert.isTrue(card.hasAttribute('selected'), 'card should have selected attr by tap');
+
+            done();
+          });
         });
 
 
