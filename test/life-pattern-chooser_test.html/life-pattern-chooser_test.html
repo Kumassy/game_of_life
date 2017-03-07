@@ -94,36 +94,44 @@
           assert.equal(element.pageCount, 0);
         });
 
-        test('calculating patterns for page', () => {
+        test('calculating patterns for page', (done) => {
           element.catalog = catalog;
           element.patternsPerPage = 3;
           element.currentPage = 0;
 
-          assert.equal(element.is, 'life-pattern-chooser');
-          assert.equal(element.catalog.length, 4);
-          assert.equal(element.currentPatterns.length, 3);
-          assert.equal(element.currentPage, 0);
-          assert.equal(element.patternsPerPage, 3);
-          assert.equal(element.pageCount, 2);
+          flush(() => {
+            assert.equal(element.is, 'life-pattern-chooser');
+            assert.equal(element.catalog.length, 4);
+            assert.equal(element.currentPatterns.length, 3);
+            assert.equal(element.currentPage, 0);
+            assert.equal(element.patternsPerPage, 3);
+            assert.equal(element.pageCount, 2);
 
-          assert.isTrue(element.canGoNext);
-          assert.isFalse(element.canGoBack);
+            assert.isTrue(element.canGoNext);
+            assert.isFalse(element.canGoBack);
+
+            done();
+          });
         });
 
-        test('calculating patterns after changing page', () => {
+        test('calculating patterns after changing page', (done) => {
           element.catalog = catalog;
           element.patternsPerPage = 3;
           element.currentPage = 1;
 
-          assert.equal(element.is, 'life-pattern-chooser');
-          assert.equal(element.catalog.length, 4);
-          assert.equal(element.currentPatterns.length, 1);
-          assert.equal(element.currentPage, 1);
-          assert.equal(element.patternsPerPage, 3);
-          assert.equal(element.pageCount, 2);
+          flush(() => {
+            assert.equal(element.is, 'life-pattern-chooser');
+            assert.equal(element.catalog.length, 4);
+            assert.equal(element.currentPatterns.length, 1);
+            assert.equal(element.currentPage, 1);
+            assert.equal(element.patternsPerPage, 3);
+            assert.equal(element.pageCount, 2);
 
-          assert.isFalse(element.canGoNext);
-          assert.isTrue(element.canGoBack);
+            assert.isFalse(element.canGoNext);
+            assert.isTrue(element.canGoBack);
+
+            done();
+          });
         });
 
         test('openning inner dialog', () => {
