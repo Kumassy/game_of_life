@@ -375,9 +375,12 @@
         // '_handleColorChanged(red, green, blue)'
       ],
 
+      ready: function() {
+        this.selectedItem = this.brushes[0];
+        this._refrectToCanvas();
+      },
 
-      _itemChanged: function(e){
-        this.set('selectedItem', e.model.get('item'));
+      _refrectToCanvas: function() {
         if(!this.editMode){
           this.$.canvas.clearCanvas();
           this.$.canvas.drawPattern(this.selectedItem,
@@ -387,6 +390,12 @@
                                       });
           this.isBrushModified = false;
         }
+      },
+
+
+      _itemChanged: function(e){
+        this.set('selectedItem', e.model.get('item'));
+        this._refrectToCanvas();
       },
 
       _updateBrush: function() {
@@ -426,15 +435,7 @@
         this.selectedItem = event.detail.pattern;
         this.brush = event.detail.pattern;
 
-        if(!this.editMode){
-          this.$.canvas.clearCanvas();
-          this.$.canvas.drawPattern(this.selectedItem,
-                                      {
-                                        location: 'center',
-                                        coordinate: 'canvas',
-                                      });
-          this.isBrushModified = false;
-        }
+        this._refrectToCanvas();
         // this.brush = event.detail.pattern;
       },
 
