@@ -18,6 +18,8 @@
         this.state = 1;
       }
     }
+
+    return this.state;
   };
 
   var GameManager = function(cellWidth, cellHeight, cellSize, canvas){
@@ -27,6 +29,13 @@
 
     this.canvas = canvas;
     this.context = canvas.getContext('2d');
+
+    this.region = {
+      top: this.CELL_HEIGHT,
+      left: this.CELL_WIDTH,
+      bottom: -1,
+      right: -1
+    };
 
     this.cells = new Array(this.CELL_WIDTH * this.CELL_HEIGHT);
     for(var i=0; i < this.cells.length; i++){
@@ -83,9 +92,54 @@
       directions.forEach((d) => {
         aliveCount += this._getCellStateAt(cell.x + d[0], cell.y + d[1]);
       });
-      cell.update(aliveCount);
+
+      cell.update(aliveCount)
+
+      if(cell.state) {
+        if(cell.x < this.region.left) {
+          this.region.left = cell.x;
+        }
+        if(cell.x > this.region.right) {
+          this.region.right = cell.x;
+        }
+        if(cell.y < this.region.top) {
+          this.region.top = cell.y;
+        }
+        if(cell.y > this.region.bottom) {
+          this.region.bottom = cell.y;
+        }
+      }
     });
   };
+
+  GameManager.prototype.updateRegion = function(){
+    let region = {
+      top: this.CELL_HEIGHT,
+      left: this.CELL_WIDTH,
+      bottom: -1,
+      right: -1
+    };
+
+    this.cells.forEach((cell) => {
+      if(cell.state) {
+        if(cell.x < region.left) {
+          region.left = cell.x;
+        }
+        if(cell.x > region.right) {
+          region.right = cell.x;
+        }
+        if(cell.y < region.top) {
+          region.top = cell.y;
+        }
+        if(cell.y > region.bottom) {
+          region.bottom = cell.y;
+        }
+      }
+    });
+
+    this.region = region;
+    return region;
+  }
 
 
   GameManager.prototype._parseRLE = function(src){
@@ -119,12 +173,19 @@
   };
 
   // GameManager.prototype._encodeRLE = function(){
-  GameManager.prototype.toRLE = function(){
+  GameManager.prototype.toRLE = function(region){
+    region = region || {
+      top: 0,
+      left: 0,
+      bottom: this.CELL_HEIGHT - 1,
+      right: this.CELL_WIDTH - 1
+    };
+
     var accumulator = [];
     var line = [];
-    for(i = 0; i < this.CELL_HEIGHT; i++){
-      for(j = 0; j < this.CELL_WIDTH; j++){
-        line.push(this.getCellAt(j, i).state);
+    for(let y = region.top; y <= region.bottom; y++){
+      for(let x = region.left; x <= region.right; x++){
+        line.push(this.getCellAt(x, y).state);
       }
 
       var t = line.join('');

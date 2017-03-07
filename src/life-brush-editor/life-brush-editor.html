@@ -380,7 +380,7 @@
         this.brush = {
           id: 'brush',
           name: 'Brush',
-          payload: this.$.canvas.getRLE(),
+          payload: this.$.canvas.getRLE(this.$.canvas._gameManager.updateRegion()),
           meta: {
             x: this.$.canvas._cellHorizontalNum,
             y: this.$.canvas._cellVerticalNum
@@ -396,7 +396,7 @@
         this.push('brushes', {
           name: 'Custom Brush',
           thumbnail: this.$.canvas.getCanvasDataURL(),
-          payload: this.$.canvas.getRLE(),
+          payload: this.$.canvas.getRLE(this.$.canvas._gameManager.updateRegion()),
           meta: {
             x: this.$.canvas._cellHorizontalNum,
             y: this.$.canvas._cellVerticalNum
