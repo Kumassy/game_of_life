@@ -180,6 +180,28 @@
           });
         });
 
+        test('fire event when closing dialog with selected pattern', (done) => {
+          element.catalog = catalog;
+          element.patternsPerPage = 3;
+          element.currentPage = 0;
+
+          flush(() => {
+            const card = Polymer.dom(element.root).querySelectorAll('.patterns .card')[2];
+            const goNextButton = element.$.goNext;
+            const goBackButton = element.$.goBack;
+            const okButton = element.$.ok;
+
+            element.addEventListener('pattern-selected', (event) => {
+              assert.equal(event.detail.pattern.id, 'light_weight_spaceship');
+              assert.deepEqual(event.detail.pattern, catalog[2]);
+              done();
+            });
+
+            MockInteractions.tap(card);
+            MockInteractions.tap(okButton);
+          });
+        });
+
       });
     </script>
   </body>
