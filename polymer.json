@@ -4,5 +4,11 @@
   "fragments": [
     "src/life-canvas/life-canvas.html",
     "src/life-app/life-app.html"
+  ],
+  "includeDependencies": [
+    "bower_components/webcomponentsjs/webcomponents-lite.js",
+    "bower_components/webcomponentsjs/webcomponents-lite.min.js",
+    "patterns.json",
+    "patterns-lite.json"
   ]
 }

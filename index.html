@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <base href="http://localhost:8080/life" target="_blank">
     <link rel="manifest" href="manifest.json">
-    <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <!-- <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script> -->
     <link rel="import" href="src/app-shell/app-shell.html">
 
     <link rel="import" href="src/life-app/life-app.html">
@@ -23,5 +23,19 @@
   </head>
   <body>
     <app-shell></app-shell>
+    <script type="text/javascript">
+      (function() {
+        if ('registerElement' in document
+            && 'import' in document.createElement('link')
+            && 'content' in document.createElement('template')) {
+          // platform is good!
+        } else {
+          // polyfill the platform!
+          var e = document.createElement('script');
+          e.src = 'bower_components/webcomponentsjs/webcomponents-lite.min.js';
+          document.body.appendChild(e);
+        }
+      })();
+    </script>
   </body>
 </html>
