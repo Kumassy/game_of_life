@@ -37,6 +37,11 @@
       right: -1
     };
 
+    this.cellColor = 'rgb(255, 0, 0)';
+    this.overlayColor = 'rgba(255, 0, 0, 0.3)';
+    this.backgroundColor = 'rgb(238, 238, 238)';
+    this.backgroundImage = null;
+
     this.cells = new Array(this.CELL_WIDTH * this.CELL_HEIGHT);
     for(var i=0; i < this.cells.length; i++){
       this.cells[i] = new Cell( i % this.CELL_WIDTH, Math.floor(i / this.CELL_WIDTH ));
@@ -57,19 +62,19 @@
     return this.cells[ x + y * this.CELL_WIDTH ]._state;
   };
 
-  GameManager.prototype.refreshCanvas = function(backgroundColor, backgroundImage){
-    if(backgroundImage){
-      this.context.fillStyle = backgroundColor || '#eeeeee';
+  GameManager.prototype.refreshCanvas = function(){
+    if(this.backgroundImage){
+      this.context.fillStyle = this.backgroundColor;
       this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
       this.context.drawImage(backgroundImage, 0, 0);
     }
     else{
-      this.context.fillStyle = backgroundColor || '#eeeeee';
+      this.context.fillStyle = this.backgroundColor;
       this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
   };
 
-  GameManager.prototype.draw = function(color){
+  GameManager.prototype.draw = function(){
     this.cells.forEach((cell) => {
       cell._state = cell.state;
 
@@ -77,7 +82,7 @@
       if(cell.state){
         // this.context.fillStyle = '#ff0000';
         // this.context.fillStyle = cell.color;
-        this.context.fillStyle = color;
+        this.context.fillStyle = this.cellColor;
         this.context.fillRect(cell.x * this.CELL_SIZE, cell.y * this.CELL_SIZE, this.CELL_SIZE, this.CELL_SIZE);
       }
     });
@@ -242,7 +247,7 @@
 
 
   // GameManager.prototype.injectPattern = function(startX, startY, pattern, color){
-  GameManager.prototype.drawPattern = function(startX, startY, pattern, color){
+  GameManager.prototype.drawPattern = function(startX, startY, pattern){
     if(!Array.isArray(pattern)){
       pattern = this._parseRLE(pattern);
     }
@@ -253,7 +258,7 @@
         if(pattern[i][j] === "1"){
           if(this.getCellAt(startX + j, startY + i)){
             this.getCellAt(startX + j, startY + i).state = 1;
-            this.getCellAt(startX + j, startY + i).color = color;
+            // this.getCellAt(startX + j, startY + i).color = this.color;
           }
         }
       }
@@ -262,7 +267,7 @@
   };
 
   // GameManager.prototype.injectOverlay = function(startX, startY, pattern, color){
-  GameManager.prototype.drawOverlay = function(startX, startY, pattern, color){
+  GameManager.prototype.drawOverlay = function(startX, startY, pattern){
     if(!Array.isArray(pattern)){
       pattern = this._parseRLE(pattern);
     }
@@ -272,7 +277,7 @@
           if(this.getCellAt(startX + j, startY + i)){
             // ^ use Cell.getCellAt() to check boundaries
             // this.context.fillStyle = 'rgba(255, 0, 0, 0.3)';
-            this.context.fillStyle = color;
+            this.context.fillStyle = this.overlayColor;
             this.context.fillRect((startX + j) * this.CELL_SIZE, (startY + i) * this.CELL_SIZE, this.CELL_SIZE, this.CELL_SIZE);
           }
         }

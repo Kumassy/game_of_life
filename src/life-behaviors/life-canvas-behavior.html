@@ -74,7 +74,8 @@
     },
 
     observers: [
-      '_handleSizeChanged(width, height, cellSize, mode, canvas)' // add canvas to ensure not undefined
+      '_handleSizeChanged(width, height, cellSize, mode, canvas)', // add canvas to ensure not undefined
+      '_syncColors(cellColor, overlayColor, backgroundColor)',
     ],
 
     ready: function(){
@@ -96,6 +97,12 @@
       }
 
       this._initialize();
+    },
+
+    _syncColors: function(cellColor, overlayColor, backgroundColor){
+      this._gameManager.cellColor = cellColor;
+      this._gameManager.overlayColor = overlayColor;
+      this._gameManager.backgroundColor = backgroundColor;
     },
 
     _initialize: function(){
@@ -133,26 +140,26 @@
         y = location.y;
       }
 
-      this._gameManager.drawPattern(x, y, pattern.payload, this.cellColor);
-      this._gameManager.draw(this.cellColor);
+      this._gameManager.drawPattern(x, y, pattern.payload);
+      this._gameManager.draw();
       this.fire('draw');
     },
     drawPatternAsOverlay: function(startX, startY, pattern){
-      this._gameManager.drawOverlay(startX, startY, pattern.payload, this.overlayColor);
+      this._gameManager.drawOverlay(startX, startY, pattern.payload);
     },
     drawPreview: function() {
       return null;
     },
     clearCanvas: function(){
       this._gameManager.clearCanvas();
-      this._gameManager.refreshCanvas(this.backgroundColor);
+      this._gameManager.refreshCanvas();
     },
 
     mainLoop: function(){
       if(this.isPlaying){
         // this._gameManager.refreshCanvas(this.backgroundColor, this.background);
-        this._gameManager.refreshCanvas(this.backgroundColor);
-        this._gameManager.draw(this.cellColor);
+        this._gameManager.refreshCanvas();
+        this._gameManager.draw();
         this._gameManager.update();
         // this.fire('game-loop-end');
         this.drawPreview();
