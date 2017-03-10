@@ -1,26 +1,30 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<!-- <link rel="import" href="../cell.html"> -->
-<link rel="import" href="../life-canvas-base/life-canvas-base.html">
-
+<link rel="import" href="../life-behaviors/life-canvas-behavior.html">
 
 <dom-module id="life-canvas">
   <template>
-    <!-- <canvas width$="[[app.gameManager.CANVAS_SIZE_X]]" height$="[[app.gameManager.CANVAS_SIZE_Y]]" id="canvas">Your browser doesn't support html5 canvas.</canvas> -->
-    <life-canvas-base id="canvas" is-playing="{{app.controller.isPlaying}}" refresh-rate="[[app.controller.refreshRate]]" width="[[app.width]]" height="[[app.height]]" cell-size="[[app.cellSize]]" mode="cell" on-game-loop-end="_drawPreview" background="[[app.backgroundImage]]" color="[[app.color]]" background-color="[[app.backgroundColor]]"></life-canvas-base>
+    <canvas id="canvas" width$="[[_canvasWidth]]" height$="[[_canvasHeight]]">Your browser doesn't support html5 canvas</canvas>
   </template>
 
   <script>
     Polymer({
       is: 'life-canvas',
-
+      behaviors: [LifeCanvasBehavior],
       properties: {
-        // app: Object,
-        app: {
-          type: Object,
+        mode: {
+          type: String,
+          value: 'cell'
         },
-        // main: {
+        canvas: {
+          type: Object,
+          value: function() {
+            return this.$.canvas;
+          }
+        },
+
+        // app: Object,
+        // app: {
         //   type: Object,
-        //   value: {}
         // },
         isDrawing: {
           type: Boolean,
@@ -28,37 +32,33 @@
         },
         mousePos: {
           type: Object,
+          value: function() {
+            return {
+              x: -1,
+              y: -1
+            }
+          }
+        },
+
+        brush: {
+          type: Object,
           value: {}
-        }
+        },
+        editable: {
+          type: Boolean,
+          value: true
+        },
 
       },
 
       ready: function() {
-        // this.initialize();
-
-        this.$.canvas.getCanvas().addEventListener('click', this._plotOnClick(this), false);
-        this.$.canvas.getCanvas().addEventListener('mousemove', this._handlePlotSeq(this), false);
-        this.$.canvas.getCanvas().addEventListener('mousemove', this._updateMousePos(this), false);
-        this.$.canvas.getCanvas().addEventListener('mousedown', this._handlePlotStart(this), false);
-        this.$.canvas.getCanvas().addEventListener('mouseup', this._handlePlotEnd(this), false);
-        this.$.canvas.getCanvas().addEventListener('mouseenter', this._handleMouseEnter(this), false);
-        this.$.canvas.getCanvas().addEventListener('mouseleave', this._handleMouseLeave(this), false);
-
-        this.app.controller = {};
-        this.set('app.controller.isPlaying', true);
-        this.set('app.controller.refreshRate', 30);
-        this.mousePos.x = -1;
-        this.mousePos.y = -1;
-
-        this.set('app.width', 200);
-        this.set('app.height', 150);
-        this.set('app.cellSize', 4);
-
-        this.set('app.color', 'rgb(255, 0, 0)');
-        this.set('app.colora', 'rgba(255, 0, 0, 0.3)');
-        this.set('app.backgroundColor', 'rgb(238, 238, 238)');
-
-        // this.mainLoop();
+        this.canvas.addEventListener('click', this._plotOnClick(this), false);
+        this.canvas.addEventListener('mousemove', this._handlePlotSeq(this), false);
+        this.canvas.addEventListener('mousemove', this._updateMousePos(this), false);
+        this.canvas.addEventListener('mousedown', this._handlePlotStart(this), false);
+        this.canvas.addEventListener('mouseup', this._handlePlotEnd(this), false);
+        this.canvas.addEventListener('mouseenter', this._handleMouseEnter(this), false);
+        this.canvas.addEventListener('mouseleave', this._handleMouseLeave(this), false);
       },
 
       _toCellCoordinates: function(e){
@@ -66,14 +66,21 @@
         var x = e.clientX - rect.left;
         var y = e.clientY - rect.top;
 
-        return [Math.floor(x / this.$.canvas.cellSize), Math.floor(y / this.$.canvas.cellSize)];
+        return [Math.floor(x / this.cellSize), Math.floor(y / this.cellSize)];
       },
 
 
       _plotOnClick: function(self){
         return function(e){
-          if(!self.app._selectedPattern || Object.keys(self.app._selectedPattern).length === 0 ) return;
-          self.injectPattern.apply(self, [...self._toCellCoordinates(e), self.app._selectedPattern.payload]);
+          if(!self.brush || Object.keys(self.brush).length === 0 || !self.editable) return;
+          // self.drawPattern.apply(self, [...self._toCellCoordinates(e), self.brush]);
+          self.drawPattern(self.brush,
+                             {
+                               location: 'top-left',
+                               coordinate: 'cursor',
+                               x: self._toCellCoordinates(e)[0],
+                               y: self._toCellCoordinates(e)[1],
+                             });
           // self._draw();
         };
       },
@@ -102,7 +109,7 @@
       },
       _handleMouseEnter: function(self){
         return function(e){
-          console.log("enter!!");
+          // console.log("enter!!");
           self.onHover = true;
         };
       },
@@ -112,56 +119,16 @@
         };
       },
 
-      _drawPreview: function(){
+      drawPreview: function(){
         // if( !this.app.catalog || !this.app.selected) return;
-        if(!this.app._catalog || !this.app._selectedPattern || Object.keys(this.app._selectedPattern).length === 0 || !this.onHover) return;
+        // if(!this.app._catalog || !this.app._selectedPattern || Object.keys(this.app._selectedPattern).length === 0 || !this.onHover) return;
+        if(!this.brush || Object.keys(this.brush).length === 0 || !this.onHover) return;
         var startX = this.mousePos.x;
         var startY = this.mousePos.y;
-        var pattern = this.app._selectedPattern.payload;
+        var pattern = this.brush;
 
-        this.$.canvas.injectOverlay(startX, startY, pattern, this.app.colora);
+        this.drawPatternAsOverlay(startX, startY, pattern);
       },
-
-      getCanvasDataURL: function(){
-        return this.$.canvas.getCanvasDataURL();
-      },
-
-      getRLE: function(){
-        return this.$.canvas.getRLE();
-      },
-
-      initialize: function(){
-        this.$.canvas.initialize();
-      },
-
-      injectPattern: function(startX, startY, pattern){
-        this.$.canvas.injectPattern(startX, startY, pattern, this.app.color);
-      },
-      clearCanvas: function(){
-        this.$.canvas.clearCanvas();
-      },
-
-      // setColors: function(){
-      //   var gm = this.$.canvas._gameManager;
-      //   console.log(gm);
-      //   if(this.app._colors.width < gm.CELL_WIDTH || this.app._colors.height < gm.CELL_HEIGHT){
-      //     console.log("error!!");
-      //     return;
-      //   }
-      //
-      //   for(var i = 0; i < gm.CELL_HEIGHT; i++){
-      //     for(var j = 0; j < gm.CELL_WIDTH; j++){
-      //       gm.getCellAt(j, i).color = this.app._colors.payload[i][j];
-      //       gm.getCellAt(j, i).state = 1;
-      //     }
-      //   }
-      //   gm.draw();
-      //
-      //   console.log("done!");
-      //
-      //
-      //
-      // },
 
     });
   </script>

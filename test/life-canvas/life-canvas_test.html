@@ -1,0 +1,113 @@
+<!doctype html>
+
+<html>
+  <head>
+    <title>life-canvas-base test</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../../src/life-canvas/life-canvas.html">
+  </head>
+  <body>
+
+    <test-fixture id="basic">
+      <template>
+        <life-canvas></life-canvas>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="testForCanvasSize">
+      <template>
+        <life-canvas mode="cell"></life-canvas>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="testForCellSize">
+      <template>
+        <life-canvas mode="canvas"></life-canvas>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite('life-canvas', function() {
+        test('instantiating the element works', function() {
+          var element = fixture('basic');
+          assert.equal(element.is, 'life-canvas');
+          assert.equal(element.width, 20);
+          assert.equal(element.height, 20);
+          assert.equal(element.mode, 'cell');
+          assert.equal(element.cellSize, 4);
+        });
+        test('calculate canvas width/height', function() {
+          var element = fixture('testForCanvasSize');
+          assert.equal(element.is, 'life-canvas');
+          assert.equal(element.width, 20);
+          assert.equal(element.height, 20);
+          assert.equal(element.mode, 'cell');
+          assert.equal(element.cellSize, 4);
+
+          assert.equal(element._canvasWidth, 80);
+          assert.equal(element._canvasHeight, 80);
+          assert.equal(element._cellHorizontalNum, 20);
+          assert.equal(element._cellVerticalNum, 20);
+        });
+        test('calculate cell width/height', function() {
+          var element = fixture('testForCellSize');
+          assert.equal(element.is, 'life-canvas');
+          assert.equal(element.width, 20);
+          assert.equal(element.height, 20);
+          assert.equal(element.mode, 'canvas');
+          assert.equal(element.cellSize, 4);
+
+          assert.equal(element._canvasWidth, 20);
+          assert.equal(element._canvasHeight, 20);
+          assert.equal(element._cellHorizontalNum, 5);
+          assert.equal(element._cellVerticalNum, 5);
+
+        });
+        test('should update canvas width/height', function() {
+          var element = fixture('testForCanvasSize');
+          assert.equal(element.is, 'life-canvas');
+          assert.equal(element.width, 20);
+          assert.equal(element.height, 20);
+          assert.equal(element.mode, 'cell');
+          assert.equal(element.cellSize, 4);
+
+          element.set('width', 40);
+          element.set('height', 50);
+
+          assert.equal(element.width, 40);
+          assert.equal(element.height, 50);
+          assert.equal(element._cellHorizontalNum, 40);
+          assert.equal(element._cellVerticalNum, 50);
+
+          assert.equal(element._canvasWidth, 160);
+          assert.equal(element._canvasHeight, 200);
+
+        });
+
+        test('should update cell width/height', function() {
+          var element = fixture('testForCellSize');
+          assert.equal(element.is, 'life-canvas');
+          assert.equal(element.width, 20);
+          assert.equal(element.height, 20);
+          assert.equal(element.mode, 'canvas');
+          assert.equal(element.cellSize, 4);
+
+          element.set('width', 40);
+          element.set('height', 60);
+
+          assert.equal(element.width, 40);
+          assert.equal(element.height, 60);
+          assert.equal(element._canvasWidth, 40);
+          assert.equal(element._canvasHeight, 60);
+
+          assert.equal(element._cellHorizontalNum, 10);
+          assert.equal(element._cellVerticalNum, 15);
+        });
+      });
+    </script>
+  </body>
+</html>

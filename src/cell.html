@@ -18,6 +18,8 @@
         this.state = 1;
       }
     }
+
+    return this.state;
   };
 
   var GameManager = function(cellWidth, cellHeight, cellSize, canvas){
@@ -27,6 +29,18 @@
 
     this.canvas = canvas;
     this.context = canvas.getContext('2d');
+
+    this.region = {
+      top: this.CELL_HEIGHT,
+      left: this.CELL_WIDTH,
+      bottom: -1,
+      right: -1
+    };
+
+    this.cellColor = 'rgb(255, 0, 0)';
+    this.overlayColor = 'rgba(255, 0, 0, 0.3)';
+    this.backgroundColor = 'rgb(238, 238, 238)';
+    this.backgroundImage = null;
 
     this.cells = new Array(this.CELL_WIDTH * this.CELL_HEIGHT);
     for(var i=0; i < this.cells.length; i++){
@@ -48,44 +62,89 @@
     return this.cells[ x + y * this.CELL_WIDTH ]._state;
   };
 
-  GameManager.prototype.refreshCanvas = function(backgroundColor, backgroundImage){
-    if(backgroundImage){
-      this.context.fillStyle = backgroundColor || '#eeeeee';
+  GameManager.prototype.refreshCanvas = function(){
+    if(this.backgroundImage){
+      this.context.fillStyle = this.backgroundColor;
       this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
       this.context.drawImage(backgroundImage, 0, 0);
     }
     else{
-      this.context.fillStyle = backgroundColor || '#eeeeee';
+      this.context.fillStyle = this.backgroundColor;
       this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
   };
 
-  GameManager.prototype.draw = function(color){
-    this.cells.forEach(function(cell){
+  GameManager.prototype.draw = function(){
+    this.cells.forEach((cell) => {
       cell._state = cell.state;
 
       // cell.draw();
       if(cell.state){
         // this.context.fillStyle = '#ff0000';
         // this.context.fillStyle = cell.color;
-        this.context.fillStyle = color;
+        this.context.fillStyle = this.cellColor;
         this.context.fillRect(cell.x * this.CELL_SIZE, cell.y * this.CELL_SIZE, this.CELL_SIZE, this.CELL_SIZE);
       }
-    }.bind(this));
+    });
   };
   GameManager.prototype.update = function(){
     var directions = [[-1, -1], [0, -1], [1, -1],
                       [-1, 0], [1, 0],
                       [-1, 1], [0, 1], [1, 1]];
 
-    this.cells.forEach(function(cell){
+    this.cells.forEach((cell) => {
       var aliveCount = 0;
-      directions.forEach(function(d){
+      directions.forEach((d) => {
         aliveCount += this._getCellStateAt(cell.x + d[0], cell.y + d[1]);
-      }.bind(this));
-      cell.update(aliveCount);
-    }.bind(this));
+      });
+
+      cell.update(aliveCount)
+
+      if(cell.state) {
+        if(cell.x < this.region.left) {
+          this.region.left = cell.x;
+        }
+        if(cell.x > this.region.right) {
+          this.region.right = cell.x;
+        }
+        if(cell.y < this.region.top) {
+          this.region.top = cell.y;
+        }
+        if(cell.y > this.region.bottom) {
+          this.region.bottom = cell.y;
+        }
+      }
+    });
   };
+
+  GameManager.prototype.updateRegion = function(){
+    let region = {
+      top: this.CELL_HEIGHT,
+      left: this.CELL_WIDTH,
+      bottom: -1,
+      right: -1
+    };
+
+    this.cells.forEach((cell) => {
+      if(cell.state) {
+        if(cell.x < region.left) {
+          region.left = cell.x;
+        }
+        if(cell.x > region.right) {
+          region.right = cell.x;
+        }
+        if(cell.y < region.top) {
+          region.top = cell.y;
+        }
+        if(cell.y > region.bottom) {
+          region.bottom = cell.y;
+        }
+      }
+    });
+
+    this.region = region;
+    return region;
+  }
 
 
   GameManager.prototype._parseRLE = function(src){
@@ -118,12 +177,20 @@
     return result;
   };
 
-  GameManager.prototype._encodeRLE = function(){
+  // GameManager.prototype._encodeRLE = function(){
+  GameManager.prototype.toRLE = function(region){
+    region = region || {
+      top: 0,
+      left: 0,
+      bottom: this.CELL_HEIGHT - 1,
+      right: this.CELL_WIDTH - 1
+    };
+
     var accumulator = [];
     var line = [];
-    for(i = 0; i < this.CELL_HEIGHT; i++){
-      for(j = 0; j < this.CELL_WIDTH; j++){
-        line.push(this.getCellAt(j, i).state);
+    for(let y = region.top; y <= region.bottom; y++){
+      for(let x = region.left; x <= region.right; x++){
+        line.push(this.getCellAt(x, y).state);
       }
 
       var t = line.join('');
@@ -179,7 +246,8 @@
   };
 
 
-  GameManager.prototype.injectPattern = function(startX, startY, pattern, color){
+  // GameManager.prototype.injectPattern = function(startX, startY, pattern, color){
+  GameManager.prototype.drawPattern = function(startX, startY, pattern){
     if(!Array.isArray(pattern)){
       pattern = this._parseRLE(pattern);
     }
@@ -190,7 +258,7 @@
         if(pattern[i][j] === "1"){
           if(this.getCellAt(startX + j, startY + i)){
             this.getCellAt(startX + j, startY + i).state = 1;
-            this.getCellAt(startX + j, startY + i).color = color;
+            // this.getCellAt(startX + j, startY + i).color = this.color;
           }
         }
       }
@@ -198,7 +266,8 @@
     // console.log(pattern);
   };
 
-  GameManager.prototype.injectOverlay = function(startX, startY, pattern, color){
+  // GameManager.prototype.injectOverlay = function(startX, startY, pattern, color){
+  GameManager.prototype.drawOverlay = function(startX, startY, pattern){
     if(!Array.isArray(pattern)){
       pattern = this._parseRLE(pattern);
     }
@@ -208,7 +277,7 @@
           if(this.getCellAt(startX + j, startY + i)){
             // ^ use Cell.getCellAt() to check boundaries
             // this.context.fillStyle = 'rgba(255, 0, 0, 0.3)';
-            this.context.fillStyle = color;
+            this.context.fillStyle = this.overlayColor;
             this.context.fillRect((startX + j) * this.CELL_SIZE, (startY + i) * this.CELL_SIZE, this.CELL_SIZE, this.CELL_SIZE);
           }
         }
