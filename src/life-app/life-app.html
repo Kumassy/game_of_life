@@ -23,10 +23,6 @@
 <link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
 
-<link rel="import" href="../../bower_components/app-route/app-route.html">
-<link rel="import" href="../../bower_components/app-route/app-location.html">
-<link rel="import" href="../../bower_components/app-route/app-route-converter.html">
-
 
 <link rel="import" href="../life-icon-toggle/life-icon-toggle.html">
 <link rel="import" href="../life-dialogs/life-save-dialog.html">
@@ -122,30 +118,26 @@
       properties: {
         app: {
           type: Object,
-          value: function() {
-            return {
-              _catalog: [],
-              saves: [],
-              controller: {
-                isPlaying: true,
-                refreshRate: 30,
-              },
-              width: 200,
-              height: 150,
-              cellSize: 4,
-              cellColor: 'rgb(255, 0, 0)',
-              overlayColor: 'rgba(255, 0, 0, 0.3)',
-              backgroundColor: 'rgb(238, 238, 238)',
-            };
-          }
+          // value: function () {
+            // return {
+            //   _catalog: [],
+            //   saves: [],
+            //   controller: {
+            //     isPlaying: true,
+            //     refreshRate: 30,
+            //   },
+            //   width: 200,
+            //   height: 150,
+            //   cellSize: 4,
+            //   cellColor: 'rgb(255, 0, 0)',
+            //   overlayColor: 'rgba(255, 0, 0, 0.3)',
+            //   backgroundColor: 'rgb(238, 238, 238)',
+            // };
+          // }
         },
         params: {
           type: Object,
           observer: '_onParamsChanged'
-        },
-        page: {
-          type: String,
-          value: 'playground'
         },
         _tab: {
           type: Number,
@@ -166,17 +158,6 @@
         // }
       },
 
-      observers: [
-        '_routePageChanged(routeData.page)',
-        '_queryParamsChanged(queryParams)',
-
-      ],
-      listeners: {
-        'add-collection': '_addCollection',
-        'show-collection-detail': '_showCollectionDetail',
-        'open-settings-dialog': '_openSettingsDialog'
-      },
-
       ready: function() {
         // this.app._catalog = [];
 
@@ -189,41 +170,25 @@
 
       },
 
-      _routePageChanged: function(page) {
-        this.page = page;
-      },
+      _onParamsChanged: function(newParams){
+        // process params
+        // console.log(this.params);
 
-      _queryParamsChanged: function(params){
-        if(params.state){
-          if(params.state === 'playing'){
+        if(this.params.state){
+          if(this.params.state === 'playing'){
             this._startPlaying();
           }
-          else if(params.state === 'paused'){
+          else if(this.params.state === 'paused'){
             this._stopPlaying();
           }
         }
 
-        if(params.data){
+        if(this.params.data){
+          // var lifeCanvas = document.querySelector('life-canvas')
           var lifeCanvas = this.$.mainCanvas;
           lifeCanvas.clearCanvas();
-          lifeCanvas.injectPattern(0, 0, params.data);
+          lifeCanvas.injectPattern(0, 0, this.params.data);
         }
-      },
-
-      _addCollection: function() {
-        this._handleCreateNewSave();
-      },
-
-      _openSettingsDialog: function() {
-        this.$.settingsDialog.open();
-      },
-
-      _showCollectionDetail: function(event) {
-        this.$.infoViewDialog.target = event.detail.collection;
-
-        // this.$.endDrawer.toggle();
-        document.getElementById('endDrawer').toggle();
-        this.$.infoViewDialog.open();
       },
 
       _startPlaying: function(){
@@ -357,8 +322,7 @@
         this.set('app._selectedSave', e.model.get('item'));
         this.set('app._selectedSaveIndex', e.model.get('index'));
 
-        // this.$.endDrawer.toggle();
-        document.getElementById('endDrawer').toggle();
+        this.$.endDrawer.toggle();
         this.$.infoViewDialog.open();
         // console.log(this.app.saves);
       },

@@ -19,37 +19,11 @@
     </test-fixture>
 
     <script>
-      suite('life-app', () => {
-        let app;
+      suite('life-app', function() {
 
-        setup(() => {
-          app = fixture('basic');
-
-        });
-
-        test('instantiating the element works',() => {
-          assert.equal(app.is, 'life-app');
-        });
-
-        test('queryParams works', () => {
-          app.route = {
-            prefix: '',
-            path: '/playground',
-            __queryParams: {
-              state: "playing"
-            }
-          };
-          assert.isTrue(app.app.controller.isPlaying);
-
-
-          app.route = {
-            prefix: '',
-            path: '/playground',
-            __queryParams: {
-              state: "paused"
-            }
-          };
-          assert.isFalse(app.app.controller.isPlaying);
+        test('instantiating the element works', function() {
+          var element = fixture('basic');
+          assert.equal(element.is, 'life-app');
         });
 
       });

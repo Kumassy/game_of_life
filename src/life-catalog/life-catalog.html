@@ -10,6 +10,7 @@
 
 <dom-module id="life-catalog">
   <template>
+<<<<<<< HEAD:src/life-catalog/life-catalog.html
     <app-route
       route="{{route}}"
       pattern="/page/:page"
@@ -25,6 +26,25 @@
             <div class="author">[[item.author]]</div>
             <div class="comments">[[item.comments]]</div>
           </div>
+=======
+    <template is="dom-repeat" items="[[catalogForPage]]">
+      <div class="card">
+        <!-- <life-preview-canvas width="240" height="240" auto-play rle="[[item.payload]]" pattern-width="[[item.meta.x]]" pattern-height="[[item.meta.y]]"></life-preview-canvas> -->
+        <life-preview-canvas width="240" height="240" auto-play pattern="[[item]]"></life-preview-canvas>
+
+        <!-- <div role="listbox">
+          <paper-item>[[item.name]]</paper-item>
+          <paper-item>[[item.author]]</paper-item>
+          <paper-item>[[item.comments]]</paper-item>
+          <paper-item>[[item.meta.rule]]</paper-item>
+          <paper-item>[[item.meta.x]]</paper-item>
+          <paper-item>[[item.meta.y]]</paper-item>
+        </div> -->
+        <div class="card-content">
+          <div class="title">[[item.name]]</div>
+          <div class="author">[[item.author]]</div>
+          <div class="comments">[[item.comments]]</div>
+>>>>>>> parent of 29c772f... refactor html structures:src/life-patterns/life-patterns.html
         </div>
       </template>
     </div>
@@ -119,6 +139,7 @@
 
       },
 
+<<<<<<< HEAD:src/life-catalog/life-catalog.html
       observers: [
         '_routePageChanged(_routeData.page)',
       ],
@@ -128,6 +149,8 @@
       },
 
 
+=======
+>>>>>>> parent of 29c772f... refactor html structures:src/life-patterns/life-patterns.html
       // _pager: function(item){
       //   if(Math.random() > 0.98){
       //     console.log(item);
