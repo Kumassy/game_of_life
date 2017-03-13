@@ -140,18 +140,18 @@
             };
           }
         },
-        params: {
-          type: Object,
-          observer: '_onParamsChanged'
-        },
+        // params: {
+        //   type: Object,
+        //   observer: '_onParamsChanged'
+        // },
         page: {
           type: String,
           value: 'playground'
         },
-        _tab: {
-          type: Number,
-          value: 0
-        },
+        // _tab: {
+        //   type: Number,
+        //   value: 0
+        // },
         _selectedSavesIndex: {
           type: Number,
           value: 0
@@ -193,7 +193,7 @@
 
       _routePageChanged: function(page) {
         this.page = page;
-        this.set('route.path', page);
+        // this.set('route.path', page);
       },
 
       _queryParamsChanged: function(params){
