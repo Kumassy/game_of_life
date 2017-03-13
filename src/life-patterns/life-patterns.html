@@ -9,6 +9,11 @@
 
 <dom-module id="life-patterns">
   <template>
+    <app-route
+        route="{{route}}"
+        pattern="/page/:page"
+        data="{{routeData}}"></app-route>
+
     <template is="dom-repeat" items="[[catalogForPage]]">
       <div class="card">
         <!-- <life-preview-canvas width="240" height="240" auto-play rle="[[item.payload]]" pattern-width="[[item.meta.x]]" pattern-height="[[item.meta.y]]"></life-preview-canvas> -->
@@ -109,6 +114,14 @@
         }
 
 
+      },
+
+      observers: [
+        '_routePageChanged(routeData.page)',
+      ],
+
+      _routePageChanged: function(page) {
+        this.currentPage = page;
       },
 
       // _pager: function(item){

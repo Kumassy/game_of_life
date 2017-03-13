@@ -23,6 +23,10 @@
 <link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
 
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../bower_components/app-route/app-route-converter.html">
+
 
 <link rel="import" href="../life-icon-toggle/life-icon-toggle.html">
 <link rel="import" href="../life-dialogs/life-save-dialog.html">
@@ -31,142 +35,61 @@
 <link rel="import" href="../life-preview-canvas/life-preview-canvas.html">
 <link rel="import" href="../life-canvas/life-canvas.html">
 <link rel="import" href="../life-input-image/life-input-image.html">
-
+<link rel="import" href="../life-nav/life-nav.html">
+<link rel="import" href="../life-patterns/life-patterns.html">
 
 <dom-module id="life-app">
   <template>
-    <app-drawer-layout force-narrow>
-      <app-drawer swipe-ope>
-        <app-header fixed>
-          <app-toolbar>
-            <div main-title>All Patterns</div>
-          </app-toolbar>
-        </app-header>
-        <paper-listbox style="height: 100%; overflow: auto;" selected="0">
-          <template is="dom-repeat" items="{{app._catalog}}">
-            <paper-item on-tap="_handlePatternListTap" style="justify-content: space-between;">
-              {{item.name}}
-              <life-icon-toggle pressed="{{item.starred}}"></life-icon-toggle>
-            </paper-item>
-          </template>
-        </paper-listbox>
-      </app-drawer>
+    <app-location route="{{route}}" use-hash-as-path></app-location>
+    <!-- <app-route-converter
+      path="{{path}}"
+      query-params="{{queryParams}}"
+      route="{{route}}"></app-route-converter> -->
+    <app-route
+      route="{{route}}"
+      query-params="{{queryParams}}"
+      pattern="/:page"
+      data="{{routeData}}"
+      tail="{{subroute}}"></app-route>
 
-      <app-drawer id="endDrawer" align="end" swipe-open>
-        <paper-tabs id="tabs" selected="{{_tab}}">
-          <paper-tab name="starredPatterns">Star</paper-tab>
-          <paper-tab name="canvasSaves">Saves</paper-tab>
-        </paper-tabs>
+    <life-nav
+      title="PlayGround"
+      page="[[page]]"
+      collection="{{app.saves}}"></life-nav>
 
-        <iron-pages selected="[[_tab]]" class="flex">
-          <div id="starredPatterns">
-            <paper-listbox style="height: 100%; overflow: auto;" selected="0">
-              <template is="dom-repeat" items="{{app._catalog}}" filter="_isPatternStarred" observe="starred">
-                <paper-item on-tap="_handlePatternListTap" style="justify-content: space-between;">
-                  {{item.name}}
-                  <life-icon-toggle pressed="{{item.starred}}"></life-icon-toggle>
-                </paper-item>
-              </template>
-            </paper-listbox>
-          </div>
-          <div id="canvasSaves">
-            <paper-button on-tap="_handleCreateNewSave" style="width: 100%; text-transform: none; justify-content: flex-start; margin-right: 4px;">
-              <iron-icon icon="add" item-icon></iron-icon>
-              New
-            </paper-button>
-            <!-- <paper-listbox id="savesList" on-iron-select="_handleSelectSaves" selected="{{_selectedSavesIndex}}" style="height: 100%; overflow: auto;"> -->
-            <paper-listbox id="savesList" style="height: 100%; overflow: auto;">
-              <!-- <paper-item>
-                <paper-icon-item>
-                  <iron-icon icon="add" item-icon></iron-icon>
-                  New
-                </paper-icon-item>
-              </paper-item> -->
-              <template is="dom-repeat" items="{{app.saves}}" id="repeater">
-                <!-- <paper-item id="{{item.name}}" style="justify-content: space-between;"> -->
-                <paper-item on-tap="_handleSaveListTap"  style="justify-content: space-between;">
-                  <span>[[item.title]]</span>
-                  <div>
-                    <paper-icon-button icon="info" on-tap="_handleInfoViewForSave">
-                    </paper-icon-button>
+    <iron-pages role="main" selected="[[page]]" attr-for-selected="name" fallback-selection="path-warning">
+      <section name="playground">
+        <life-canvas
+          id="mainCanvas"
+          width="{{app.width}}"
+          height="{{app.height}}"
+          is-playing="{{app.controller.isPlaying}}"
+          refresh-rate="{{app.controller.refreshRate}}"
+          cell-size="{{app.cellSize}}"
+          cell-color="{{app.cellColor}}"
+          overlay-color="{{app.overlayColor}}"
+          background-color="{{app.backgroundColor}}"
+          brush="{{app._selectedPattern}}"></life-canvas>
+        <life-brush-editor stamps="[[app._selectedPattern]]" brush="{{app._selectedPattern}}" app="{{app}}"></life-brush-editor>
+        <nav>
+          <paper-button id="togglecontroller" on-tap="_togglePlaying" toggles style="float: left;">Pause</paper-button>
+          <paper-slider value="{{app.controller.refreshRate}}" min="20" max="300" editable style="float: left; min-width: 300px;"></paper-slider>
+          <paper-button id="clearcontroller" on-tap="handleClear" toggles style="float: left;">Clear</paper-button>
+        </nav>
+      </section>
 
-                    <!-- <paper-icon-button icon="save" >
-                    </paper-icon-button> -->
-                    <!-- <paper-icon-button icon="social:share">
-                    </paper-icon-button>
-                    <paper-icon-button icon="delete">
-                    </paper-icon-button> -->
-                  </div>
-                </paper-item>
-                <!-- <paper-icon-item>
-                  <paper-item-body>
-                    <div>Recipes</div>
-                  </paper-item-body>
-                  <paper-icon-button icon="save">
-                  </paper-icon-button>
-                  <paper-icon-button icon="social:share">
-                  </paper-icon-button>
-                  <paper-icon-button icon="delete">
-                  </paper-icon-button>
-                </paper-icon-item> -->
-              </template>
-            </paper-listbox>
-          </div>
-        </iron-pages>
-      </app-drawer>
+      <life-patterns
+        name="catalog"
+        route="{{subroute}}"
+        app="{{app}}"></life-patterns>
+      <!-- invalid top level paths -->
+      <life-path-warning name="path-warning"></life-path-warning>
+    </iron-pages>
 
-      <app-header-layout>
-        <app-header style="height: 96px;" fixed>
-          <app-toolbar>
-            <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-            <div main-title>Game of Life</div>
-            <paper-icon-button icon="settings" onclick="document.getElementById('settingsDialog').open();"></paper-icon-button>
-            <paper-icon-button icon="star" onclick="document.getElementById('endDrawer').toggle();"></paper-icon-button>
-          </app-toolbar>
-        </app-header>
-      </app-header-layout>
+    <life-save-dialog id="infoViewDialog" target="{{app._selectedSave}}" on-title-change="_handleTitleChange"></life-save-dialog>
+    <life-settings-dialog id="settingsDialog" app="{{app}}"></life-settings-dialog>
 
-
-
-      <div style="float: left; padding: 0 8px;">
-        <div>
-          <!-- <life-save-dialog id="infoViewDialog" title="{{app._selectedSave.name}}" image-src="[[app._selectedSave.dataUrl]]" share-url="[[app._selectedSave.shareUrl]]" on-title-change="_handleTitleChange"></life-save-dialog> -->
-          <life-save-dialog id="infoViewDialog" target="{{app._selectedSave}}" on-title-change="_handleTitleChange"></life-save-dialog>
-          <life-settings-dialog id="settingsDialog" app="{{app}}"></life-settings-dialog>
-          <life-canvas id="mainCanvas"
-                        width="{{app.width}}"
-                        height="{{app.height}}"
-                        is-playing="{{app.controller.isPlaying}}"
-                        refresh-rate="{{app.controller.refreshRate}}"
-                        cell-size="{{app.cellSize}}"
-                        cell-color="{{app.cellColor}}"
-                        overlay-color="{{app.overlayColor}}"
-                        background-color="{{app.backgroundColor}}"
-                        brush="{{app._selectedPattern}}">
-          </life-canvas>
-          <life-brush-editor stamps="[[app._selectedPattern]]" brush="{{app._selectedPattern}}" app="{{app}}"></life-brush-editor>
-
-          <nav>
-            <paper-button id="togglecontroller" on-tap="_togglePlaying" toggles style="float: left;">Pause</paper-button>
-            <paper-slider value="{{app.controller.refreshRate}}" min="20" max="300" editable style="float: left; min-width: 300px;"></paper-slider>
-            <!--                    ^ Awesome!! ^ -->
-            <paper-button id="clearcontroller" on-tap="handleClear" toggles style="float: left;">Clear</paper-button>
-          </nav>
-        </div>
-        <!-- <div style="clear: both;">
-          <paper-input label="Cell width" value="{{app.width}}" type="number" max="3000" style="float:left; width: 45%; max-width: 400px; margin-right: 8px;"></paper-input>
-          <paper-input label="Cell height" value="{{app.height}}" type="number" max="3000" style="float:left; width: 45%; max-width: 400px;"></paper-input>
-          <paper-input label="Cell size" value="{{app.cellSize}}" type="number" min="1" max="10" style="float:left; width: 45%; max-width: 400px;"></paper-input>
-        </div> -->
-
-        <!-- <div>
-          <life-input-image app="{{app}}"></life-input-image>
-        </div> -->
-      </div>
-
-
-      <iron-ajax auto url="../../patterns-lite.json" handle-as="json" on-response="handleResponse"></iron-ajax>
-    </app-drawer-layout>
+    <iron-ajax auto url="../../patterns-lite.json" handle-as="json" on-response="handleResponse"></iron-ajax>
   </template>
 
 
@@ -199,26 +122,30 @@
       properties: {
         app: {
           type: Object,
-          // value: function () {
-            // return {
-            //   _catalog: [],
-            //   saves: [],
-            //   controller: {
-            //     isPlaying: true,
-            //     refreshRate: 30,
-            //   },
-            //   width: 200,
-            //   height: 150,
-            //   cellSize: 4,
-            //   cellColor: 'rgb(255, 0, 0)',
-            //   overlayColor: 'rgba(255, 0, 0, 0.3)',
-            //   backgroundColor: 'rgb(238, 238, 238)',
-            // };
-          // }
+          value: function() {
+            return {
+              _catalog: [],
+              saves: [],
+              controller: {
+                isPlaying: true,
+                refreshRate: 30,
+              },
+              width: 200,
+              height: 150,
+              cellSize: 4,
+              cellColor: 'rgb(255, 0, 0)',
+              overlayColor: 'rgba(255, 0, 0, 0.3)',
+              backgroundColor: 'rgb(238, 238, 238)',
+            };
+          }
         },
         params: {
           type: Object,
           observer: '_onParamsChanged'
+        },
+        page: {
+          type: String,
+          value: 'playground'
         },
         _tab: {
           type: Number,
@@ -239,6 +166,17 @@
         // }
       },
 
+      observers: [
+        '_routePageChanged(routeData.page)',
+        '_queryParamsChanged(queryParams)',
+
+      ],
+      listeners: {
+        'add-collection': '_addCollection',
+        'show-collection-detail': '_showCollectionDetail',
+        'open-settings-dialog': '_openSettingsDialog'
+      },
+
       ready: function() {
         // this.app._catalog = [];
 
@@ -251,25 +189,41 @@
 
       },
 
-      _onParamsChanged: function(newParams){
-        // process params
-        // console.log(this.params);
+      _routePageChanged: function(page) {
+        this.page = page;
+      },
 
-        if(this.params.state){
-          if(this.params.state === 'playing'){
+      _queryParamsChanged: function(params){
+        if(params.state){
+          if(params.state === 'playing'){
             this._startPlaying();
           }
-          else if(this.params.state === 'paused'){
+          else if(params.state === 'paused'){
             this._stopPlaying();
           }
         }
 
-        if(this.params.data){
-          // var lifeCanvas = document.querySelector('life-canvas')
+        if(params.data){
           var lifeCanvas = this.$.mainCanvas;
           lifeCanvas.clearCanvas();
-          lifeCanvas.injectPattern(0, 0, this.params.data);
+          lifeCanvas.injectPattern(0, 0, params.data);
         }
+      },
+
+      _addCollection: function() {
+        this._handleCreateNewSave();
+      },
+
+      _openSettingsDialog: function() {
+        this.$.settingsDialog.open();
+      },
+
+      _showCollectionDetail: function(event) {
+        this.$.infoViewDialog.target = event.detail.collection;
+
+        // this.$.endDrawer.toggle();
+        document.getElementById('endDrawer').toggle();
+        this.$.infoViewDialog.open();
       },
 
       _startPlaying: function(){
@@ -403,7 +357,8 @@
         this.set('app._selectedSave', e.model.get('item'));
         this.set('app._selectedSaveIndex', e.model.get('index'));
 
-        this.$.endDrawer.toggle();
+        // this.$.endDrawer.toggle();
+        document.getElementById('endDrawer').toggle();
         this.$.infoViewDialog.open();
         // console.log(this.app.saves);
       },
