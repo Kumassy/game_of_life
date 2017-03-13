@@ -54,7 +54,7 @@
 
     <life-nav
       title="PlayGround"
-      page="[[page]]"
+      page="{{page}}"
       collection="{{app.saves}}"></life-nav>
 
     <iron-pages role="main" selected="[[page]]" attr-for-selected="name" fallback-selection="path-warning">
@@ -86,9 +86,10 @@
       <life-path-warning name="path-warning"></life-path-warning>
     </iron-pages>
 
-    <life-save-dialog id="infoViewDialog" target="{{app._selectedSave}}" on-title-change="_handleTitleChange"></life-save-dialog>
+    <life-save-dialog id="infoViewDialog"></life-save-dialog>
     <life-settings-dialog id="settingsDialog" app="{{app}}"></life-settings-dialog>
 
+    <!-- TODO: create life-pattern-data element -->
     <iron-ajax auto url="../../patterns-lite.json" handle-as="json" on-response="handleResponse"></iron-ajax>
   </template>
 
@@ -174,7 +175,8 @@
       listeners: {
         'add-collection': '_addCollection',
         'show-collection-detail': '_showCollectionDetail',
-        'open-settings-dialog': '_openSettingsDialog'
+        'open-settings-dialog': '_openSettingsDialog',
+        'title-change': '_handleTitleChange'
       },
 
       ready: function() {
@@ -191,6 +193,7 @@
 
       _routePageChanged: function(page) {
         this.page = page;
+        this.set('route.path', page);
       },
 
       _queryParamsChanged: function(params){
