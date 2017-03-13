@@ -27,10 +27,10 @@
 
     <app-drawer-layout force-narrow>
       <app-drawer swipe-open>
-        <paper-listbox selected="0">
-          <paper-item>PlayGround</paper-item>
-          <paper-item>Pattern Catalog</paper-item>
-          <paper-item>About / License</paper-item>
+        <paper-listbox selected="{{page}}" attr-for-selected="name">
+          <paper-item name="playground">PlayGround</paper-item>
+          <paper-item name="catalog">Pattern Catalog</paper-item>
+          <paper-item name="about">About / License</paper-item>
         </paper-listbox>
       </app-drawer>
 
@@ -82,6 +82,7 @@
         // current page name / title e.g. playground, catalog ...
         page: {
           type: String,
+          notify: true,
           value: 'playground'
         },
 
