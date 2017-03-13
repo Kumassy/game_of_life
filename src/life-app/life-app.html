@@ -36,7 +36,7 @@
 <link rel="import" href="../life-canvas/life-canvas.html">
 <link rel="import" href="../life-input-image/life-input-image.html">
 <link rel="import" href="../life-nav/life-nav.html">
-<link rel="import" href="../life-patterns/life-patterns.html">
+<link rel="import" href="../life-catalog/life-catalog.html">
 
 <dom-module id="life-app">
   <template>
@@ -78,10 +78,10 @@
         </nav>
       </section>
 
-      <life-patterns
+      <life-catalog
         name="catalog"
         route="{{subroute}}"
-        app="{{app}}"></life-patterns>
+        catalog="[[app._catalog]]"></life-catalog>
       <!-- invalid top level paths -->
       <life-path-warning name="path-warning"></life-path-warning>
     </iron-pages>
