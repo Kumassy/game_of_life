@@ -27,11 +27,15 @@
         color: inherit;
         text-decoration: none;
       }
+
+      app-drawer {
+        z-index: 100;
+      }
     </style>
 
 
     <app-drawer-layout force-narrow>
-      <app-drawer swipe-open>
+      <app-drawer id="drawer" swipe-open>
         <paper-listbox selected="[[page]]" attr-for-selected="name">
           <a href="#/playground" name="playground">
             <paper-item>PlayGround</paper-item>
@@ -94,6 +98,7 @@
         page: {
           type: String,
           notify: true,
+          observer: '_pageChanged',
           value: 'playground'
         },
 
@@ -135,6 +140,9 @@
           document.getElementById('endDrawer').toggle();
         }
       },
+      _pageChanged: function() {
+        this.$.drawer.close();
+      }
 
     });
   </script>
