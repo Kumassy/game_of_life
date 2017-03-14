@@ -12,7 +12,7 @@
   <template>
     <app-route
       route="{{route}}"
-      pattern="/page/:page"
+      pattern="/:page"
       data="{{_routeData}}"></app-route>
 
     <div class="patterns">
@@ -93,8 +93,8 @@
       is: 'life-catalog',
       behaviors: [LifePatternCatalogBehavior],
       properties: {
-        route: Object,
-        // routeData: Object,
+        // route: Object,
+        _routeData: Object,
 
         // app: {
         //   type: Object
@@ -120,11 +120,17 @@
       },
 
       observers: [
+        // '_reflectToPageURL(route.path)',
         '_routePageChanged(_routeData.page)',
+        '_pageChanged(currentPage)',
       ],
 
       _routePageChanged: function(page) {
-        this.currentPage = page;
+        this.currentPage = parseInt(page) || 0;
+      },
+
+      _pageChanged: function(page) {
+        this.set('route.path', '/' + page);
       },
 
 

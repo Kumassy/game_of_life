@@ -146,6 +146,7 @@
         // },
         page: {
           type: String,
+          notify: true,
           value: 'playground'
         },
         // _tab: {
@@ -169,6 +170,7 @@
 
       observers: [
         '_routePageChanged(routeData.page)',
+        '_pageChanged(page)',
         '_queryParamsChanged(queryParams)',
 
       ],
@@ -192,8 +194,19 @@
       },
 
       _routePageChanged: function(page) {
+        if(!page) {
+          this.page = 'playground';
+          this.set('route.path', '/' + this.page);
+          return;
+        }
+
         this.page = page;
-        // this.set('route.path', page);
+        let subroute = this.subroute.path || '';
+        this.set('route.path', '/' + this.page + subroute);
+      },
+
+      _pageChanged: function(page) {
+        this.set('route.path', '/' + page);
       },
 
       _queryParamsChanged: function(params){
