@@ -37,6 +37,8 @@
 <link rel="import" href="../life-input-image/life-input-image.html">
 <link rel="import" href="../life-nav/life-nav.html">
 <link rel="import" href="../life-catalog/life-catalog.html">
+<link rel="import" href="../life-path-warning/life-path-warning.html">
+<link rel="import" href="../life-about/life-about.html">
 
 <dom-module id="life-app">
   <template>
@@ -82,6 +84,8 @@
         name="catalog"
         route="{{subroute}}"
         catalog="[[app._catalog]]"></life-catalog>
+
+      <life-about name="about"></life-about>
       <!-- invalid top level paths -->
       <life-path-warning name="path-warning"></life-path-warning>
     </iron-pages>

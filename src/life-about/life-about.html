@@ -1,0 +1,37 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+
+<dom-module id="life-about">
+  <template>
+    <style>
+      :host {
+        display: block;
+        padding: 0px 40px;
+      }
+      paper-material {
+        padding: 12px 32px;
+      }
+    </style>
+
+    <paper-material elevation="1">
+      <section>
+        <h2>About</h2>
+        <p>Game of life implementation made by with Polymer</p>
+      </section>
+      <section>
+        <h2>Author</h2>
+        <p>Kumassy (@kumassy_ , http://kumassy.com)</p>
+      </section>
+      <section>
+        <h2>Lisence</h2>
+        <p>MIT</p>
+      </section>
+    </paper-material>
+  </template>
+  <script>
+    Polymer({
+      is: 'life-about'
+    });
+  </script>
+</dom-module>
