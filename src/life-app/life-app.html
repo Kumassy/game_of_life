@@ -170,7 +170,6 @@
 
       observers: [
         '_routePageChanged(routeData.page)',
-        '_pageChanged(page)',
         '_queryParamsChanged(queryParams)',
 
       ],
@@ -201,12 +200,6 @@
         }
 
         this.page = page;
-        let subroute = this.subroute.path || '';
-        this.set('route.path', '/' + this.page + subroute);
-      },
-
-      _pageChanged: function(page) {
-        this.set('route.path', '/' + page);
       },
 
       _queryParamsChanged: function(params){
