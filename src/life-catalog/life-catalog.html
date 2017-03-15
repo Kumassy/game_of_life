@@ -3,6 +3,7 @@
 <link rel="import" href="../../bower_components/paper-item/paper-item.html"> -->
 <link rel="import" href="../../bower_components/paper-styles/default-theme.html">
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 
 <link rel="import" href="../life-behaviors/life-pattern-catalog-behavior.html">
 <link rel="import" href="../life-preview-canvas/life-preview-canvas.html">
@@ -17,8 +18,9 @@
 
     <div class="patterns">
       <template is="dom-repeat" items="[[currentPatterns]]">
-        <div class="card">
+        <div class="card" star$="[[item.starred]]">
           <life-preview-canvas width="240" height="240" auto-play pattern="[[item]]"></life-preview-canvas>
+          <paper-icon-button icon="star" on-tap="_toggleStar"></paper-icon-button>
 
           <div class="card-content">
             <div class="title">[[item.name]]</div>
@@ -86,6 +88,27 @@
       padding-top: 16px;
       overflow-wrap: break-word;
     }
+
+    .card paper-icon-button {
+      position: absolute;
+      top: 219px;
+      right: 15px;
+      border-radius: 50%;
+
+      background: white;
+
+      @apply(--shadow-elevation-2dp);
+    }
+
+    .card:not([star]) paper-icon-button {
+      --iron-icon-fill-color: white;
+      --iron-icon-stroke-color: var(--paper-grey-600);
+    }
+
+    .card[star] paper-icon-button {
+      --iron-icon-fill-color: yellow;
+      --iron-icon-stroke-color: var(--paper-grey-600);
+    }
   </style>
 
   <script>
@@ -137,10 +160,29 @@
       _handleGoBack: function() {
         this.goBack();
         this.set('route.path', '/' + this.currentPage);
+        this.debounce('update-styles', () => {
+          Polymer.updateStyles();
+        }, 100);
       },
       _handleGoNext: function() {
         this.goNext();
         this.set('route.path', '/' + this.currentPage);
+        this.debounce('update-styles', () => {
+          Polymer.updateStyles();
+        }, 100);
+      },
+
+
+      _toggleStar: function(e) {
+        let starred = e.model.get('item.starred');
+        starred = starred || false;
+        e.model.set('item.starred', !starred);
+
+        const target = e.currentTarget;
+        this.debounce('update-styles', () => {
+          target.updateStyles();
+        }, 100);
+
       },
 
 
