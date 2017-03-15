@@ -7,9 +7,14 @@
           return [];
         }
       },
+      filter: {
+        type: String,
+        value: '',
+        observer: '_filterChanged'
+      },
       currentPatterns: {
         type: Object,
-        computed: '_computeCurrentPatterns(catalog, currentPage, patternsPerPage)'
+        computed: '_computeCurrentPatterns(catalog, filter, currentPage, patternsPerPage)'
       },
       currentPage: {
         type: Number,
@@ -21,7 +26,7 @@
       },
       pageCount: {
         type: Number,
-        computed: '_computePageCount(catalog, patternsPerPage)'
+        computed: '_computePageCount(catalog, filter, patternsPerPage)'
       },
       canGoNext: {
         type: Boolean,
@@ -33,12 +38,23 @@
       }
     },
 
-    _computePageCount: function(catalog, patternsPerPage){
-      return Math.ceil(catalog.length / patternsPerPage);
+    _filterChanged: function() {
+      this.currentPage = 0;
+      this.fire('page-change', {page: this.currentPage});
     },
 
-    _computeCurrentPatterns: function(catalog, currentPage, patternsPerPage){
-      return catalog.slice(currentPage * patternsPerPage, currentPage * patternsPerPage + patternsPerPage);
+    __filterCatalog: function(catalog, filter){
+      return catalog.filter((pattern) => (new RegExp(filter, "i")).test(pattern.name));
+    },
+
+    _computePageCount: function(catalog, filter, patternsPerPage){
+      const ctlg = this.__filterCatalog(catalog, filter);
+      return Math.ceil(ctlg.length / patternsPerPage);
+    },
+
+    _computeCurrentPatterns: function(catalog, filter, currentPage, patternsPerPage){
+      const ctlg = this.__filterCatalog(catalog, filter);
+      return ctlg.slice(currentPage * patternsPerPage, currentPage * patternsPerPage + patternsPerPage);
     },
 
     _checkWhetherCanGoNext: function(currentPage, pageCount) {

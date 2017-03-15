@@ -83,7 +83,7 @@
             </template>
 
             <template is="dom-if" if="[[_shouldRenderSearchBox]]">
-              <paper-input id="searchBox">
+              <paper-input id="searchBox" value="{{searchKeyword}}">
                 <iron-icon icon="search" prefix></iron-icon>
                 <paper-icon-button icon="star"></paper-icon-button>
               </paper-input>
@@ -101,6 +101,11 @@
         title: {
           type: String,
           value: 'Game of Life'
+        },
+        searchKeyword: {
+          type: String,
+          value: '',
+          notify: true,
         },
 
         // current page name / title e.g. playground, catalog ...

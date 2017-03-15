@@ -145,6 +145,7 @@
         }
       },
       _onPageChanged: function() {
+        if(this._selectedPattern == null) return;
         this.__removeOrRestoreSelectedAttr();
       },
       _closeDialog: function() {
