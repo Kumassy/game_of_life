@@ -410,7 +410,9 @@
         };
 
         if(this.editMode && this.isBrushModified === false){
-          setTimeout(() => this.isBrushModified = true, 500);
+          this.debounce('update-brush-modified', () => {
+            this.isBrushModified = true
+          }, 500);
         }
       },
 
