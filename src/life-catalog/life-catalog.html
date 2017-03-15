@@ -32,8 +32,8 @@
     </div>
 
     <div class="buttons">
-      <paper-button id="goBack" disabled="[[!canGoBack]]" on-tap="_handleGoBack">Back</paper-button>
-      <paper-button id="goNext" disabled="[[!canGoNext]]" on-tap="_handleGoNext">Next</paper-button>
+      <paper-button id="goBack" disabled="[[!canGoBack]]" on-tap="goBack">Back</paper-button>
+      <paper-button id="goNext" disabled="[[!canGoNext]]" on-tap="goNext">Next</paper-button>
     </div>
   </template>
 
@@ -146,6 +146,9 @@
         '_routePageChanged(_routeData.page)',
         '_restoreRoutePage(route.prefix)',
       ],
+      listeners: {
+        'page-change': '_onPageChanged',
+      },
 
       _routePageChanged: function(page) {
         this.currentPage = parseInt(page) || 0;
@@ -156,16 +159,7 @@
           this.set('route.path', '/' + this.currentPage);
         }
       },
-
-      _handleGoBack: function() {
-        this.goBack();
-        this.set('route.path', '/' + this.currentPage);
-        this.debounce('update-styles', () => {
-          Polymer.updateStyles();
-        }, 100);
-      },
-      _handleGoNext: function() {
-        this.goNext();
+      _onPageChanged: function() {
         this.set('route.path', '/' + this.currentPage);
         this.debounce('update-styles', () => {
           Polymer.updateStyles();
