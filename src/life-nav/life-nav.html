@@ -14,6 +14,7 @@
 <link rel="import" href="../../bower_components/paper-item/paper-item-body.html">
 <link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 
 <dom-module id="life-nav">
@@ -70,7 +71,7 @@
       </template>
 
       <app-header-layout>
-        <app-header style="height: 96px;" fixed>
+        <app-header fixed>
           <app-toolbar>
             <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
             <div main-title>[[title]]</div>
@@ -80,6 +81,14 @@
               <paper-icon-button icon="settings" on-tap="_openSettingsDialog"></paper-icon-button>
               <paper-icon-button icon="star" on-tap="_openEndDrawer"></paper-icon-button>
             </template>
+
+            <template is="dom-if" if="[[_shouldRenderSearchBox]]">
+              <paper-input id="searchBox">
+                <iron-icon icon="search" prefix></iron-icon>
+                <paper-icon-button icon="star"></paper-icon-button>
+              </paper-input>
+            </template>
+
           </app-toolbar>
         </app-header>
       </app-header-layout>
@@ -114,6 +123,10 @@
           type: Boolean,
           computed: '_computeShouldRenderSettings(page)'
         },
+        _shouldRenderSearchBox: {
+          type: Boolean,
+          computed: '_computeShouldRenderSearchBox(page)'
+        },
       },
 
       _computeShouldRenderEndDrawer: function(page) {
@@ -121,6 +134,9 @@
       },
       _computeShouldRenderSettings: function(page) {
         return page === 'playground';
+      },
+      _computeShouldRenderSearchBox: function(page) {
+        return page === 'catalog';
       },
 
       _addCollection: function(event) {
