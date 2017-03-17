@@ -41,6 +41,7 @@
 <link rel="import" href="../life-about/life-about.html">
 <link rel="import" href="../life-catalog-data/life-catalog-data.html">
 <link rel="import" href="../life-collection-data/life-collection-data.html">
+<link rel="import" href="../life-controller/life-pause-button.html">
 
 <dom-module id="life-app">
   <template>
@@ -84,7 +85,8 @@
           brush="{{app._selectedPattern}}"></life-canvas>
         <life-brush-editor brush="{{app._selectedPattern}}" catalog="[[app.catalog]]"></life-brush-editor>
         <nav>
-          <paper-button id="togglecontroller" on-tap="_togglePlaying" toggles style="float: left;">Pause</paper-button>
+          <life-pause-button
+            state="{{app.controller.isPlaying}}" style="float: left;"></life-pause-button>
           <paper-slider value="{{app.controller.refreshRate}}" min="20" max="300" editable style="float: left; min-width: 300px;"></paper-slider>
           <paper-button id="clearcontroller" on-tap="handleClear" toggles style="float: left;">Clear</paper-button>
         </nav>
@@ -247,21 +249,6 @@
         if(this.app._selectedPattern == null) {
           this.set('app._selectedPattern', this.app.catalog[0]);
         }
-      },
-
-      _startPlaying: function(){
-        this.$.togglecontroller.textContent = "Pause";
-        this.set('app.controller.isPlaying', true);
-      },
-      _stopPlaying: function(){
-        this.$.togglecontroller.textContent = "Resume";
-        this.set('app.controller.isPlaying', false);
-      },
-      _isPlaying: function(){
-        return this.get('app.controller.isPlaying');
-      },
-      _togglePlaying: function(){
-        this._isPlaying() ? this._stopPlaying() : this._startPlaying();
       },
 
       handleClear: function(e, datail) {
