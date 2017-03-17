@@ -29,7 +29,7 @@
 
 
 <link rel="import" href="../life-icon-toggle/life-icon-toggle.html">
-<link rel="import" href="../life-dialogs/life-save-dialog.html">
+<link rel="import" href="../life-dialogs/life-collection-detail-dialog.html">
 <link rel="import" href="../life-dialogs/life-settings-dialog.html">
 <link rel="import" href="../life-brush-editor/life-brush-editor.html">
 <link rel="import" href="../life-preview-canvas/life-preview-canvas.html">
@@ -104,7 +104,7 @@
       <life-path-warning name="path-warning"></life-path-warning>
     </iron-pages>
 
-    <life-save-dialog id="collectionDetailDialog"></life-save-dialog>
+    <life-collection-detail-dialog id="collectionDetailDialog"></life-collection-detail-dialog>
     <life-settings-dialog id="settingsDialog" app="{{app}}"></life-settings-dialog>
 
     <!-- TODO: create life-pattern-data element -->
@@ -195,7 +195,7 @@
         'add-collection': '_createNewCollection',
         'show-collection-detail': '_showCollectionDetail',
         'open-settings-dialog': '_openSettingsDialog',
-        'title-change': '_handleTitleChange',
+        'title-change': '_updateCollectionTitle',
         'catalog-updated': '_checkSelectedPattern'
       },
 
@@ -215,10 +215,10 @@
       _queryParamsChanged: function(params){
         if(params.state){
           if(params.state === 'playing'){
-            this._startPlaying();
+            this.set('app.controller.isPlaying', true);
           }
           else if(params.state === 'paused'){
-            this._stopPlaying();
+            this.set('app.controller.isPlaying', false);
           }
         }
 
@@ -276,12 +276,12 @@
       },
 
       // _handleSelectSaves: function(e){
-      _handleSaveListTap: function(e){
-        this.app._selectedSave = e.model.get('item');
-      },
-      _handlePatternListTap: function(e){
-        this.set('app._selectedPattern', e.model.get('item'));
-      },
+      // _handleSaveListTap: function(e){
+      //   this.app._selectedSave = e.model.get('item');
+      // },
+      // _handlePatternListTap: function(e){
+      //   this.set('app._selectedPattern', e.model.get('item'));
+      // },
       // _handleInfoViewForSave: function(e){
       //   // console.log(this._selectedSavesIndex);
       //   // this._selectingSaveInfo = this.app.saves[this._selectedSavesIndex];
@@ -294,9 +294,9 @@
       //   this.$.collectionDetailDialog.open();
       //   // console.log(this.app.saves);
       // },
-      _handleTitleChange: function(e){
-        if(this.app && this.app.hasOwnProperty('_selectedSaveIndex')){
-          this.notifyPath(['app', 'collections', this.app._selectedSaveIndex, 'title']);
+      _updateCollectionTitle: function(e){
+        for(let i = 0; i < this.app.collections.length; i++) {
+          this.notifyPath(['app', 'collections', i, 'title']);
         }
       },
       // _computeShareURL: function(_selectingSaveInfo){
