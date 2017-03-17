@@ -158,32 +158,12 @@
             };
           }
         },
-        // params: {
-        //   type: Object,
-        //   observer: '_onParamsChanged'
-        // },
+
         page: {
           type: String,
           notify: true,
           value: 'playground'
         },
-        // _tab: {
-        //   type: Number,
-        //   value: 0
-        // },
-        _selectedSavesIndex: {
-          type: Number,
-          value: 0
-        },
-        _selectingSaveInfo: {
-          type: Object,
-          notify: true,
-          value: {}
-        },
-        // _selectingSaveShareURL: {
-        //   type: String,
-        //   computed: '_computeShareURL(_selectingSaveInfo)'
-        // }
       },
 
       observers: [
@@ -229,10 +209,6 @@
         }
       },
 
-      // _addCollection: function() {
-      //   this._handleCreateNewSave();
-      // },
-
       _openSettingsDialog: function() {
         this.$.settingsDialog.open();
       },
@@ -275,37 +251,11 @@
         });
       },
 
-      // _handleSelectSaves: function(e){
-      // _handleSaveListTap: function(e){
-      //   this.app._selectedSave = e.model.get('item');
-      // },
-      // _handlePatternListTap: function(e){
-      //   this.set('app._selectedPattern', e.model.get('item'));
-      // },
-      // _handleInfoViewForSave: function(e){
-      //   // console.log(this._selectedSavesIndex);
-      //   // this._selectingSaveInfo = this.app.saves[this._selectedSavesIndex];
-      //
-      //   this.set('app._selectedSave', e.model.get('item'));
-      //   this.set('app._selectedSaveIndex', e.model.get('index'));
-      //
-      //   // this.$.endDrawer.toggle();
-      //   document.getElementById('endDrawer').toggle();
-      //   this.$.collectionDetailDialog.open();
-      //   // console.log(this.app.saves);
-      // },
       _updateCollectionTitle: function(e){
         for(let i = 0; i < this.app.collections.length; i++) {
           this.notifyPath(['app', 'collections', i, 'title']);
         }
       },
-      // _computeShareURL: function(_selectingSaveInfo){
-      //   return 'http://kumassy.com/life2/?state=paused&data=' + _selectingSaveInfo.rle;
-      // },
-      // _isPatternStarred: function(item){
-      //   return item.starred;
-      // }
-
     });
   </script>
 </dom-module>
