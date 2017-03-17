@@ -12,9 +12,14 @@
         value: '',
         observer: '_filterChanged'
       },
+      filterByStar: {
+        type: Boolean,
+        value: false,
+        observer: '_filterChanged'
+      },
       currentPatterns: {
         type: Object,
-        computed: '_computeCurrentPatterns(catalog, filter, currentPage, patternsPerPage)'
+        computed: '_computeCurrentPatterns(catalog, filter, filterByStar, currentPage, patternsPerPage)'
       },
       currentPage: {
         type: Number,
@@ -26,7 +31,7 @@
       },
       pageCount: {
         type: Number,
-        computed: '_computePageCount(catalog, filter, patternsPerPage)'
+        computed: '_computePageCount(catalog, filter, filterByStar, patternsPerPage)'
       },
       canGoNext: {
         type: Boolean,
@@ -43,17 +48,17 @@
       this.fire('page-change', {page: this.currentPage});
     },
 
-    __filterCatalog: function(catalog, filter){
-      return catalog.filter((pattern) => (new RegExp(filter, "i")).test(pattern.name));
+    __filterCatalog: function(catalog, filter, filterByStar){
+      return catalog.filter((pattern) => !filterByStar || pattern.starred).filter((pattern) => (new RegExp(filter, "i")).test(pattern.name));
     },
 
-    _computePageCount: function(catalog, filter, patternsPerPage){
-      const ctlg = this.__filterCatalog(catalog, filter);
+    _computePageCount: function(catalog, filter, filterByStar, patternsPerPage){
+      const ctlg = this.__filterCatalog(catalog, filter, filterByStar);
       return Math.ceil(ctlg.length / patternsPerPage);
     },
 
-    _computeCurrentPatterns: function(catalog, filter, currentPage, patternsPerPage){
-      const ctlg = this.__filterCatalog(catalog, filter);
+    _computeCurrentPatterns: function(catalog, filter, filterByStar, currentPage, patternsPerPage){
+      const ctlg = this.__filterCatalog(catalog, filter, filterByStar);
       return ctlg.slice(currentPage * patternsPerPage, currentPage * patternsPerPage + patternsPerPage);
     },
 

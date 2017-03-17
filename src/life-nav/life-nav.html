@@ -16,6 +16,7 @@
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-toggle-button/paper-toggle-button.html">
 
 <dom-module id="life-nav">
   <template>
@@ -85,8 +86,8 @@
             <template is="dom-if" if="[[_shouldRenderSearchBox]]">
               <paper-input id="searchBox" value="{{searchKeyword}}">
                 <iron-icon icon="search" prefix></iron-icon>
-                <paper-icon-button icon="star"></paper-icon-button>
               </paper-input>
+              <paper-toggle-button checked="{{filterByStar}}">Star Only</paper-toggle-button>
             </template>
 
           </app-toolbar>
@@ -105,6 +106,11 @@
         searchKeyword: {
           type: String,
           value: '',
+          notify: true,
+        },
+        filterByStar: {
+          type: Boolean,
+          value: false,
           notify: true,
         },
 

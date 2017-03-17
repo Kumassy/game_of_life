@@ -58,6 +58,7 @@
       title="PlayGround"
       page="{{page}}"
       search-keyword="{{searchKeyword}}"
+      filter-by-star="{{filterByStar}}"
       collection="{{app.saves}}"></life-nav>
 
     <iron-pages role="main" selected="[[page]]" attr-for-selected="name" fallback-selection="path-warning">
@@ -85,6 +86,7 @@
         name="catalog"
         route="{{subroute}}"
         filter="[[searchKeyword]]"
+        filter-by-star="[[filterByStar]]"
         catalog="[[app._catalog]]"></life-catalog>
 
       <life-about name="about"></life-about>
