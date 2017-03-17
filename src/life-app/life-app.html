@@ -74,7 +74,7 @@
           overlay-color="{{app.overlayColor}}"
           background-color="{{app.backgroundColor}}"
           brush="{{app._selectedPattern}}"></life-canvas>
-        <life-brush-editor stamps="[[app._selectedPattern]]" brush="{{app._selectedPattern}}" app="{{app}}"></life-brush-editor>
+        <life-brush-editor brush="{{app._selectedPattern}}" app="{{app}}"></life-brush-editor>
         <nav>
           <paper-button id="togglecontroller" on-tap="_togglePlaying" toggles style="float: left;">Pause</paper-button>
           <paper-slider value="{{app.controller.refreshRate}}" min="20" max="300" editable style="float: left; min-width: 300px;"></paper-slider>
