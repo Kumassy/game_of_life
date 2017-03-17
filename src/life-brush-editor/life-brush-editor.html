@@ -86,8 +86,7 @@
       </div>
     </div>
 
-    <life-settings-dialog id="settingsDialog" app="{{app}}"></life-settings-dialog>
-    <life-pattern-chooser id="patternChooser" catalog="[[app._catalog]]" on-pattern-selected="_patternSelected"></life-pattern-chooser>
+    <life-pattern-chooser id="patternChooser" catalog="[[catalog]]" on-pattern-selected="_patternSelected"></life-pattern-chooser>
   </template>
 
   <style>
@@ -193,8 +192,9 @@
       is: 'life-brush-editor',
       behaviors: [LifeDraggableBehavior],
       properties: {
-        app: {
-          type: Object
+        catalog: {
+          type: Array,
+          value: []
         },
         // rle: {
         //   type: String,

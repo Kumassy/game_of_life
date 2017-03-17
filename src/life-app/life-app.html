@@ -59,7 +59,7 @@
       page="{{page}}"
       search-keyword="{{searchKeyword}}"
       filter-by-star="{{filterByStar}}"
-      collection="{{app.saves}}"></life-nav>
+      collection="{{app.collections}}"></life-nav>
 
     <iron-pages role="main" selected="[[page]]" attr-for-selected="name" fallback-selection="path-warning">
       <section name="playground">
@@ -74,7 +74,7 @@
           overlay-color="{{app.overlayColor}}"
           background-color="{{app.backgroundColor}}"
           brush="{{app._selectedPattern}}"></life-canvas>
-        <life-brush-editor brush="{{app._selectedPattern}}" app="{{app}}"></life-brush-editor>
+        <life-brush-editor brush="{{app._selectedPattern}}" catalog="[[app.catalog]]"></life-brush-editor>
         <nav>
           <paper-button id="togglecontroller" on-tap="_togglePlaying" toggles style="float: left;">Pause</paper-button>
           <paper-slider value="{{app.controller.refreshRate}}" min="20" max="300" editable style="float: left; min-width: 300px;"></paper-slider>
@@ -87,7 +87,7 @@
         route="{{subroute}}"
         filter="[[searchKeyword]]"
         filter-by-star="[[filterByStar]]"
-        catalog="[[app._catalog]]"></life-catalog>
+        catalog="[[app.catalog]]"></life-catalog>
 
       <life-about name="about"></life-about>
       <!-- invalid top level paths -->
@@ -133,8 +133,8 @@
           type: Object,
           value: function() {
             return {
-              _catalog: [],
-              saves: [],
+              catalog: [],
+              collections: [],
               controller: {
                 isPlaying: true,
                 refreshRate: 30,
@@ -274,7 +274,7 @@
       handleResponse: function(r){
         // console.log(r.detail.response);
 
-        this.app._catalog = [
+        this.app.catalog = [
           {
             id: 'pencil',
             name: 'Pencil',
@@ -331,15 +331,15 @@
           }
         ].concat(r.detail.response);
 
-        this.app._catalog.forEach(function(c){
+        this.app.catalog.forEach(function(c){
           c.starred = false;
         });
 
-        this.notifyPath('app._catalog');
+        this.notifyPath('app.catalog');
 
         // this.app._selectedPattern = {};
         // this.app._selectedPattern = this.app._catalog[0];
-        this.set('app._selectedPattern', this.app._catalog[0]);
+        this.set('app._selectedPattern', this.app.catalog[0]);
       },
 
       _handleCreateNewSave: function(){
@@ -350,7 +350,7 @@
 
         var date = new Date();
         var timestamp = ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2) + ':' + ('0' + date.getHours()).slice(-2);
-        this.push('app.saves', {
+        this.push('app.collections', {
           title: timestamp,
           rle: rle,
           dataUrl: dataUrl,
@@ -381,7 +381,7 @@
       },
       _handleTitleChange: function(e){
         if(this.app && this.app.hasOwnProperty('_selectedSaveIndex')){
-          this.notifyPath(['app', 'saves', this.app._selectedSaveIndex, 'title']);
+          this.notifyPath(['app', 'collections', this.app._selectedSaveIndex, 'title']);
         }
       },
       // _computeShareURL: function(_selectingSaveInfo){
