@@ -33,6 +33,11 @@
       </paper-dialog-scrollable>
 
       <div class="buttons">
+        <paper-input id="searchBox" value="{{filter}}">
+          <iron-icon icon="search" prefix></iron-icon>
+        </paper-input>
+        <paper-toggle-button checked="{{filterByStar}}">Star Only</paper-toggle-button>
+
         <paper-button id="goBack" disabled="[[!canGoBack]]" on-tap="goBack">Back</paper-button>
         <paper-button id="goNext" disabled="[[!canGoNext]]" on-tap="goNext">Next</paper-button>
         <paper-button id="ok" dialog-confirm autofocus on-tap="_closeDialog">OK</paper-button>
