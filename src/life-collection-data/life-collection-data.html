@@ -1,0 +1,31 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="life-collection-data">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'life-collection-data',
+
+      properties: {
+        collections: {
+          type: Array,
+          notify: true,
+          value: function() {
+            return [];
+          }
+        }
+      },
+
+      addCollection: function(collection) {
+        this.push('collections', collection);
+      }
+    });
+  </script>
+</dom-module>

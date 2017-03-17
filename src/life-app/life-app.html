@@ -40,6 +40,7 @@
 <link rel="import" href="../life-path-warning/life-path-warning.html">
 <link rel="import" href="../life-about/life-about.html">
 <link rel="import" href="../life-catalog-data/life-catalog-data.html">
+<link rel="import" href="../life-collection-data/life-collection-data.html">
 
 <dom-module id="life-app">
   <template>
@@ -57,13 +58,16 @@
 
     <life-catalog-data
       catalog="{{app.catalog}}"></life-catalog-data>
+    <life-collection-data
+      id="collectionData"
+      collections="{{app.collections}}"></life-collection-data>
 
     <life-nav
       title="PlayGround"
       page="{{page}}"
       search-keyword="{{searchKeyword}}"
       filter-by-star="{{filterByStar}}"
-      collection="{{app.collections}}"></life-nav>
+      collection="[[app.collections]]"></life-nav>
 
     <iron-pages role="main" selected="[[page]]" attr-for-selected="name" fallback-selection="path-warning">
       <section name="playground">
@@ -98,7 +102,7 @@
       <life-path-warning name="path-warning"></life-path-warning>
     </iron-pages>
 
-    <life-save-dialog id="infoViewDialog"></life-save-dialog>
+    <life-save-dialog id="collectionDetailDialog"></life-save-dialog>
     <life-settings-dialog id="settingsDialog" app="{{app}}"></life-settings-dialog>
 
     <!-- TODO: create life-pattern-data element -->
@@ -186,7 +190,7 @@
 
       ],
       listeners: {
-        'add-collection': '_addCollection',
+        'add-collection': '_createNewCollection',
         'show-collection-detail': '_showCollectionDetail',
         'open-settings-dialog': '_openSettingsDialog',
         'title-change': '_handleTitleChange',
@@ -223,20 +227,20 @@
         }
       },
 
-      _addCollection: function() {
-        this._handleCreateNewSave();
-      },
+      // _addCollection: function() {
+      //   this._handleCreateNewSave();
+      // },
 
       _openSettingsDialog: function() {
         this.$.settingsDialog.open();
       },
 
       _showCollectionDetail: function(event) {
-        this.$.infoViewDialog.target = event.detail.collection;
+        this.$.collectionDetailDialog.target = event.detail.collection;
 
         // this.$.endDrawer.toggle();
         document.getElementById('endDrawer').toggle();
-        this.$.infoViewDialog.open();
+        this.$.collectionDetailDialog.open();
       },
 
       _checkSelectedPattern: function() {
@@ -265,7 +269,7 @@
         this.$.mainCanvas.clearCanvas();
       },
 
-      _handleCreateNewSave: function(){
+      _createNewCollection: function(){
         var lifeCanvas = this.$.mainCanvas;
 
         var rle = lifeCanvas.getRLE();
@@ -273,7 +277,8 @@
 
         var date = new Date();
         var timestamp = ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2) + ':' + ('0' + date.getHours()).slice(-2);
-        this.push('app.collections', {
+
+        this.$.collectionData.addCollection({
           title: timestamp,
           rle: rle,
           dataUrl: dataUrl,
@@ -290,18 +295,18 @@
       _handlePatternListTap: function(e){
         this.set('app._selectedPattern', e.model.get('item'));
       },
-      _handleInfoViewForSave: function(e){
-        // console.log(this._selectedSavesIndex);
-        // this._selectingSaveInfo = this.app.saves[this._selectedSavesIndex];
-
-        this.set('app._selectedSave', e.model.get('item'));
-        this.set('app._selectedSaveIndex', e.model.get('index'));
-
-        // this.$.endDrawer.toggle();
-        document.getElementById('endDrawer').toggle();
-        this.$.infoViewDialog.open();
-        // console.log(this.app.saves);
-      },
+      // _handleInfoViewForSave: function(e){
+      //   // console.log(this._selectedSavesIndex);
+      //   // this._selectingSaveInfo = this.app.saves[this._selectedSavesIndex];
+      //
+      //   this.set('app._selectedSave', e.model.get('item'));
+      //   this.set('app._selectedSaveIndex', e.model.get('index'));
+      //
+      //   // this.$.endDrawer.toggle();
+      //   document.getElementById('endDrawer').toggle();
+      //   this.$.collectionDetailDialog.open();
+      //   // console.log(this.app.saves);
+      // },
       _handleTitleChange: function(e){
         if(this.app && this.app.hasOwnProperty('_selectedSaveIndex')){
           this.notifyPath(['app', 'collections', this.app._selectedSaveIndex, 'title']);
