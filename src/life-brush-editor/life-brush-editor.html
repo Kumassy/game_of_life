@@ -93,7 +93,7 @@
     :host {
     }
 
-    :host[edit-mode] paper-toolbar {
+    :host([edit-mode]) paper-toolbar {
       --paper-toolbar-background: var(--accent-color);
     }
     #container {
@@ -166,7 +166,7 @@
       color: var(--google-blue-300);
     }
 
-    :host[is-brush-modified] .toolbar #add-brush {
+    :host([is-brush-modified]) .toolbar #add-brush {
       display: block;
     }
 
@@ -345,7 +345,7 @@
         isBrushModified: {
           type: Boolean,
           reflectToAttribute: true,
-          observer: 'updateStyles',
+          // observer: 'updateStyles',
           value: false,
         },
 
