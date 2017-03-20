@@ -11,6 +11,7 @@
 
     <link rel="import" href="src/life-app/life-app.html">
     <link rel="import" href="bower_components/polymerfire/firebase-app.html">
+    <link rel="import" href="bower_components/platinum-sw/platinum-sw-elements.html">
 
     <style>
       html, body{
@@ -22,6 +23,17 @@
   </head>
   <body>
     <!-- <app-shell></app-shell> -->
+
+    <platinum-sw-register
+        auto-register
+        skip-waiting
+        clients-claim
+        reload-on-install
+        href="sw-import.js">
+      <platinum-sw-cache
+        default-cache-strategy="networkFirst">
+      </platinum-sw-cache>
+    </platinum-sw-register>
 
     <firebase-app
       name="life"

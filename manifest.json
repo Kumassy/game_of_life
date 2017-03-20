@@ -1,7 +1,11 @@
 {
-  "name": "game_of_life",
-  "short_name": "game_of_life",
+  "name": "Game_of_life",
+  "short_name": "life",
   "description": "Game of Life implementaion in Polymer",
-  "start_url": "/",
-  "display": "standalone"
+  "scope": "./",
+  "start_url": "index.html",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#2196f3",
+  "background_color": "#2196f3"
 }
