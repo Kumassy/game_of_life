@@ -11,9 +11,7 @@
 
     <firebase-document
       id="document"
-      app-name="life"
-      path="[[collectionId]]"
-      data="{{collection}}">
+      app-name="life">
     </firebase-document>
 
     <firebase-query
@@ -65,14 +63,12 @@
       },
 
       addCollection: function(collection) {
-        this.collection = collection;
-
-        if (this.$.document.isNew || true) {
-          this.$.document.save(this.collectionsPath).then(() => {
-            this.$.document.reset();
-          });
-        }
         // this.push('collections', collection);
+
+        this.$.document.data = collection;
+        this.$.document.save(this.collectionsPath).then(() => {
+          this.$.document.reset();
+        });
       },
 
       get collectionsPath() {
