@@ -28,6 +28,7 @@
 <link rel="import" href="../../bower_components/app-route/app-route-converter.html">
 
 <link rel="import" href="../../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
+<link rel="import" href="../../bower_components/app-storage/app-network-status-behavior.html">
 
 <link rel="import" href="../../bower_components/polymerfire/polymerfire.html">
 
@@ -42,6 +43,7 @@
 <link rel="import" href="../life-catalog/life-catalog.html">
 <link rel="import" href="../life-path-warning/life-path-warning.html">
 <link rel="import" href="../life-about/life-about.html">
+<link rel="import" href="../life-login/life-login.html">
 <link rel="import" href="../life-catalog-data/life-catalog-data.html">
 <link rel="import" href="../life-collection-data/life-collection-data.html">
 <link rel="import" href="../life-controller/life-pause-button.html">
@@ -60,11 +62,23 @@
       data="{{routeData}}"
       tail="{{subroute}}"></app-route>
 
+    <firebase-auth
+      id="auth"
+      app-name="life"
+      provider="google"
+      signed-in="{{signedIn}}"
+      user="{{user}}"></firebase-auth>
+
     <life-catalog-data
       catalog="{{app.catalog}}"></life-catalog-data>
     <life-collection-data
       id="collectionData"
       collections="{{app.collections}}"></life-collection-data>
+
+    <life-login
+      on-sign-in="signIn"
+      signed-in="[[signedIn]]"
+      disabled="[[!online]]"></life-login>
 
     <life-nav
       title="PlayGround"
@@ -140,6 +154,8 @@
   <script>
     Polymer({
       is: 'life-app',
+
+      behaviors: [Polymer.AppNetworkStatusBehavior],
 
       properties: {
         app: {
@@ -258,6 +274,10 @@
         for(let i = 0; i < this.app.collections.length; i++) {
           this.notifyPath(['app', 'collections', i, 'title']);
         }
+      },
+
+      signIn: function() {
+        this.$.auth.signInWithPopup();
       },
     });
   </script>
