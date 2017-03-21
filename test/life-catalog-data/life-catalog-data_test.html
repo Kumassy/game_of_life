@@ -154,7 +154,7 @@
           element.toggleStar(e);
 
           assert.isTrue(spy.withArgs('item.starred', true).called);
-
+          assert.deepEqual(element._starredCatalog, ['light_weight_spaceship']);
         });
 
       });
