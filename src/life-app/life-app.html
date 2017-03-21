@@ -73,7 +73,8 @@
     <life-collection-data
       id="collectionData"
       user="[[user]]"
-      collections="{{app.collections}}"></life-collection-data>
+      collections="{{app.collections}}"
+      persisted-collections="{{persistedCollections}}"></life-collection-data>
 
     <life-login
       on-sign-in="signIn"
@@ -85,7 +86,7 @@
       page="{{page}}"
       search-keyword="{{searchKeyword}}"
       filter-by-star="{{filterByStar}}"
-      collection="[[app.collections]]"></life-nav>
+      collection="[[persistedCollections]]"></life-nav>
 
     <iron-pages role="main" selected="[[page]]" attr-for-selected="name" fallback-selection="path-warning">
       <section name="playground">
