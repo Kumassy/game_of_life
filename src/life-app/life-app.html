@@ -69,6 +69,7 @@
       user="{{user}}"></firebase-auth>
 
     <life-catalog-data
+      id="catalogData"
       catalog="{{app.catalog}}"></life-catalog-data>
     <life-collection-data
       id="collectionData"
@@ -198,7 +199,8 @@
         'show-collection-detail': '_showCollectionDetail',
         'open-settings-dialog': '_openSettingsDialog',
         'title-change': '_updateCollectionTitle',
-        'catalog-updated': '_checkSelectedPattern'
+        'catalog-updated': '_checkSelectedPattern',
+        'pattern-starred': '_toggleStar',
       },
 
       ready: function() {
@@ -273,10 +275,15 @@
         });
       },
 
-      _updateCollectionTitle: function(e){
+      _updateCollectionTitle: function(e) {
         for(let i = 0; i < this.app.collections.length; i++) {
           this.notifyPath(['app', 'collections', i, 'title']);
         }
+      },
+
+      _toggleStar: function(e) {
+        this.$.catalogData.toggleStar(e.detail);
+
       },
 
       signIn: function() {

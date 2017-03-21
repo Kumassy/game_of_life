@@ -168,15 +168,17 @@
 
 
       _toggleStar: function(e) {
-        let starred = e.model.get('item.starred');
-        starred = starred || false;
-        e.model.set('item.starred', !starred);
+        // let starred = e.model.get('item.starred');
+        // starred = starred || false;
+        // e.model.set('item.starred', !starred);
+        //
+        //
 
+        this.fire('pattern-starred', e);
         const target = e.currentTarget;
         this.debounce('update-styles', () => {
           target.updateStyles();
         }, 100);
-
       },
 
 

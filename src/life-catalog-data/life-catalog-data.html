@@ -10,6 +10,19 @@
       }
     </style>
 
+    <firebase-query
+      id="query"
+      app-name="life"
+      path="/catalog/[[user.uid]]"
+      data="{{starredCatalog}}">
+    </firebase-query>
+    <app-indexeddb-mirror
+      session="[[user.uid]]"
+      key="life"
+      data="{{starredCatalog}}"
+      persisted-data="{{persistedStarredCatalog}}">
+    </app-indexeddb-mirror>
+
     <iron-ajax auto url="../../patterns-lite.json" handle-as="json" on-response="handleResponse"></iron-ajax>
   </template>
   <script>
@@ -23,9 +36,40 @@
           value: function() {
             return [];
           }
-        }
+        },
+        starredCatalog: {
+          type: Array,
+          notify: true,
+        },
+        persistedStarredCatalog: {
+          type: Array,
+          notify: true,
+          observer: '_applyStar'
+        },
       },
 
+      _applyStar: function(starredCatalog) {
+
+      },
+
+      toggleStar: function(e) {
+        let starred = e.model.get('item.starred') || false;
+        let patternId = e.model.get('item.id');
+
+        if (starred) {
+          // remove star
+          e.model.set('item.starred', false);
+
+          var index = this.starredCatalog.indexOf(patternId);
+          if (index != -1) {
+            this.splice('starredCatalog', index, 1);
+          }
+        } else {
+          // put star
+          e.model.set('item.starred', true);
+          this.starredCatalog.push(patternId);
+        }
+      },
 
       handleResponse: function(r){
         this.catalog = [
