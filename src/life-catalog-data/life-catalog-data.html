@@ -14,12 +14,12 @@
       id="query"
       app-name="life"
       path="/catalog/[[user.uid]]"
-      data="{{starredCatalog}}">
+      data="{{_starredCatalog}}">
     </firebase-query>
     <app-indexeddb-mirror
       session="[[user.uid]]"
       key="life"
-      data="{{starredCatalog}}"
+      data="{{_starredCatalog}}"
       persisted-data="{{persistedStarredCatalog}}">
     </app-indexeddb-mirror>
 
@@ -33,24 +33,32 @@
         catalog: {
           type: Array,
           notify: true,
+          readOnly: true,
           value: function() {
             return [];
           }
         },
-        starredCatalog: {
+
+        // raw data got from iron-ajax
+        _catalogData: {
           type: Array,
-          notify: true,
+          value: function() {
+            return [];
+          }
+        },
+        _starredCatalog: {
+          type: Array,
         },
         persistedStarredCatalog: {
           type: Array,
-          notify: true,
-          observer: '_applyStar'
+          value: [],
         },
       },
 
-      _applyStar: function(starredCatalog) {
+      observers: [
+        'updateCatalog(_catalogData, persistedStarredCatalog)'
+      ],
 
-      },
 
       toggleStar: function(e) {
         let starred = e.model.get('item.starred') || false;
@@ -60,19 +68,19 @@
           // remove star
           e.model.set('item.starred', false);
 
-          var index = this.starredCatalog.indexOf(patternId);
+          var index = this._starredCatalog.indexOf(patternId);
           if (index != -1) {
-            this.splice('starredCatalog', index, 1);
+            this.splice('_starredCatalog', index, 1);
           }
         } else {
           // put star
           e.model.set('item.starred', true);
-          this.starredCatalog.push(patternId);
+          this._starredCatalog.push(patternId);
         }
       },
 
-      handleResponse: function(r){
-        this.catalog = [
+      handleResponse: function(r) {
+        this._catalogData = [
           {
             id: 'pencil',
             name: 'Pencil',
@@ -128,11 +136,15 @@
             }
           }
         ].concat(r.detail.response);
+      },
 
-        this.catalog.forEach((c) => {
-          c.starred = false;
+      updateCatalog: function(_catalogData, persistedStarredCatalog) {
+        let catalog = _catalogData.map((pattern) => {
+          pattern.starred = persistedStarredCatalog.includes(pattern.id);
+          return pattern;
         });
 
+        this._setCatalog(catalog);
         this.fire('catalog-updated');
       },
     });
