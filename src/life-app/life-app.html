@@ -27,7 +27,6 @@
 <link rel="import" href="../../bower_components/app-route/app-location.html">
 <link rel="import" href="../../bower_components/app-route/app-route-converter.html">
 
-<link rel="import" href="../../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
 <link rel="import" href="../../bower_components/app-storage/app-network-status-behavior.html">
 
 <link rel="import" href="../../bower_components/polymerfire/polymerfire.html">
@@ -164,7 +163,7 @@
           value: function() {
             return {
               catalog: [],
-              collections: [],
+              // collections: [],
               controller: {
                 isPlaying: true,
                 refreshRate: 30,
@@ -178,6 +177,8 @@
             };
           }
         },
+
+        // user: Object,
 
         page: {
           type: String,

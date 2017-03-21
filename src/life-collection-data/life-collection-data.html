@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/polymerfire/polymerfire.html">
+<link rel="import" href="../../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
 
 <dom-module id="life-collection-data">
   <template>
@@ -20,12 +21,12 @@
       path="/collections/[[user.uid]]"
       data="{{collections}}">
     </firebase-query>
-    <!-- <app-indexeddb-mirror
+    <app-indexeddb-mirror
       session="[[user.uid]]"
       key="life"
       data="{{collections}}"
       persisted-data="{{persistedCollections}}">
-    </app-indexeddb-mirror> -->
+    </app-indexeddb-mirror>
 
   </template>
   <script>
@@ -38,27 +39,11 @@
         collections: {
           type: Array,
           notify: true,
-          value: function() {
-            return [];
-          }
-        },
-        collection: {
-          type: Object,
-          value: function() {
-            return {};
-          }
-        },
-        collectionId: {
-          type: String,
-          value: 'null'
         },
 
         persistedCollections: {
           type: Array,
           notify: true,
-          value: function() {
-            return [];
-          }
         },
       },
 
