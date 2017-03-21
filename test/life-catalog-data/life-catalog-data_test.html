@@ -214,7 +214,7 @@
 
         test('merge starred info from network', () => {
           element._catalogData = catalog;
-          element.persistedStarredCatalog = ['test__glider_gun'];
+          element._starredCatalog = ['test__glider_gun'];
 
           assert.equal(element.catalog[2].id, 'test__light_weight_spaceship');
           assert.isFalse(element.catalog[2].starred);
