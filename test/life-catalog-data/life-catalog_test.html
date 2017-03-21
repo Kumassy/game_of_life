@@ -104,7 +104,7 @@
           assert.equal(element.is, 'life-catalog-data');
         });
 
-        test('Retrieve catalog data from server', (done) => {
+        test('retrieve catalog data from server', (done) => {
           // element.catalog = catalog;
           const ajax = Polymer.dom(element.root).querySelector('iron-ajax');
           const request = ajax.generateRequest();
@@ -117,6 +117,18 @@
               assert.equal(element.catalog.length, catalog.length + 4);
               done();
             }, 3000);
+          });
+        });
+
+        test('fire catalog-updated event', (done) => {
+          // element.catalog = catalog;
+          const ajax = Polymer.dom(element.root).querySelector('iron-ajax');
+          const request = ajax.generateRequest();
+          server.respond();
+          assert.deepEqual(request.response, catalog);
+
+          element.addEventListener('catalog-updated', () => {
+            done();
           });
         });
 
