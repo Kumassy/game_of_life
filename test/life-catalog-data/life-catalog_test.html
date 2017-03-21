@@ -132,6 +132,31 @@
           });
         });
 
+        test('toggling star works', () => {
+          let e = {
+            model: {
+              get: function() {
+                // do nothing
+              },
+              set: function() {
+
+              }
+            }
+          };
+
+          let stub = sinon.stub(e.model, 'get');
+          stub.withArgs('item.starred').returns(false);
+          stub.withArgs('item.id').returns('light_weight_spaceship');
+
+          let spy = sinon.spy(e.model, 'set');
+
+
+          element.toggleStar(e);
+
+          assert.isTrue(spy.withArgs('item.starred', true).called);
+
+        });
+
       });
     </script>
   </body>
