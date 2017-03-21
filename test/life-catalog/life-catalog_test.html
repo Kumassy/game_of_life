@@ -98,9 +98,14 @@
             const starButton = Polymer.dom(element.root).querySelectorAll('.card paper-icon-button')[1];
 
             assert.isUndefined(catalog[1].starred);
+
+            element.addEventListener('pattern-starred', (event) =>  {
+              assert.deepEqual(event.detail.model.get('item'), catalog[1]);
+              assert.isUndefined(event.detail.model.get('item.starred'));
+              done();
+            });
             MockInteractions.tap(starButton);
-            assert.isTrue(catalog[1].starred);
-            done();
+
           });
         });
 
