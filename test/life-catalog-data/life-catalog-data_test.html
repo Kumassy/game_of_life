@@ -33,7 +33,7 @@
           element = fixture('basic');
           catalog =
             [{
-              id: 'pencil',
+              id: 'test__pencil',
               name: 'Pencil',
               payload: ["1"],
               meta: {
@@ -42,7 +42,7 @@
               }
             },
             {
-              id: 'glider',
+              id: 'test__glider',
               name: 'Glider',
               payload: [
                 "010",
@@ -54,7 +54,7 @@
               }
             },
             {
-              id: 'light_weight_spaceship',
+              id: 'test__light_weight_spaceship',
               name: 'Light Weight Spaceship',
               payload: [
                 "01001",
@@ -68,7 +68,7 @@
               }
             },
             {
-              id: 'glider_gun',
+              id: 'test__glider_gun',
               name: 'Glider Gun',
               payload: [
                 "000000000000000000000000100000000000",
@@ -133,7 +133,40 @@
         });
 
         test('toggling star works', () => {
+          element._catalogData = catalog;
+
+
           let e = {
+            model: {
+              get: function() {
+                // do nothing
+              },
+              set: function() {
+                element.catalog[2].starred = true;
+              }
+            }
+          };
+
+          let stub = sinon.stub(e.model, 'get');
+          stub.withArgs('item.starred').returns(false);
+          stub.withArgs('item.id').returns('test__light_weight_spaceship');
+
+          let spy = sinon.spy(e.model, 'set');
+
+
+          element.toggleStar(e);
+
+          assert.isTrue(spy.withArgs('item.starred', true).called);
+          assert.deepEqual(element._starredCatalog, ['test__light_weight_spaceship']);
+          assert.equal(element.catalog[2].id, 'test__light_weight_spaceship');
+          assert.isTrue(element.catalog[2].starred);
+        });
+
+        test('removing star works', () => {
+          element._catalogData = catalog;
+
+
+          let e__glider_gun = {
             model: {
               get: function() {
                 // do nothing
@@ -143,18 +176,43 @@
               }
             }
           };
+          let stub__glider_gun = sinon.stub(e__glider_gun.model, 'get');
+          stub__glider_gun.withArgs('item.starred').returns(false);
+          stub__glider_gun.withArgs('item.id').returns('test__glider_gun');
+          let spy__glider_gun = sinon.spy(e__glider_gun.model, 'set');
 
-          let stub = sinon.stub(e.model, 'get');
-          stub.withArgs('item.starred').returns(false);
-          stub.withArgs('item.id').returns('light_weight_spaceship');
+          let e__space_ship = {
+            model: {
+              get: function() {
+                // do nothing
+              },
+              set: function() {
 
-          let spy = sinon.spy(e.model, 'set');
+              }
+            }
+          };
+          let stub__space_ship = sinon.stub(e__space_ship.model, 'get');
+          stub__space_ship.withArgs('item.starred').returns(false);
+          stub__space_ship.withArgs('item.id').returns('test__light_weight_spaceship');
+          let spy__space_ship = sinon.spy(e__space_ship.model, 'set');
 
 
-          element.toggleStar(e);
+          element.toggleStar(e__glider_gun);
+          element.toggleStar(e__space_ship);
 
-          assert.isTrue(spy.withArgs('item.starred', true).called);
-          assert.deepEqual(element._starredCatalog, ['light_weight_spaceship']);
+          assert.deepEqual(element._starredCatalog, ['test__glider_gun', 'test__light_weight_spaceship']);
+
+          stub__glider_gun.withArgs('item.starred').returns(true);
+          element.toggleStar(e__glider_gun);
+
+          assert.isTrue(spy__glider_gun.withArgs('item.starred', false).called);
+          assert.deepEqual(element._starredCatalog, ['test__light_weight_spaceship']);
+          // assert.equal(element.catalog[3].id, 'test__glider_gun');
+          // assert.isFalse(element.catalog[3].starred);
+
+
+
+
         });
 
       });
