@@ -1,0 +1,41 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+
+<dom-module id="life-icon-button">
+  <template>
+    <style>
+      :host {
+        display: inline-block;
+      }
+      iron-icon {
+        fill: rgba(0,0,0,0);
+        stroke: currentcolor;
+      }
+      :host([checked]) iron-icon {
+        fill: currentcolor;
+      }
+    </style>
+
+    <iron-icon icon="[[icon]]"></iron-icon>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'life-icon-button',
+
+      properties: {
+        icon: {
+          type: String,
+          value: 'star'
+        },
+
+        checked: {
+          type: Boolean,
+          value: false,
+          notify: true,
+          reflectToAttribute: true
+        }
+      },
+    });
+  </script>
+</dom-module>
