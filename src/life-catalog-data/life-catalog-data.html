@@ -97,7 +97,7 @@
           }
         }
 
-        this.$.document.save(this.catalogPath, this.user.uid).then(() => {
+        this.$.document.save('/catalog', this.user.uid).then(() => {
           this.$.document.reset();
         });
       },
@@ -169,11 +169,6 @@
 
         this._setCatalog(catalog);
         this.fire('catalog-updated');
-      },
-
-      get catalogPath() {
-        // return '/catalog/' + this.user.uid;
-        return '/catalog';
       },
 
     });
