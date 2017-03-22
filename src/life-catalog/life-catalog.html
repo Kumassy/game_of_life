@@ -21,7 +21,6 @@
       <template is="dom-repeat" items="[[currentPatterns]]">
         <div class="card" star$="[[item.starred]]">
           <life-preview-canvas width="240" height="240" auto-play pattern="[[item]]"></life-preview-canvas>
-          <!-- <paper-icon-button icon="star" on-tap="_toggleStar"></paper-icon-button> -->
           <life-icon-button checked="[[item.starred]]" on-tap="_toggleStar"></life-icon-button>
           <div class="card-content">
             <div class="title">[[item.name]]</div>
@@ -111,28 +110,6 @@
       properties: {
         route: Object,
         _routeData: Object,
-
-        // app: {
-        //   type: Object
-        // },
-        // catalogForPage: {
-        //   type: Object,
-        //   computed: '_computeCatalogForPage(app._catalog, currentPage, perPage)'
-        // },
-        // currentPage: {
-        //   type: Number,
-        //   value: 0
-        // },
-        // perPage: {
-        //   type: Number,
-        //   value: 12,
-        // },
-        // pageCount: {
-        //   type: Number,
-        //   computed: '_computePageCount(app._catalog, perPage)'
-        // }
-
-
       },
 
       observers: [
@@ -154,43 +131,11 @@
       },
       _onPageChanged: function() {
         this.set('route.path', '/' + this.currentPage);
-        // this.debounce('update-styles', () => {
-        //   Polymer.updateStyles();
-        // }, 100);
       },
-
 
       _toggleStar: function(e) {
-        // let starred = e.model.get('item.starred');
-        // starred = starred || false;
-        // e.model.set('item.starred', !starred);
-        //
-        //
-
         this.fire('pattern-starred', e);
-        // const target = e.currentTarget;
-        // this.debounce('update-styles', () => {
-        //   target.updateStyles();
-        // }, 100);
       },
-
-
-      // _pager: function(item){
-      //   if(Math.random() > 0.98){
-      //     console.log(item);
-      //     return true;
-      //   }
-      //   else{
-      //     return false;
-      //   }
-      // }
-      // _computePageCount: function(catalog, perPage){
-      //   return Math.ceil(catalog.length / perPage);
-      // },
-      //
-      // _computeCatalogForPage: function(catalog, currentPage, perPage){
-      //   return catalog.slice(currentPage * perPage, currentPage * perPage + perPage);
-      // }
     });
   </script>
 </dom-module>
