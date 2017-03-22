@@ -90,29 +90,17 @@
       overflow-wrap: break-word;
     }
 
-    .card paper-icon-button {
+    .card life-icon-button {
       position: absolute;
       top: 219px;
       right: 15px;
       border-radius: 50%;
+      padding: 8px;
+      box-sizing: border-box;
 
       background: white;
 
       @apply(--shadow-elevation-2dp);
-    }
-
-    .card:not([star]) paper-icon-button iron-icon {
-      /*--iron-icon-fill-color: white;
-      --iron-icon-stroke-color: var(--paper-grey-600);*/
-
-      fill: rgba(0,0,0,0);
-      stroke: yellow;
-    }
-
-    .card[star] paper-icon-button iron-icon {
-      /*--iron-icon-fill-color: yellow;
-      --iron-icon-stroke-color: var(--paper-grey-600);*/
-      fill: yellow;
     }
   </style>
 
