@@ -4,6 +4,8 @@
 <link rel="import" href="../../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
 
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+
 
 <dom-module id="life-catalog-data">
   <template>
@@ -169,6 +171,7 @@
 
         this._setCatalog(catalog);
         this.fire('catalog-updated');
+        this.fire('iron-signal', {name: 'catalog-updated', data: null});
       },
 
     });
