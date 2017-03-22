@@ -19,7 +19,7 @@
 
     <div class="patterns">
       <template is="dom-repeat" items="[[currentPatterns]]">
-        <div class="card" star$="[[item.starred]]">
+        <div class="card">
           <life-preview-canvas width="240" height="240" auto-play pattern="[[item]]"></life-preview-canvas>
           <life-icon-button checked="[[item.starred]]" on-tap="_toggleStar"></life-icon-button>
           <div class="card-content">
