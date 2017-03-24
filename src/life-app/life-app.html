@@ -43,12 +43,15 @@
 <link rel="import" href="../life-path-warning/life-path-warning.html">
 <link rel="import" href="../life-about/life-about.html">
 <link rel="import" href="../life-login/life-login.html">
+<link rel="import" href="../life-analytics/life-analytics.html">
 <link rel="import" href="../life-catalog-data/life-catalog-data.html">
 <link rel="import" href="../life-collection-data/life-collection-data.html">
 <link rel="import" href="../life-controller/life-pause-button.html">
 
 <dom-module id="life-app">
   <template>
+    <life-analytics key="UA-84495932-3"></life-analytics>
+
     <app-location route="{{route}}" use-hash-as-path></app-location>
     <!-- <app-route-converter
       path="{{path}}"
