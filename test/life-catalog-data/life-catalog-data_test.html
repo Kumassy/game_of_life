@@ -95,6 +95,10 @@
               JSON.stringify(catalog)
             ]
           );
+
+          element.user = {uid: 'USER_TOKEN'};
+          sinon.stub(element.$.document, 'save', () => Promise.resolve());
+          sinon.stub(element.$.document, 'reset', () => true);
         });
         teardown(function() {
           server.restore();
@@ -157,7 +161,7 @@
           element.toggleStar(e);
 
           assert.isTrue(spy.withArgs('item.starred', true).called);
-          assert.deepEqual(element._starredCatalog, ['test__light_weight_spaceship']);
+          assert.isTrue(element._starredCatalog.hasOwnProperty('test__light_weight_spaceship'));
           assert.equal(element.catalog[2].id, 'test__light_weight_spaceship');
           assert.isTrue(element.catalog[2].starred);
         });
@@ -200,13 +204,16 @@
           element.toggleStar(e__glider_gun);
           element.toggleStar(e__space_ship);
 
-          assert.deepEqual(element._starredCatalog, ['test__glider_gun', 'test__light_weight_spaceship']);
+          assert.isTrue(element._starredCatalog.hasOwnProperty('test__glider_gun'));
+          assert.isTrue(element._starredCatalog.hasOwnProperty('test__light_weight_spaceship'));
+
 
           stub__glider_gun.withArgs('item.starred').returns(true);
           element.toggleStar(e__glider_gun);
 
           assert.isTrue(spy__glider_gun.withArgs('item.starred', false).called);
-          assert.deepEqual(element._starredCatalog, ['test__light_weight_spaceship']);
+          assert.isFalse(element._starredCatalog.hasOwnProperty('test__glider_gun'));
+          assert.isTrue(element._starredCatalog.hasOwnProperty('test__light_weight_spaceship'));
           // assert.equal(element.catalog[3].id, 'test__glider_gun');
           // assert.isFalse(element.catalog[3].starred);
 
@@ -214,7 +221,7 @@
 
         test('merge starred info from network', () => {
           element._catalogData = catalog;
-          element._starredCatalog = ['test__glider_gun'];
+          element._starredCatalog = {test__glider_gun: true};
 
           assert.equal(element.catalog[2].id, 'test__light_weight_spaceship');
           assert.isFalse(element.catalog[2].starred);
