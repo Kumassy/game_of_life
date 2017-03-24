@@ -27,6 +27,9 @@
 <link rel="import" href="../../bower_components/app-route/app-location.html">
 <link rel="import" href="../../bower_components/app-route/app-route-converter.html">
 
+<link rel="import" href="../../bower_components/app-storage/app-network-status-behavior.html">
+
+<link rel="import" href="../../bower_components/polymerfire/polymerfire.html">
 
 <link rel="import" href="../life-icon-toggle/life-icon-toggle.html">
 <link rel="import" href="../life-dialogs/life-collection-detail-dialog.html">
@@ -39,6 +42,7 @@
 <link rel="import" href="../life-catalog/life-catalog.html">
 <link rel="import" href="../life-path-warning/life-path-warning.html">
 <link rel="import" href="../life-about/life-about.html">
+<link rel="import" href="../life-login/life-login.html">
 <link rel="import" href="../life-catalog-data/life-catalog-data.html">
 <link rel="import" href="../life-collection-data/life-collection-data.html">
 <link rel="import" href="../life-controller/life-pause-button.html">
@@ -57,18 +61,34 @@
       data="{{routeData}}"
       tail="{{subroute}}"></app-route>
 
+    <firebase-auth
+      id="auth"
+      app-name="life"
+      provider="google"
+      signed-in="{{signedIn}}"
+      user="{{user}}"></firebase-auth>
+
     <life-catalog-data
+      id="catalogData"
+      user="[[user]]"
       catalog="{{app.catalog}}"></life-catalog-data>
     <life-collection-data
       id="collectionData"
-      collections="{{app.collections}}"></life-collection-data>
+      user="[[user]]"
+      collections="{{app.collections}}"
+      persisted-collections="{{persistedCollections}}"></life-collection-data>
+
+    <life-login
+      on-sign-in="signIn"
+      signed-in="[[signedIn]]"
+      disabled="[[!online]]"></life-login>
 
     <life-nav
       title="PlayGround"
       page="{{page}}"
       search-keyword="{{searchKeyword}}"
       filter-by-star="{{filterByStar}}"
-      collection="[[app.collections]]"></life-nav>
+      collection="[[persistedCollections]]"></life-nav>
 
     <iron-pages role="main" selected="[[page]]" attr-for-selected="name" fallback-selection="path-warning">
       <section name="playground">
@@ -138,13 +158,15 @@
     Polymer({
       is: 'life-app',
 
+      behaviors: [Polymer.AppNetworkStatusBehavior],
+
       properties: {
         app: {
           type: Object,
           value: function() {
             return {
               catalog: [],
-              collections: [],
+              // collections: [],
               controller: {
                 isPlaying: true,
                 refreshRate: 30,
@@ -158,6 +180,8 @@
             };
           }
         },
+
+        // user: Object,
 
         page: {
           type: String,
@@ -176,7 +200,8 @@
         'show-collection-detail': '_showCollectionDetail',
         'open-settings-dialog': '_openSettingsDialog',
         'title-change': '_updateCollectionTitle',
-        'catalog-updated': '_checkSelectedPattern'
+        'catalog-updated': '_checkSelectedPattern',
+        'pattern-starred': '_toggleStar',
       },
 
       ready: function() {
@@ -251,10 +276,19 @@
         });
       },
 
-      _updateCollectionTitle: function(e){
+      _updateCollectionTitle: function(e) {
         for(let i = 0; i < this.app.collections.length; i++) {
           this.notifyPath(['app', 'collections', i, 'title']);
         }
+      },
+
+      _toggleStar: function(e) {
+        this.$.catalogData.toggleStar(e.detail);
+
+      },
+
+      signIn: function() {
+        this.$.auth.signInWithPopup();
       },
     });
   </script>

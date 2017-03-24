@@ -1,6 +1,11 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
+<link rel="import" href="../../bower_components/polymerfire/polymerfire.html">
+<link rel="import" href="../../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
+
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+
 
 <dom-module id="life-catalog-data">
   <template>
@@ -9,6 +14,26 @@
         display: block;
       }
     </style>
+
+    <!-- <firebase-query
+      id="query"
+      app-name="life"
+      path="/catalog/[[user.uid]]"
+      data="{{_starredCatalog}}">
+    </firebase-query> -->
+    <firebase-document
+      id="document"
+      app-name="life"
+      path="/catalog/[[user.uid]]"
+      data="{{_starredCatalog}}">
+    </firebase-document>
+
+    <app-indexeddb-mirror
+      session="[[user.uid]]"
+      key="life"
+      data="{{_starredCatalog}}"
+      persisted-data="{{persistedStarredCatalog}}">
+    </app-indexeddb-mirror>
 
     <iron-ajax auto url="../../patterns-lite.json" handle-as="json" on-response="handleResponse"></iron-ajax>
   </template>
@@ -20,15 +45,67 @@
         catalog: {
           type: Array,
           notify: true,
+          readOnly: true,
           value: function() {
             return [];
           }
-        }
+        },
+
+        // raw data got from iron-ajax
+        _catalogData: {
+          type: Array,
+          value: function() {
+            return [];
+          }
+        },
+        _starredCatalog: {
+          type: Object,
+        },
+        persistedStarredCatalog: {
+          type: Object,
+          value: function() {
+            return {
+            }
+          },
+        },
       },
 
+      observers: [
+        'updateCatalog(_catalogData, persistedStarredCatalog)'
+      ],
 
-      handleResponse: function(r){
-        this.catalog = [
+
+      toggleStar: function(e) {
+        let starred = e.model.get('item.starred') || false;
+        let patternId = e.model.get('item.id');
+
+        if (starred) {
+          // remove star
+          e.model.set('item.starred', false);
+
+          if (this._starredCatalog.hasOwnProperty(patternId)) {
+            delete this._starredCatalog[patternId];
+          } else {
+            // TODO report bug
+          }
+        } else {
+          // put star
+          e.model.set('item.starred', true);
+
+          if (!this._starredCatalog.hasOwnProperty(patternId)) {
+            this._starredCatalog[patternId] = true;
+          } else {
+            // TODO report bug
+          }
+        }
+
+        this.$.document.save('/catalog', this.user.uid).then(() => {
+          this.$.document.reset();
+        });
+      },
+
+      handleResponse: function(r) {
+        this._catalogData = [
           {
             id: 'pencil',
             name: 'Pencil',
@@ -84,13 +161,19 @@
             }
           }
         ].concat(r.detail.response);
+      },
 
-        this.catalog.forEach((c) => {
-          c.starred = false;
+      updateCatalog: function(_catalogData, persistedStarredCatalog) {
+        let catalog = _catalogData.map((pattern) => {
+          pattern.starred = persistedStarredCatalog.hasOwnProperty(pattern.id);
+          return pattern;
         });
 
+        this._setCatalog(catalog);
         this.fire('catalog-updated');
+        this.fire('iron-signal', {name: 'catalog-updated', data: null});
       },
+
     });
   </script>
 </dom-module>

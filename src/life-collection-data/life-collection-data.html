@@ -1,4 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymerfire/polymerfire.html">
+<link rel="import" href="../../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
 
 <dom-module id="life-collection-data">
   <template>
@@ -8,24 +10,55 @@
       }
     </style>
 
+    <firebase-document
+      id="document"
+      app-name="life">
+    </firebase-document>
+
+    <firebase-query
+      id="query"
+      app-name="life"
+      path="/collections/[[user.uid]]"
+      data="{{collections}}">
+    </firebase-query>
+    <app-indexeddb-mirror
+      session="[[user.uid]]"
+      key="life"
+      data="{{collections}}"
+      persisted-data="{{persistedCollections}}">
+    </app-indexeddb-mirror>
+
   </template>
   <script>
     Polymer({
       is: 'life-collection-data',
 
       properties: {
+        // user: Object,
+
         collections: {
           type: Array,
           notify: true,
-          value: function() {
-            return [];
-          }
-        }
+        },
+
+        persistedCollections: {
+          type: Array,
+          notify: true,
+        },
       },
 
       addCollection: function(collection) {
-        this.push('collections', collection);
-      }
+        // this.push('collections', collection);
+
+        this.$.document.data = collection;
+        this.$.document.save(this.collectionsPath).then(() => {
+          this.$.document.reset();
+        });
+      },
+
+      get collectionsPath() {
+        return '/collections/' + this.user.uid;
+      },
     });
   </script>
 </dom-module>
