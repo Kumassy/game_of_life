@@ -193,6 +193,7 @@
       ],
       listeners: {
         'add-collection': '_createNewCollection',
+        'delete-collection': '_deleteCollection',
         'show-collection-detail': '_showCollectionDetail',
         'open-settings-dialog': '_openSettingsDialog',
         'title-change': '_updateCollectionTitle',
@@ -253,7 +254,7 @@
         this.$.mainCanvas.clearCanvas();
       },
 
-      _createNewCollection: function(){
+      _createNewCollection: function() {
         var lifeCanvas = this.$.mainCanvas;
 
         var rle = lifeCanvas.getRLE();
@@ -270,6 +271,10 @@
           createdAt: new Date(),
           updatedAt: new Date(),
         });
+      },
+
+      _deleteCollection: function(e) {
+        this.$.collectionData.deleteCollection(e.detail.collection);
       },
 
       _updateCollectionTitle: function(e) {

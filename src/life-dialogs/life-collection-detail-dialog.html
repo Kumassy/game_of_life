@@ -31,7 +31,7 @@
         <paper-input label="Share URL" value="[[target.shareUrl]]"></paper-input>
       </paper-dialog-scrollable>
       <div class="buttons">
-        <paper-button class="delete">Delete</paper-button>
+        <paper-button class="delete" on-tap="_deleteTarget">Delete</paper-button>
         <paper-button dialog-confirm autofocus>OK</paper-button>
       </div>
     </paper-dialog>
@@ -59,19 +59,23 @@
         '_titleChanged(target.title)'
       ],
 
-      _computeDownloadURL: function(dataUrl){
+      _computeDownloadURL: function(dataUrl) {
         return dataUrl.replace('image/png', 'application/octet-stream');
       },
-      _computeDownloadFileName: function(title){
+      _computeDownloadFileName: function(title) {
         return title + '.png';
       },
 
-      _titleChanged: function(){
+      _titleChanged: function() {
         this.set('target.updatedAt', new Date());
         this.fire('title-change', {title: this.title});
       },
 
-      open: function(){
+      _deleteTarget: function() {
+        this.fire('delete-collection', {collection: this.target});
+      },
+
+      open: function() {
         this.$.dialog.open();
       }
     });
