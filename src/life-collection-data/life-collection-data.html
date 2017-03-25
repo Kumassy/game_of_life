@@ -2,6 +2,8 @@
 <link rel="import" href="../../bower_components/polymerfire/polymerfire.html">
 <link rel="import" href="../../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
 
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+
 <link rel="import" href="../life-behaviors/life-analytics-behavior.html">
 
 <dom-module id="life-collection-data">
@@ -30,6 +32,8 @@
       persisted-data="{{persistedCollections}}">
     </app-indexeddb-mirror>
 
+
+    <paper-toast id="toast" text="collection was deleted successfully"></paper-toast>
   </template>
   <script>
     Polymer({
@@ -63,6 +67,8 @@
         if (index != -1) {
           this.$.document.path = `${this.collectionsPath}/${collection.$key}`;
           this.$.document.destroy();
+
+          this.$.toast.open();
         } else {
           this.sendException('failed to delete collection');
         }

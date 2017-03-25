@@ -31,8 +31,15 @@
         <paper-input label="Share URL" value="[[target.shareUrl]]"></paper-input>
       </paper-dialog-scrollable>
       <div class="buttons">
-        <paper-button class="delete" on-tap="_deleteTarget">Delete</paper-button>
+        <paper-button class="delete" on-tap="_openConfirmationDialog">Delete</paper-button>
         <paper-button dialog-confirm autofocus>OK</paper-button>
+      </div>
+    </paper-dialog>
+    <paper-dialog id="confirmation">
+      <div>Are you sure?</div>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button dialog-confirm autofocus on-tap="_deleteTarget">OK</paper-button>
       </div>
     </paper-dialog>
   </template>
@@ -71,7 +78,12 @@
         this.fire('title-change', {title: this.title});
       },
 
+      _openConfirmationDialog: function() {
+        this.$.confirmation.open();
+      },
+
       _deleteTarget: function() {
+        this.$.dialog.close();
         this.fire('delete-collection', {collection: this.target});
       },
 
