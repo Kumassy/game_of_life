@@ -159,8 +159,8 @@
       if(this.isPlaying){
         // this._gameManager.refreshCanvas(this.backgroundColor, this.background);
         this._gameManager.refreshCanvas();
-        this._gameManager.draw();
         this._gameManager.update();
+        this._gameManager.draw();
         // this.fire('game-loop-end');
         this.drawPreview();
       }
