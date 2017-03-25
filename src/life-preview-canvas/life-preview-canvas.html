@@ -7,8 +7,6 @@
     <canvas id="canvas" width$="[[_canvasWidth]]" height$="[[_canvasHeight]]">Your browser doesn't support html5 canvas</canvas>
   </template>
 
-  <style>
-  </style>
 
   <script>
     Polymer({
@@ -33,10 +31,10 @@
         //   type: Number,
         //   value: 40
         // },
-        autoPlay: {
-          type: Boolean,
-          value: false
-        },
+        // autoPlay: {
+        //   type: Boolean,
+        //   value: false
+        // },
         // rle: {
         //   type: String,
         //   value: '2o2b$o3b$3bo$2b2o!',    // Beacon
@@ -73,16 +71,25 @@
         //   value: 2,
         //   // computed: '_computeCellSize(patternWidth, patternHeight)'
         // },
+
+        refreshRate: {
+          type: Number,
+          value: 30
+        },
         onHover: {
+          type: Boolean,
+          value: false
+        },
+        playOnHover: {
           type: Boolean,
           value: false
         }
       },
 
       observers: [
-        // '_handleAutoAdjust(patternWidth, patternHeight, rle)'
-        '_handleAutoAdjust(pattern)',
-        '_mapAutoPlay(autoPlay)'
+        // '_drawPattern(patternWidth, patternHeight, rle)'
+        '_drawPattern(pattern)',
+        // '_mapAutoPlay(autoPlay)'
       ],
 
       ready: function(){
@@ -90,27 +97,29 @@
 
         // console.log(this.$.canvas.getCanvas());
         // this.$.canvas.getCanvas().addEventListener('click', function(e){ console.log("hoge") }, false);
-        this.canvas.addEventListener('mouseenter', this._handleMouseEnter(this), false);
-        this.canvas.addEventListener('mouseleave', this._handleMouseLeave(this), false);
+        this.canvas.addEventListener('mouseenter', this._handleMouseEnter.bind(this), false);
+        this.canvas.addEventListener('mouseleave', this._handleMouseLeave.bind(this), false);
       },
 
-      _handleMouseEnter: function(self){
-        return function(e){
-          // console.log("hover!!");
-          self.onHover = true;
-        };
+      _handleMouseEnter: function(e) {
+        this.onHover = true;
+        if (this.playOnHover) {
+          this.isPlaying = true;
+        }
       },
-      _handleMouseLeave: function(self){
-        return function(e){
-          self.onHover = false;
-        };
+      _handleMouseLeave: function(e) {
+        this.onHover = false;
+        if (this.playOnHover) {
+          this.isPlaying = false;
+          this._drawPattern(this.pattern);
+        }
       },
       // _handleClick: function(){
       //   console.log("handle Click");
       // },
 
-      // _handleAutoAdjust: function(patternWidth, patternHeight, rle){
-      _handleAutoAdjust: function(pattern){
+      // _drawPattern: function(patternWidth, patternHeight, rle){
+      _drawPattern: function(pattern){
         let cellSize = 1;
         const patternWidth = pattern.meta.x;
         const patternHeight = pattern.meta.y;
@@ -139,11 +148,12 @@
                             location: 'center',
                             coordinate: 'canvas',
                           });
+
       },
 
-      _mapAutoPlay: function(autoPlay) {
-        this.isPlaying = autoPlay;
-      },
+      // _mapAutoPlay: function(autoPlay) {
+      //   this.isPlaying = autoPlay;
+      // },
 
       // _computeCellSize: function(patternWidth, patternHeight){
       //   var cellSize = 1;
