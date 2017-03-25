@@ -1,0 +1,13 @@
+<script type="text/javascript">
+  LifeAnalyticsBehavior = {
+    sendEvent: function(eventCategory, eventAction, eventLabel) {
+      ga('send', 'event', eventCategory, eventAction, eventLabel);
+    },
+    sendException: function(description) {
+      ga('send', 'exception', {
+        'exDescription': description,
+        'exFatal': false
+      });
+    },
+  };
+</script>

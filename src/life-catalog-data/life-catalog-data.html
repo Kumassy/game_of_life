@@ -6,6 +6,7 @@
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
 
+<link rel="import" href="../life-behaviors/life-analytics-behavior.html">
 
 <dom-module id="life-catalog-data">
   <template>
@@ -40,6 +41,7 @@
   <script>
     Polymer({
       is: 'life-catalog-data',
+      behaviors: [LifeAnalyticsBehavior],
 
       properties: {
         catalog: {
@@ -86,7 +88,7 @@
           if (this._starredCatalog.hasOwnProperty(patternId)) {
             delete this._starredCatalog[patternId];
           } else {
-            // TODO report bug
+            this.sendException(`${patternId} is missing in _starredCatalog`);
           }
         } else {
           // put star
@@ -95,7 +97,7 @@
           if (!this._starredCatalog.hasOwnProperty(patternId)) {
             this._starredCatalog[patternId] = true;
           } else {
-            // TODO report bug
+            this.sendException(`_starredCatalog has ${patternId}`);
           }
         }
 
