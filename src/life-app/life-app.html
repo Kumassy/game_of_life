@@ -233,7 +233,7 @@
         if(params.data){
           var lifeCanvas = this.$.mainCanvas;
           lifeCanvas.clearCanvas();
-          lifeCanvas.injectPattern(0, 0, params.data);
+          lifeCanvas.drawPattern(params.data, {location: 'center', coordinate: 'canvas'});
         }
       },
 
