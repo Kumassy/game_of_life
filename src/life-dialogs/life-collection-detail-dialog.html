@@ -1,22 +1,37 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 
 <dom-module id="life-collection-detail-dialog">
   <template>
+    <style>
+      .buttons {
+        @apply(--layout);
+        @apply(--layout-justified);
+      }
+      paper-button.delete {
+        color: var(--paper-red-500);
+      }
+    </style>
     <paper-dialog id="dialog">
-      <paper-input label="Title" value="{{target.title}}"></paper-input>
-      <div style="position: relative;">
-        <a href="[[_downloadURL]]" download="[[_downloadFileName]]">
-          <img src="[[target.dataUrl]]" style="max-height: 60vh; max-width: 100%; width: auto;">
-        </a>
-      </div>
-      <!-- <span>[[target.createdAt]]</span>
-      <span>[[target.updatedAt]]</span> -->
-      <paper-input label="Share URL" value="[[target.shareUrl]]"></paper-input>
+      <h2>Collection Detail</h2>
+      <paper-dialog-scrollable>
+        <paper-input label="Title" value="{{target.title}}"></paper-input>
+        <div style="position: relative;">
+          <a href="[[_downloadURL]]" download="[[_downloadFileName]]">
+            <img src="[[target.dataUrl]]" style="max-height: 60vh; max-width: 100%; width: auto;">
+          </a>
+        </div>
+        <!-- <span>[[target.createdAt]]</span>
+        <span>[[target.updatedAt]]</span> -->
+        <paper-input label="Share URL" value="[[target.shareUrl]]"></paper-input>
+      </paper-dialog-scrollable>
       <div class="buttons">
+        <paper-button class="delete">Delete</paper-button>
         <paper-button dialog-confirm autofocus>OK</paper-button>
       </div>
     </paper-dialog>
