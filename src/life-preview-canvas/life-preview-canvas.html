@@ -23,30 +23,9 @@
             return this.$.canvas;
           }
         },
-        // width: {
-        //   type: Number,
-        //   value: 40
-        // },
-        // height: {
-        //   type: Number,
-        //   value: 40
-        // },
         // autoPlay: {
         //   type: Boolean,
         //   value: false
-        // },
-        // rle: {
-        //   type: String,
-        //   value: '2o2b$o3b$3bo$2b2o!',    // Beacon
-        //   // observer: '_rleChanged'
-        // },
-        // patternWidth: {
-        //   type: Number,
-        //   // value: 20
-        // },
-        // patternHeight: {
-        //   type: Number,
-        //   // value: 20
         // },
         pattern: {
           type: Object,
@@ -66,12 +45,6 @@
           }
         },
 
-        // cellSize: {
-        //   type: Number,
-        //   value: 2,
-        //   // computed: '_computeCellSize(patternWidth, patternHeight)'
-        // },
-
         refreshRate: {
           type: Number,
           value: 30
@@ -87,16 +60,10 @@
       },
 
       observers: [
-        // '_drawPattern(patternWidth, patternHeight, rle)'
         '_drawPattern(pattern)',
-        // '_mapAutoPlay(autoPlay)'
       ],
 
       ready: function(){
-        // this._computeCellSize(this.patternWidth, this.patternHeight);
-
-        // console.log(this.$.canvas.getCanvas());
-        // this.$.canvas.getCanvas().addEventListener('click', function(e){ console.log("hoge") }, false);
         this.canvas.addEventListener('mouseenter', this._handleMouseEnter.bind(this), false);
         this.canvas.addEventListener('mouseleave', this._handleMouseLeave.bind(this), false);
       },
@@ -114,11 +81,7 @@
           this._drawPattern(this.pattern);
         }
       },
-      // _handleClick: function(){
-      //   console.log("handle Click");
-      // },
 
-      // _drawPattern: function(patternWidth, patternHeight, rle){
       _drawPattern: function(pattern){
         let cellSize = 1;
         const patternWidth = pattern.meta.x;
@@ -134,15 +97,7 @@
         }
         this.cellSize = cellSize;
 
-
-        // var canvas = this.$.canvas;
-        // canvas.clearCanvas();
         this.clearCanvas();
-
-        // var x = Math.floor((this._canvasWidth / this.cellSize) / 2 - patternWidth / 2);
-        // var y = Math.floor((this._canvasHeight / this.cellSize) / 2 - patternHeight / 2);
-        // // console.log("width: " + this.patternWidth + "; height: " + this.patternHeight + ";x: " + x + "; y: " + y);
-        // this.drawPattern(x, y, pattern.payload);
         this.drawPattern(pattern,
                           {
                             location: 'center',
@@ -150,44 +105,6 @@
                           });
 
       },
-
-      // _mapAutoPlay: function(autoPlay) {
-      //   this.isPlaying = autoPlay;
-      // },
-
-      // _computeCellSize: function(patternWidth, patternHeight){
-      //   var cellSize = 1;
-      //   if(patternWidth > this.width || patternHeight > this.height){
-      //     cellSize = 1;
-      //   }
-      //   else{
-      //     // console.log(Math.max(Math.floor(this.width / (patternWidth * 1.4)), Math.floor(this.height / (patternHeight * 1.4)), 1));
-      //
-      //     var _cellSize = Math.min(Math.floor(this.width / (patternWidth * 1.4)), Math.floor(this.height / (patternHeight * 1.4)));
-      //     cellSize = [1, _cellSize, 8].sort(function(a, b){ return a - b;})[1];
-      //     // cellSize = Math.max(Math.floor(this.width / (patternWidth * 1.4)), Math.floor(this.height / (patternHeight * 1.4)), 1);
-      //   }
-      //
-      //   // console.log(cellSize);
-      //
-      //   this._rleChanged();
-      //   return cellSize;
-      // },
-      //
-      // _rleChanged: function(){
-      //   var canvas = this.$.canvas;
-      //   // var canvas = document.querySelector('life-canvas-base');
-      //   canvas.clearCanvas();
-      //   // canvas.injectPattern(2, 2, this.rle);
-      //
-      //   if(!this.width || !this.height || !this.patternWidth || !this.patternHeight) return;
-      //   var x = Math.floor((this.width / this.cellSize) / 2 - this.patternWidth / 2);
-      //   var y = Math.floor((this.height / this.cellSize) / 2 - this.patternHeight / 2);
-      //   console.log("width: " + this.patternWidth + "; height: " + this.patternHeight + ";x: " + x + "; y: " + y);
-      //   canvas.injectPattern(x, y, this.rle);
-      // }
-
-
     });
   </script>
 </dom-module>
