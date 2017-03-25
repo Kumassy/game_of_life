@@ -112,14 +112,6 @@
       is: 'life-pattern-chooser',
       behaviors: [LifePatternCatalogBehavior],
       properties: {
-        // _selectedPattern: {
-        //   type: Object,
-        //   value: null
-        // },
-        // _domForSelectedPattern: {
-        //   type: Object,
-        //   value: null
-        // },
         _selectedPattern: {
           type: Object,
           value: function() {
@@ -137,37 +129,20 @@
       },
 
       _patternSelected: function(e) {
-        // if(this._domForSelectedPattern) {
-        //   this._domForSelectedPattern.removeAttribute('selected');
-        // }
         if (this._selectedPattern.dom) {
           this._selectedPattern.dom.removeAttribute('selected');
         }
 
 
-        // this._domForSelectedPattern = e.currentTarget;
-        // this._selectedPattern = {
-        //   page: this.currentPage,
-        //   pattern: e.model.get('item'),
-        // };
         this._selectedPattern = {
           pattern:  e.model.get('item'),
           dom: e.currentTarget,
           page: this.currentPage,
         };
 
-        // this._domForSelectedPattern.setAttribute('selected', '');
         this._selectedPattern.dom.setAttribute('selected', '');
       },
       __removeOrRestoreSelectedAttr: function() {
-        // if(this._selectedPattern.page === this.currentPage) {
-        //   // restore
-        //   this._domForSelectedPattern.setAttribute('selected', '');
-        // }
-        // else {
-        //   // remove
-        //   this._domForSelectedPattern.removeAttribute('selected');
-        // }
         if(this._selectedPattern.page === this.currentPage) {
           // restore
           this._selectedPattern.dom.setAttribute('selected', '');
