@@ -105,7 +105,7 @@
       properties: {
         title: {
           type: String,
-          value: 'Game of Life'
+          computed: '_computePageTitle(page)'
         },
         searchKeyword: {
           type: String,
@@ -124,7 +124,17 @@
           type: String,
           notify: true,
           observer: '_pageChanged',
-          value: 'playground'
+          // value: 'playground'
+        },
+        _pageTitles: {
+          type: Object,
+          value: function() {
+            return {
+              playground: 'Playground',
+              catalog: 'Catalog',
+              about: 'About'
+            }
+          }
         },
 
         collection: {
@@ -160,6 +170,9 @@
       },
       _computeShouldRenderSearchBox: function(page) {
         return page === 'catalog';
+      },
+      _computePageTitle: function(page) {
+        return this._pageTitles[page];
       },
 
       _addCollection: function(event) {
