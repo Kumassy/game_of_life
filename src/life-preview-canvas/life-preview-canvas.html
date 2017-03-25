@@ -64,17 +64,17 @@
       ],
 
       ready: function(){
-        this.canvas.addEventListener('mouseenter', this._handleMouseEnter.bind(this), false);
-        this.canvas.addEventListener('mouseleave', this._handleMouseLeave.bind(this), false);
+        this.canvas.addEventListener('mouseenter', this._onMouseEnter.bind(this), false);
+        this.canvas.addEventListener('mouseleave', this._onMouseLeave.bind(this), false);
       },
 
-      _handleMouseEnter: function(e) {
+      _onMouseEnter: function(e) {
         this.onHover = true;
         if (this.playOnHover) {
           this.isPlaying = true;
         }
       },
-      _handleMouseLeave: function(e) {
+      _onMouseLeave: function(e) {
         this.onHover = false;
         if (this.playOnHover) {
           this.isPlaying = false;
