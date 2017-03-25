@@ -86,7 +86,7 @@
             </template>
 
             <template is="dom-if" if="[[_shouldRenderSearchBox]]">
-              <paper-input id="searchBox" value="{{searchKeyword}}">
+              <paper-input id="searchBox" no-label-float placeholder="Search Catalog" value="{{searchKeyword}}">
                 <iron-icon icon="search" prefix></iron-icon>
               </paper-input>
               <paper-toggle-button checked="{{filterByStar}}">Star Only</paper-toggle-button>
