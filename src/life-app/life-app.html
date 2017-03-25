@@ -53,10 +53,6 @@
     <life-analytics key="UA-84495932-3"></life-analytics>
 
     <app-location route="{{route}}" use-hash-as-path></app-location>
-    <!-- <app-route-converter
-      path="{{path}}"
-      query-params="{{queryParams}}"
-      route="{{route}}"></app-route-converter> -->
     <app-route
       route="{{route}}"
       query-params="{{queryParams}}"
@@ -123,15 +119,13 @@
         catalog="[[app.catalog]]"></life-catalog>
 
       <life-about name="about"></life-about>
+      
       <!-- invalid top level paths -->
       <life-path-warning name="path-warning"></life-path-warning>
     </iron-pages>
 
     <life-collection-detail-dialog id="collectionDetailDialog"></life-collection-detail-dialog>
     <life-settings-dialog id="settingsDialog" app="{{app}}"></life-settings-dialog>
-
-    <!-- TODO: create life-pattern-data element -->
-    <!-- <iron-ajax auto url="../../patterns-lite.json" handle-as="json" on-response="handleResponse"></iron-ajax> -->
   </template>
 
 
