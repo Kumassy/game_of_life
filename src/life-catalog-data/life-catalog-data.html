@@ -87,6 +87,7 @@
 
           if (this._starredCatalog.hasOwnProperty(patternId)) {
             delete this._starredCatalog[patternId];
+            this.sendEvent('catalog', 'star_removed', patternId);
           } else {
             this.sendException(`${patternId} is missing in _starredCatalog`);
           }
@@ -96,6 +97,7 @@
 
           if (!this._starredCatalog.hasOwnProperty(patternId)) {
             this._starredCatalog[patternId] = true;
+            this.sendEvent('catalog', 'star_put', patternId);
           } else {
             this.sendException(`_starredCatalog has ${patternId}`);
           }
