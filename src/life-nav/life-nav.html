@@ -30,14 +30,14 @@
         display: block;
       }
 
-      paper-listbox a{
+      paper-listbox a {
         color: inherit;
         text-decoration: none;
       }
 
-      app-header{
+      app-header {
         background: var(--primary-color);
-        color: var(--dark-theme-text-color);;
+        color: var(--dark-theme-text-color);
         /*background: 'magenta';*/
         font-family: 'Roboto', Helvetica, sans-serif;
         /*color: white;*/
@@ -48,6 +48,16 @@
       }
       app-drawer {
         z-index: 11;
+      }
+      app-toolbar paper-input {
+        --paper-input-container-input-color: var(--dark-theme-text-color);
+      }
+      app-toolbar paper-toggle-button {
+        --paper-toggle-button-label-color: var(--dark-theme-text-color);
+        --paper-toggle-button-checked-bar-color: var(--accent-color);
+        --paper-toggle-button-checked-button-color: var(--accent-color);
+        --paper-toggle-button-checked-ink-color: var(--accent-color);
+
       }
     </style>
 
