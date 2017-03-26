@@ -91,6 +91,7 @@
 
   <style>
     :host {
+      position: absolute;
     }
 
     :host([edit-mode]) paper-toolbar {
@@ -98,7 +99,7 @@
     }
     #container {
       display: inline-block;
-      position: relative;
+      position: absolute;
       /*position: fixed;*/
       box-sizing: border-box;
       -moz-box-sizing: border-box;
@@ -178,10 +179,10 @@
     .preview .brush-info {
       padding: 4px;
     }
-    .preview .brush-info .brush-title{
+    .preview .brush-info .brush-title {
       color: var(--primary-text-color);
     }
-    .preview .brush-info .brush-meta{
+    .preview .brush-info .brush-meta {
       color: var(--secondary-text-color);
       font-size: small;
     }
