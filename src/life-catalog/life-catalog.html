@@ -6,6 +6,8 @@
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 
 <link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
 
 <link rel="import" href="../life-behaviors/life-pattern-catalog-behavior.html">
 <link rel="import" href="../life-preview-canvas/life-preview-canvas.html">
@@ -19,18 +21,20 @@
       pattern="/:page"
       data="{{_routeData}}"></app-route>
 
-    <div class="patterns">
-      <template is="dom-repeat" items="[[currentPatterns]]">
-        <div class="card">
-          <life-preview-canvas width="240" height="240" play-on-hover pattern="[[item]]"></life-preview-canvas>
-          <life-icon-button checked="[[item.starred]]" on-tap="_toggleStar"></life-icon-button>
-          <div class="card-content">
-            <div class="title">[[item.name]]</div>
-            <div class="author">[[item.author]]</div>
-            <div class="comments">[[item.comments]]</div>
+    <div id="scrollable">
+      <div class="patterns">
+        <template is="dom-repeat" items="[[currentPatterns]]">
+          <div class="card">
+            <life-preview-canvas width="240" height="240" play-on-hover pattern="[[item]]"></life-preview-canvas>
+            <life-icon-button checked="[[item.starred]]" on-tap="_toggleStar"></life-icon-button>
+            <div class="card-content">
+              <div class="title">[[item.name]]</div>
+              <div class="author">[[item.author]]</div>
+              <div class="comments">[[item.comments]]</div>
+            </div>
           </div>
-        </div>
-      </template>
+        </template>
+      </div>
     </div>
 
     <div class="buttons">
@@ -42,14 +46,17 @@
   </template>
 
   <style include="paper-material">
+    :host {
+      @apply(--layout-relative);
+    }
+    #scrollable {
+      @apply(--layout-scroll);
+      max-height: calc(100vh - 57px - 64px);
+    }
     .patterns {
-      display: -webkit-flex;
-      display: flex;
-      /*-webkit-flex-direction: column;
-      flex-direction: column;*/
-      -webkit-flex-wrap: wrap;
-      flex-wrap: wrap;
-      /*height: 220vw;*/
+      @apply(--layout);
+      @apply(--layout-wrap);
+      @apply(--layout-center-justified);
     }
     .card {
       /*display: inline-block;*/
@@ -105,6 +112,15 @@
 
       @apply(--shadow-elevation-2dp);
     }
+
+    .buttons {
+      @apply(--layout-relative);
+      padding: 8px 8px 8px 24px;
+      margin: 0;
+      color: var(--paper-dialog-button-color, --primary-color);
+      @apply(--layout-horizontal);
+      @apply(--layout-end-justified);
+    }
   </style>
 
   <script>
@@ -123,6 +139,12 @@
       listeners: {
         'page-change': '_onPageChanged',
       },
+
+      // attached: function() {
+      //   let offset = Polymer.dom(this.root).querySelector('.buttons').offsetHeight;
+      //   offset += 64; // height of app-header
+      //   this.$.scrollable.style.maxHeight = `calc(100vh - ${offset}px)`;
+      // },
 
       _routePageChanged: function(page) {
         this.currentPage = parseInt(page) || 0;
