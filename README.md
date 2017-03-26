@@ -1,2 +1,2 @@
-# Game of Life
-Game of Life implementation in Javascript
+# life-app
+The Game of Life app made by Polymer.

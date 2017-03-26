@@ -1,0 +1,239 @@
+<!doctype html>
+
+<html>
+  <head>
+    <title>life-catalog-data test</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../../src/life-catalog-data/life-catalog-data.html">
+
+    <link rel="import" href="../../bower_components/iron-test-helpers/iron-test-helpers.html">
+  </head>
+  <body>
+
+    <test-fixture id="basic">
+      <template>
+        <life-catalog-data></life-catalog-data>
+      </template>
+    </test-fixture>
+
+    <script>
+      let ga = function() {
+        return true;
+      };
+      
+      suite('life-catalog', () => {
+        let element;
+        let catalog;
+        let server;
+        var responseHeaders = {
+          json: { 'Content-Type': 'application/json' }
+        };
+
+        setup(() => {
+          element = fixture('basic');
+          catalog =
+            [{
+              id: 'test__pencil',
+              name: 'Pencil',
+              payload: ["1"],
+              meta: {
+                x: 1,
+                y: 1
+              }
+            },
+            {
+              id: 'test__glider',
+              name: 'Glider',
+              payload: [
+                "010",
+                "001",
+                "111"],
+              meta: {
+                x: 3,
+                y: 3
+              }
+            },
+            {
+              id: 'test__light_weight_spaceship',
+              name: 'Light Weight Spaceship',
+              payload: [
+                "01001",
+                "10000",
+                "10001",
+                "11110"
+              ],
+              meta: {
+                x: 5,
+                y: 4
+              }
+            },
+            {
+              id: 'test__glider_gun',
+              name: 'Glider Gun',
+              payload: [
+                "000000000000000000000000100000000000",
+                "000000000000000000000010100000000000",
+                "000000000000110000001100000000000011",
+                "000000000001000100001100000000000011",
+                "110000000010000010001100000000000000",
+                "110000000010001011000010100000000000",
+                "000000000010000010000000100000000000",
+                "000000000001000100000000000000000000",
+                "000000000000110000000000000000000000"
+              ],
+              meta: {
+                x: 36,
+                y: 9
+              }
+            }];
+          server = sinon.fakeServer.create();
+          server.respondWith(
+            'GET',
+            /patterns-lite\.json/, [
+              200,
+              responseHeaders.json,
+              JSON.stringify(catalog)
+            ]
+          );
+
+          element.user = {uid: 'USER_TOKEN'};
+          sinon.stub(element.$.document, 'save', () => Promise.resolve());
+          sinon.stub(element.$.document, 'reset', () => true);
+        });
+        teardown(function() {
+          server.restore();
+        });
+
+        test('instantiating the element works', () => {
+          assert.equal(element.is, 'life-catalog-data');
+        });
+
+        test('retrieve catalog data from server', (done) => {
+          // element.catalog = catalog;
+          const ajax = Polymer.dom(element.root).querySelector('iron-ajax');
+          const request = ajax.generateRequest();
+          server.respond();
+          assert.deepEqual(request.response, catalog);
+
+          ajax.addEventListener('response', (event) => {
+            setTimeout(() => {
+              assert.equal(element._catalogData.length, catalog.length + 4);
+              assert.equal(element.catalog.length, catalog.length + 4);
+              done();
+            }, 3000);
+          });
+        });
+
+        test('fire catalog-updated event', (done) => {
+          // element.catalog = catalog;
+          const ajax = Polymer.dom(element.root).querySelector('iron-ajax');
+          const request = ajax.generateRequest();
+          server.respond();
+          assert.deepEqual(request.response, catalog);
+
+          element.addEventListener('catalog-updated', () => {
+            done();
+          });
+        });
+
+        test('toggling star works', () => {
+          element._catalogData = catalog;
+
+
+          let e = {
+            model: {
+              get: function() {
+                // do nothing
+              },
+              set: function() {
+                element.catalog[2].starred = true;
+              }
+            }
+          };
+
+          let stub = sinon.stub(e.model, 'get');
+          stub.withArgs('item.starred').returns(false);
+          stub.withArgs('item.id').returns('test__light_weight_spaceship');
+
+          let spy = sinon.spy(e.model, 'set');
+
+
+          element.toggleStar(e);
+
+          assert.isTrue(spy.withArgs('item.starred', true).called);
+          assert.isTrue(element._starredCatalog.hasOwnProperty('test__light_weight_spaceship'));
+          assert.equal(element.catalog[2].id, 'test__light_weight_spaceship');
+          assert.isTrue(element.catalog[2].starred);
+        });
+
+        test('removing star works', () => {
+          element._catalogData = catalog;
+
+
+          let e__glider_gun = {
+            model: {
+              get: function() {
+                // do nothing
+              },
+              set: function() {
+
+              }
+            }
+          };
+          let stub__glider_gun = sinon.stub(e__glider_gun.model, 'get');
+          stub__glider_gun.withArgs('item.starred').returns(false);
+          stub__glider_gun.withArgs('item.id').returns('test__glider_gun');
+          let spy__glider_gun = sinon.spy(e__glider_gun.model, 'set');
+
+          let e__space_ship = {
+            model: {
+              get: function() {
+                // do nothing
+              },
+              set: function() {
+
+              }
+            }
+          };
+          let stub__space_ship = sinon.stub(e__space_ship.model, 'get');
+          stub__space_ship.withArgs('item.starred').returns(false);
+          stub__space_ship.withArgs('item.id').returns('test__light_weight_spaceship');
+          let spy__space_ship = sinon.spy(e__space_ship.model, 'set');
+
+
+          element.toggleStar(e__glider_gun);
+          element.toggleStar(e__space_ship);
+
+          assert.isTrue(element._starredCatalog.hasOwnProperty('test__glider_gun'));
+          assert.isTrue(element._starredCatalog.hasOwnProperty('test__light_weight_spaceship'));
+
+
+          stub__glider_gun.withArgs('item.starred').returns(true);
+          element.toggleStar(e__glider_gun);
+
+          assert.isTrue(spy__glider_gun.withArgs('item.starred', false).called);
+          assert.isFalse(element._starredCatalog.hasOwnProperty('test__glider_gun'));
+          assert.isTrue(element._starredCatalog.hasOwnProperty('test__light_weight_spaceship'));
+          // assert.equal(element.catalog[3].id, 'test__glider_gun');
+          // assert.isFalse(element.catalog[3].starred);
+
+        });
+
+        test('merge starred info from network', () => {
+          element._catalogData = catalog;
+          element._starredCatalog = {test__glider_gun: true};
+
+          assert.equal(element.catalog[2].id, 'test__light_weight_spaceship');
+          assert.isFalse(element.catalog[2].starred);
+          assert.equal(element.catalog[3].id, 'test__glider_gun');
+          assert.isTrue(element.catalog[3].starred);
+        });
+
+      });
+    </script>
+  </body>
+</html>

@@ -9,6 +9,7 @@
 
 
 <link rel="import" href="../life-behaviors/life-pattern-catalog-behavior.html">
+<link rel="import" href="../life-behaviors/life-analytics-behavior.html">
 <link rel="import" href="../life-preview-canvas/life-preview-canvas.html">
 
 
@@ -20,7 +21,7 @@
         <div class="patterns">
           <template is="dom-repeat" items="[[currentPatterns]]">
             <div class="card" on-tap="_patternSelected">
-              <life-preview-canvas width="240" height="240" auto-play pattern="[[item]]"></life-preview-canvas>
+              <life-preview-canvas width="240" height="240" play-on-hover pattern="[[item]]"></life-preview-canvas>
 
               <div class="card-content">
                 <div class="title">[[item.name]]</div>
@@ -33,8 +34,13 @@
       </paper-dialog-scrollable>
 
       <div class="buttons">
-        <paper-button id="goBack" disabled="[[!canGoBack]]" on-tap="_handleGoBack">Back</paper-button>
-        <paper-button id="goNext" disabled="[[!canGoNext]]" on-tap="_handleGoNext">Next</paper-button>
+        <paper-input id="searchBox" no-label-float placeholder="Search Catalog" value="{{filter}}">
+          <iron-icon icon="search" prefix></iron-icon>
+        </paper-input>
+        <paper-toggle-button checked="{{filterByStar}}">Star Only</paper-toggle-button>
+
+        <paper-button id="goBack" disabled="[[!canGoBack]]" on-tap="goBack">Back</paper-button>
+        <paper-button id="goNext" disabled="[[!canGoNext]]" on-tap="goNext">Next</paper-button>
         <paper-button id="ok" dialog-confirm autofocus on-tap="_closeDialog">OK</paper-button>
       </div>
     </paper-dialog>
@@ -92,7 +98,6 @@
         overflow-wrap: break-word;
       }
 
-      /*TODO*/
       .card[selected] life-preview-canvas {
         transform: translateZ(0px) scale3d(0.92, 0.86, 1);
       }
@@ -105,51 +110,56 @@
   <script>
     Polymer({
       is: 'life-pattern-chooser',
-      behaviors: [LifePatternCatalogBehavior],
+      behaviors: [LifePatternCatalogBehavior, LifeAnalyticsBehavior],
       properties: {
         _selectedPattern: {
           type: Object,
-          value: null
-        },
-        _domForSelectedPattern: {
-          type: Object,
-          value: null
+          value: function() {
+            return {
+              pattern: null,
+              dom: null,
+              page: null,
+            }
+          }
         }
       },
 
+      listeners: {
+        'page-change': '_onPageChanged',
+      },
+
       _patternSelected: function(e) {
-        if(this._domForSelectedPattern) {
-          this._domForSelectedPattern.removeAttribute('selected');
+        if (this._selectedPattern.dom) {
+          this._selectedPattern.dom.removeAttribute('selected');
         }
 
-        this._domForSelectedPattern = e.currentTarget;
+
         this._selectedPattern = {
+          pattern:  e.model.get('item'),
+          dom: e.currentTarget,
           page: this.currentPage,
-          pattern: e.model.get('item'),
         };
 
-        this._domForSelectedPattern.setAttribute('selected', '');
+        this._selectedPattern.dom.setAttribute('selected', '');
       },
       __removeOrRestoreSelectedAttr: function() {
         if(this._selectedPattern.page === this.currentPage) {
           // restore
-          this._domForSelectedPattern.setAttribute('selected', '');
+          this._selectedPattern.dom.setAttribute('selected', '');
         }
         else {
           // remove
-          this._domForSelectedPattern.removeAttribute('selected');
+          this._selectedPattern.dom.removeAttribute('selected');
         }
       },
-      _handleGoBack: function() {
-        this.goBack();
-        this.__removeOrRestoreSelectedAttr();
-      },
-      _handleGoNext: function() {
-        this.goNext();
+      _onPageChanged: function() {
+        if (this._selectedPattern == null || this._selectedPattern.pattern == null) return;
         this.__removeOrRestoreSelectedAttr();
       },
       _closeDialog: function() {
+        if (this._selectedPattern == null || this._selectedPattern.pattern == null) return;
         this.fire('pattern-selected', {pattern: this._selectedPattern.pattern });
+        this.sendEvent('pattern-chooser', 'selected', this._selectedPattern.id);
       },
 
       open: function() {

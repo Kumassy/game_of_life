@@ -1,0 +1,115 @@
+<!doctype html>
+
+<html>
+  <head>
+    <title>life-catalog test</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../../src/life-catalog/life-catalog.html">
+
+    <link rel="import" href="../../bower_components/iron-test-helpers/iron-test-helpers.html">
+  </head>
+  <body>
+
+    <test-fixture id="basic">
+      <template>
+        <life-catalog></life-catalog>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite('life-catalog', () => {
+        let element;
+        let catalog;
+
+        setup(() => {
+          element = fixture('basic');
+          catalog =
+            [{
+              id: 'pencil',
+              name: 'Pencil',
+              payload: ["1"],
+              meta: {
+                x: 1,
+                y: 1
+              }
+            },
+            {
+              id: 'glider',
+              name: 'Glider',
+              payload: [
+                "010",
+                "001",
+                "111"],
+              meta: {
+                x: 3,
+                y: 3
+              }
+            },
+            {
+              id: 'light_weight_spaceship',
+              name: 'Light Weight Spaceship',
+              payload: [
+                "01001",
+                "10000",
+                "10001",
+                "11110"
+              ],
+              meta: {
+                x: 5,
+                y: 4
+              }
+            },
+            {
+              id: 'glider_gun',
+              name: 'Glider Gun',
+              payload: [
+                "000000000000000000000000100000000000",
+                "000000000000000000000010100000000000",
+                "000000000000110000001100000000000011",
+                "000000000001000100001100000000000011",
+                "110000000010000010001100000000000000",
+                "110000000010001011000010100000000000",
+                "000000000010000010000000100000000000",
+                "000000000001000100000000000000000000",
+                "000000000000110000000000000000000000"
+              ],
+              meta: {
+                x: 36,
+                y: 9
+              }
+            }];
+
+        });
+
+        test('instantiating the element works', () => {
+          assert.equal(element.is, 'life-catalog');
+        });
+
+        test('Putting star on one pattern', (done) => {
+          element.catalog = catalog;
+          element.patternsPerPage = 3;
+          element.currentPage = 0;
+
+          flush(() => {
+            const starButton = Polymer.dom(element.root).querySelectorAll('.card life-icon-button')[1];
+
+            assert.isUndefined(catalog[1].starred);
+
+            element.addEventListener('pattern-starred', (event) =>  {
+              assert.deepEqual(event.detail.model.get('item'), catalog[1]);
+              assert.isUndefined(event.detail.model.get('item.starred'));
+              done();
+            });
+            MockInteractions.tap(starButton);
+
+          });
+        });
+
+      });
+    </script>
+  </body>
+</html>

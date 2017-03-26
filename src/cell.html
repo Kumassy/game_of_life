@@ -76,7 +76,7 @@
 
   GameManager.prototype.draw = function(){
     this.cells.forEach((cell) => {
-      cell._state = cell.state;
+      // cell._state = cell.state;
 
       // cell.draw();
       if(cell.state){
@@ -88,6 +88,10 @@
     });
   };
   GameManager.prototype.update = function(){
+    this.cells.forEach((cell) => {
+      cell._state = cell.state
+    });
+    
     var directions = [[-1, -1], [0, -1], [1, -1],
                       [-1, 0], [1, 0],
                       [-1, 1], [0, 1], [1, 1]];

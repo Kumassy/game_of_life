@@ -7,9 +7,19 @@
           return [];
         }
       },
+      filter: {
+        type: String,
+        value: '',
+        observer: '_filterChanged'
+      },
+      filterByStar: {
+        type: Boolean,
+        value: false,
+        observer: '_filterChanged'
+      },
       currentPatterns: {
         type: Object,
-        computed: '_computeCurrentPatterns(catalog, currentPage, patternsPerPage)'
+        computed: '_computeCurrentPatterns(catalog, filter, filterByStar, currentPage, patternsPerPage)'
       },
       currentPage: {
         type: Number,
@@ -21,7 +31,7 @@
       },
       pageCount: {
         type: Number,
-        computed: '_computePageCount(catalog, patternsPerPage)'
+        computed: '_computePageCount(catalog, filter, filterByStar, patternsPerPage)'
       },
       canGoNext: {
         type: Boolean,
@@ -33,12 +43,23 @@
       }
     },
 
-    _computePageCount: function(catalog, patternsPerPage){
-      return Math.ceil(catalog.length / patternsPerPage);
+    _filterChanged: function() {
+      this.currentPage = 0;
+      this.fire('page-change', {page: this.currentPage});
     },
 
-    _computeCurrentPatterns: function(catalog, currentPage, patternsPerPage){
-      return catalog.slice(currentPage * patternsPerPage, currentPage * patternsPerPage + patternsPerPage);
+    __filterCatalog: function(catalog, filter, filterByStar){
+      return catalog.filter((pattern) => !filterByStar || pattern.starred).filter((pattern) => (new RegExp(filter, "i")).test(pattern.name));
+    },
+
+    _computePageCount: function(catalog, filter, filterByStar, patternsPerPage){
+      const ctlg = this.__filterCatalog(catalog, filter, filterByStar);
+      return Math.ceil(ctlg.length / patternsPerPage);
+    },
+
+    _computeCurrentPatterns: function(catalog, filter, filterByStar, currentPage, patternsPerPage){
+      const ctlg = this.__filterCatalog(catalog, filter, filterByStar);
+      return ctlg.slice(currentPage * patternsPerPage, currentPage * patternsPerPage + patternsPerPage);
     },
 
     _checkWhetherCanGoNext: function(currentPage, pageCount) {
@@ -61,12 +82,14 @@
     goNext: function() {
       if(this.canGoNext) {
         this.currentPage += 1;
+        this.fire('page-change', {page: this.currentPage});
       }
     },
 
     goBack: function() {
       if(this.canGoBack) {
         this.currentPage -= 1;
+        this.fire('page-change', {page: this.currentPage});
       }
     },
 

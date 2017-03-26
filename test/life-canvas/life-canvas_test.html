@@ -108,6 +108,43 @@
           assert.equal(element._cellVerticalNum, 15);
         });
       });
+
+      suite('mainLoop in life-canvas', () => {
+        let element;
+        let draw;
+        setup(() => {
+          element = fixture('basic');
+          draw = sinon.spy(element._gameManager, 'draw');
+        });
+
+        test('draw() will never be called unless isPlaying turns true', () => {
+          assert.isFalse(element.isPlaying);
+          assert.isFalse(draw.called);
+        });
+
+        test('draw() will be called when isPlaying turns true', () => {
+          element.isPlaying = true;
+          assert.isTrue(element.isPlaying);
+          assert.isTrue(draw.called);
+        });
+
+        test('draw() will never be called after isPlaying turns false', (done) => {
+          element.isPlaying = true;
+          setTimeout(() => {
+            // execute mainLoop for some generations
+            element.isPlaying = false;
+            setTimeout(() => {
+              // wait until mainLoop will be finished
+              draw.reset();
+              setTimeout(() => {
+                assert.isFalse(element.isPlaying);
+                assert.isFalse(draw.called);
+                done();
+              }, 500);
+            }, 500)
+          }, 500);
+        });
+      });
     </script>
   </body>
 </html>

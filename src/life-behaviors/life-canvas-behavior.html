@@ -48,9 +48,10 @@
         }
       },
 
-      isPlaying: {    // isRunning -> isPlaying
+      isPlaying: {
         type: Boolean,
-        value: false
+        value: false,
+        observer: '_wakeMainLoop'
       },
       refreshRate: {
         type: Number,
@@ -79,10 +80,10 @@
     ],
 
     ready: function(){
-      this.mainLoop();
+      // this.mainLoop();
     },
 
-    _handleSizeChanged: function(width, height, cellSize, mode, canvas){
+    _handleSizeChanged: function(width, height, cellSize, mode, canvas) {
       if(mode === 'cell'){
         this._canvasWidth = width * cellSize;
         this._canvasHeight = height * cellSize;
@@ -99,13 +100,13 @@
       this._initialize();
     },
 
-    _syncColors: function(cellColor, overlayColor, backgroundColor){
+    _syncColors: function(cellColor, overlayColor, backgroundColor) {
       this._gameManager.cellColor = cellColor;
       this._gameManager.overlayColor = overlayColor;
       this._gameManager.backgroundColor = backgroundColor;
     },
 
-    _initialize: function(){
+    _initialize: function() {
       this._gameManager = new GameManager(this._cellHorizontalNum, this._cellVerticalNum, this.cellSize, this.canvas);
     },
 
@@ -113,18 +114,18 @@
     //   return this.canvas;
     // },
 
-    getCanvasDataURL: function(){
+    getCanvasDataURL: function() {
       // return this._gameManager.canvas.toDataURL();
       return this.canvas.toDataURL();
     },
 
-    getRLE: function(region){
+    getRLE: function(region) {
       return this._gameManager.toRLE(region);
     },
 
     // interface
     // drawPattern: function(startX, startY, pattern, location){
-    drawPattern: function(pattern, location){
+    drawPattern: function(pattern, location) {
       // location {
       //   location: 'center' | 'top-left'
       //   coordinate: 'canvas' | 'cursor'
@@ -150,22 +151,29 @@
     drawPreview: function() {
       return null;
     },
-    clearCanvas: function(){
+    clearCanvas: function() {
       this._gameManager.clearCanvas();
       this._gameManager.refreshCanvas();
     },
 
-    mainLoop: function(){
-      if(this.isPlaying){
+    _wakeMainLoop: function(isPlaying, oldIsPlaying) {
+      if (isPlaying && !oldIsPlaying) {
+        this.mainLoop();
+      }
+    },
+
+    mainLoop: function() {
+      if(this.isPlaying) {
         // this._gameManager.refreshCanvas(this.backgroundColor, this.background);
         this._gameManager.refreshCanvas();
-        this._gameManager.draw();
         this._gameManager.update();
+        this._gameManager.draw();
         // this.fire('game-loop-end');
         this.drawPreview();
+        setTimeout(() => this.mainLoop(), this.refreshRate);
       }
       // setTimeout(this.mainLoop, this.refreshRate);
-      setTimeout(() => this.mainLoop(), this.refreshRate);
+      // setTimeout(() => this.mainLoop(), this.refreshRate);
     },
   }
 </script>

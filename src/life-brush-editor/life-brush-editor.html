@@ -86,20 +86,20 @@
       </div>
     </div>
 
-    <life-settings-dialog id="settingsDialog" app="{{app}}"></life-settings-dialog>
-    <life-pattern-chooser id="patternChooser" catalog="[[app._catalog]]" on-pattern-selected="_patternSelected"></life-pattern-chooser>
+    <life-pattern-chooser id="patternChooser" catalog="[[catalog]]" on-pattern-selected="_patternSelected"></life-pattern-chooser>
   </template>
 
   <style>
     :host {
+      position: absolute;
     }
 
-    :host[edit-mode] paper-toolbar {
+    :host([edit-mode]) paper-toolbar {
       --paper-toolbar-background: var(--accent-color);
     }
     #container {
       display: inline-block;
-      position: relative;
+      position: absolute;
       /*position: fixed;*/
       box-sizing: border-box;
       -moz-box-sizing: border-box;
@@ -167,7 +167,7 @@
       color: var(--google-blue-300);
     }
 
-    :host[is-brush-modified] .toolbar #add-brush {
+    :host([is-brush-modified]) .toolbar #add-brush {
       display: block;
     }
 
@@ -179,10 +179,10 @@
     .preview .brush-info {
       padding: 4px;
     }
-    .preview .brush-info .brush-title{
+    .preview .brush-info .brush-title {
       color: var(--primary-text-color);
     }
-    .preview .brush-info .brush-meta{
+    .preview .brush-info .brush-meta {
       color: var(--secondary-text-color);
       font-size: small;
     }
@@ -193,8 +193,9 @@
       is: 'life-brush-editor',
       behaviors: [LifeDraggableBehavior],
       properties: {
-        app: {
-          type: Object
+        catalog: {
+          type: Array,
+          value: []
         },
         // rle: {
         //   type: String,
@@ -204,14 +205,6 @@
         //   type: Object
         // },
 
-
-        // pattern list from life wiki
-        stamps: {
-          type: Array,
-          value: function() {
-            return [];
-          }
-        },
 
         brushes: {
           type: Object,
@@ -353,7 +346,7 @@
         isBrushModified: {
           type: Boolean,
           reflectToAttribute: true,
-          observer: 'updateStyles',
+          // observer: 'updateStyles',
           value: false,
         },
 
@@ -399,18 +392,25 @@
       },
 
       _updateBrush: function() {
-        this.brush = {
-          id: 'brush',
-          name: 'Brush',
-          payload: this.$.canvas.getRLE(this.$.canvas._gameManager.updateRegion()),
-          meta: {
-            x: this.$.canvas._cellHorizontalNum,
-            y: this.$.canvas._cellVerticalNum
-          }
-        };
+        if (this.editMode) {
+          this.debounce('update-brush', () => {
+            this.brush = {
+              id: 'brush',
+              name: 'Brush',
+              payload: this.$.canvas.getRLE(this.$.canvas._gameManager.updateRegion()),
+              meta: {
+                x: this.$.canvas._cellHorizontalNum,
+                y: this.$.canvas._cellVerticalNum
+              }
+            };
+          }, 100);
+        }
 
-        if(this.editMode && this.isBrushModified === false){
-          setTimeout(() => this.isBrushModified = true, 500);
+
+        if (this.editMode && this.isBrushModified === false) {
+          this.debounce('update-brush-modified', () => {
+            this.isBrushModified = true
+          }, 500);
         }
       },
 

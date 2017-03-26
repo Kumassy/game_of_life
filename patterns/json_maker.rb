@@ -4,8 +4,10 @@ require 'uri'
 list = []
 list_lite = []
 # list = {}
+rle_ignore = %(empty.rle)
 
 Dir.glob("*.rle").each do |filename|
+  next if rle_ignore.include? filename
   # p "*" * 20
   # p filename
   File.open(filename, mode = "rt") do |file|
@@ -23,15 +25,15 @@ Dir.glob("*.rle").each do |filename|
     payload = []
 
     file.each_line do |line|
-      if md = line.match(/^#[Cc] (.*)/)       
+      if md = line.match(/^#[Cc] (.*)/)
         if md[1].match %r(http://(www.)?conwaylife.com/wiki/)
           url << md[1]
         elsif md[1].match %r((www.)?conwaylife.com/wiki/)
           url << "http://#{md[1]}"
 
-        elsif md[1].match %r(http://(www.)?conwaylife.com/forums/)          
+        elsif md[1].match %r(http://(www.)?conwaylife.com/forums/)
           url << md[1]
-        elsif md[1].match %r((www.)?conwaylife.com/forums/)          
+        elsif md[1].match %r((www.)?conwaylife.com/forums/)
           url << "http://#{md[1]}"
 
         elsif md[1].match %r(http://(www.)?conwaylife.com/patterns/)
@@ -44,10 +46,10 @@ Dir.glob("*.rle").each do |filename|
         elsif md[1].match %r(home.interserv.com/~mniemiec/)
           url << "http://#{md[1]}"
 
-        elsif md[1].match %r(www.nathanieljohnston.com/index.php/2009/08/generating-sequences-of-primes-in-conways-game-of-life/)  
+        elsif md[1].match %r(www.nathanieljohnston.com/index.php/2009/08/generating-sequences-of-primes-in-conways-game-of-life/)
           url << "http://#{md[1]}"
 
- 
+
 
         elsif URI.extract(md[1]).length > 0
           url << URI.extract(md[1]).first

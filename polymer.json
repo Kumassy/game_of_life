@@ -1,8 +1,20 @@
 {
   "entrypoint": "index.html",
-  "shell": "src/app-shell/app-shell.html",
+  "shell": "src/life-app/life-app.html",
   "fragments": [
     "src/life-canvas/life-canvas.html",
-    "src/life-app/life-app.html"
+    "src/life-controller/life-canvas-controller.html",
+    "src/life-catalog/life-catalog.html",
+    "src/life-about/life-about.html",
+    "src/life-path-warning/life-path-warning.html"
+  ],
+  "includeDependencies": [
+    "manifest.json",
+    "sw-import.js",
+    "bower_components/webcomponentsjs/webcomponents-lite.js",
+    "bower_components/webcomponentsjs/webcomponents-lite.min.js",
+    "bower_components/platinum-sw/*",
+    "patterns.json",
+    "patterns-lite.json"
   ]
 }
