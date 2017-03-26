@@ -46,7 +46,7 @@
 <link rel="import" href="../life-analytics/life-analytics.html">
 <link rel="import" href="../life-catalog-data/life-catalog-data.html">
 <link rel="import" href="../life-collection-data/life-collection-data.html">
-<link rel="import" href="../life-controller/life-pause-button.html">
+<link rel="import" href="../life-controller/life-canvas-controller.html">
 
 <dom-module id="life-app">
   <template>
@@ -102,12 +102,15 @@
           background-color="{{app.backgroundColor}}"
           brush="{{app._selectedPattern}}"></life-canvas>
         <life-brush-editor brush="{{app._selectedPattern}}" catalog="[[app.catalog]]"></life-brush-editor>
-        <nav>
+        <life-canvas-controller
+          is-playing="{{app.controller.isPlaying}}"
+          refresh-rate="{{app.controller.refreshRate}}"></life-canvas-controller>
+        <!-- <nav>
           <life-pause-button
             state="{{app.controller.isPlaying}}" style="float: left;"></life-pause-button>
           <paper-slider value="{{app.controller.refreshRate}}" min="20" max="300" editable style="float: left; min-width: 300px;"></paper-slider>
           <paper-button id="clearcontroller" on-tap="handleClear" toggles style="float: left;">Clear</paper-button>
-        </nav>
+        </nav> -->
       </section>
 
       <life-catalog
@@ -198,6 +201,7 @@
         'title-change': '_updateCollectionTitle',
         'catalog-updated': '_checkSelectedPattern',
         'pattern-starred': '_toggleStar',
+        'clear-canvas': '_clearCanvas',
       },
 
       ready: function() {
@@ -248,8 +252,7 @@
         }
       },
 
-      handleClear: function(e, datail) {
-        // document.querySelector('life-canvas').clearCanvas();
+      _clearCanvas: function() {
         this.$.mainCanvas.clearCanvas();
       },
 
