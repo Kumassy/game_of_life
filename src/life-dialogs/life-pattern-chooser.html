@@ -21,7 +21,7 @@
         <div class="patterns">
           <template is="dom-repeat" items="[[currentPatterns]]">
             <div class="card" on-tap="_patternSelected">
-              <life-preview-canvas width="240" height="240" auto-play pattern="[[item]]"></life-preview-canvas>
+              <life-preview-canvas width="240" height="240" play-on-hover pattern="[[item]]"></life-preview-canvas>
 
               <div class="card-content">
                 <div class="title">[[item.name]]</div>
