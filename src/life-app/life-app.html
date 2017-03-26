@@ -71,12 +71,14 @@
     <life-catalog-data
       id="catalogData"
       user="[[user]]"
-      catalog="{{app.catalog}}"></life-catalog-data>
+      catalog="{{app.catalog}}"
+      disabled="[[!signedIn]]"></life-catalog-data>
     <life-collection-data
       id="collectionData"
       user="[[user]]"
       collections="{{app.collections}}"
-      persisted-collections="{{persistedCollections}}"></life-collection-data>
+      persisted-collections="{{persistedCollections}}"
+      disabled="[[!signedIn]]"></life-collection-data>
 
     <!-- <life-login
       signed-in="[[signedIn]]"

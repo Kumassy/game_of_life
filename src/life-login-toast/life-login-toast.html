@@ -1,0 +1,47 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../../bower_components/paper-styles/default-theme.html">
+
+<dom-module id="life-login-toast">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      .close {
+        text-transform: none;
+        color: #eeff41;
+      }
+
+      .signIn {
+        text-transform: none;
+        color: var(--accent-color);
+      }
+    </style>
+
+
+    <paper-toast id="toast" duration="0" text="You need to sign in to use this feature.">
+      <paper-button on-tap="close" class="close">Later</paper-button>
+      <paper-button on-tap="continueSignIn" class="signIn">Sign In</paper-button>
+    </paper-toast>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'life-login-toast',
+
+
+      open: function() {
+        this.$.toast.open();
+      },
+      close: function() {
+        this.$.toast.close();
+      },
+      continueSignIn: function() {
+        this.fire('open-settings-dialog');
+        this.close();
+      }
+    });
+  </script>
+</dom-module>

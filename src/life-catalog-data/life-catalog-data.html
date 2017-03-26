@@ -7,6 +7,7 @@
 <link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
 
 <link rel="import" href="../life-behaviors/life-analytics-behavior.html">
+<link rel="import" href="../life-login-toast/life-login-toast.html">
 
 <dom-module id="life-catalog-data">
   <template>
@@ -35,6 +36,8 @@
       data="{{_starredCatalog}}"
       persisted-data="{{persistedStarredCatalog}}">
     </app-indexeddb-mirror>
+
+    <life-login-toast id="loginToast"></life-login-toast>
 
     <iron-ajax auto url="../../patterns-lite.json" handle-as="json" on-response="handleResponse"></iron-ajax>
   </template>
@@ -70,6 +73,7 @@
             }
           },
         },
+        disabled: Boolean,
       },
 
       observers: [
@@ -78,6 +82,11 @@
 
 
       toggleStar: function(e) {
+        if (this.disabled) {
+          this.$.loginToast.open();
+          return;
+        }
+        
         let starred = e.model.get('item.starred') || false;
         let patternId = e.model.get('item.id');
 

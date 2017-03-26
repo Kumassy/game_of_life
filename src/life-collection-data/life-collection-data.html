@@ -5,6 +5,7 @@
 <link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 
 <link rel="import" href="../life-behaviors/life-analytics-behavior.html">
+<link rel="import" href="../life-login-toast/life-login-toast.html">
 
 <dom-module id="life-collection-data">
   <template>
@@ -34,6 +35,7 @@
 
 
     <paper-toast id="toast" text="collection was deleted successfully"></paper-toast>
+    <life-login-toast id="loginToast"></life-login-toast>
   </template>
   <script>
     Polymer({
@@ -52,9 +54,14 @@
           type: Array,
           notify: true,
         },
+        disabled: Boolean,
       },
 
       addCollection: function(collection) {
+        if (this.disabled) {
+          this.$.loginToast.open();
+          return;
+        }
         // this.push('collections', collection);
 
         this.$.document.data = collection;
@@ -63,6 +70,11 @@
         });
       },
       deleteCollection: function(collection) {
+        if (this.disabled) {
+          this.$.loginToast.open();
+          return;
+        }
+        
         const index = this.collections.indexOf(collection);
         if (index != -1) {
           this.$.document.path = `${this.collectionsPath}/${collection.$key}`;
