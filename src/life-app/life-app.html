@@ -78,10 +78,9 @@
       collections="{{app.collections}}"
       persisted-collections="{{persistedCollections}}"></life-collection-data>
 
-    <life-login
-      on-sign-in="signIn"
+    <!-- <life-login
       signed-in="[[signedIn]]"
-      disabled="[[!online]]"></life-login>
+      disabled="[[!online]]"></life-login> -->
 
     <life-nav
       page="{{page}}"
@@ -124,7 +123,12 @@
     </iron-pages>
 
     <life-collection-detail-dialog id="collectionDetailDialog"></life-collection-detail-dialog>
-    <life-settings-dialog id="settingsDialog" app="{{app}}"></life-settings-dialog>
+    <life-settings-dialog
+      id="settingsDialog"
+      app="{{app}}"
+      user="[[user]]"
+      signed-in="[[signedIn]]"
+      disabled="[[!online]]"></life-settings-dialog>
   </template>
 
 
@@ -186,6 +190,8 @@
         'catalog-updated': '_checkSelectedPattern',
         'pattern-starred': '_toggleStar',
         'clear-canvas': '_clearCanvas',
+        'sign-in': 'signIn',
+        'sign-out': 'signOut',
       },
 
       ready: function() {
@@ -275,7 +281,11 @@
       },
 
       signIn: function() {
+        // TODO handle Error
         this.$.auth.signInWithPopup();
+      },
+      signOut: function() {
+        this.$.auth.signOut();
       },
     });
   </script>
