@@ -3,6 +3,8 @@
 <link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="../../bower_components/paper-styles/default-theme.html">
 
+<link rel="import" href="../life-behaviors/life-analytics-behavior.html">
+
 <dom-module id="life-login-toast">
   <template>
     <style>
@@ -22,14 +24,15 @@
 
 
     <paper-toast id="toast" duration="0" text="You need to sign in to use this feature.">
-      <paper-button on-tap="close" class="close">Later</paper-button>
-      <paper-button on-tap="continueSignIn" class="signIn">Sign In</paper-button>
+      <paper-button on-tap="rejected" class="close">Later</paper-button>
+      <paper-button on-tap="accepted" class="signIn">Sign In</paper-button>
     </paper-toast>
 
   </template>
   <script>
     Polymer({
       is: 'life-login-toast',
+      behaviors: [LifeAnalyticsBehavior],
 
 
       open: function() {
@@ -38,9 +41,14 @@
       close: function() {
         this.$.toast.close();
       },
-      continueSignIn: function() {
+      rejected: function() {
+        this.close();
+        this.sendEvent('life-login-toast', 'signin', 'rejected');
+      },
+      accepted: function() {
         this.fire('open-settings-dialog');
         this.close();
+        this.sendEvent('life-login-toast', 'signin', 'accepted');
       }
     });
   </script>
