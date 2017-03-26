@@ -9,6 +9,7 @@
 
 
 <link rel="import" href="../life-behaviors/life-pattern-catalog-behavior.html">
+<link rel="import" href="../life-behaviors/life-analytics-behavior.html">
 <link rel="import" href="../life-preview-canvas/life-preview-canvas.html">
 
 
@@ -97,7 +98,6 @@
         overflow-wrap: break-word;
       }
 
-      /*TODO*/
       .card[selected] life-preview-canvas {
         transform: translateZ(0px) scale3d(0.92, 0.86, 1);
       }
@@ -110,7 +110,7 @@
   <script>
     Polymer({
       is: 'life-pattern-chooser',
-      behaviors: [LifePatternCatalogBehavior],
+      behaviors: [LifePatternCatalogBehavior, LifeAnalyticsBehavior],
       properties: {
         _selectedPattern: {
           type: Object,
@@ -159,6 +159,7 @@
       _closeDialog: function() {
         if (this._selectedPattern == null || this._selectedPattern.pattern == null) return;
         this.fire('pattern-selected', {pattern: this._selectedPattern.pattern });
+        this.sendEvent('pattern-chooser', 'selected', this._selectedPattern.id);
       },
 
       open: function() {
