@@ -1,5 +1,5 @@
 {
-  "name": "game_of_life",
+  "name": "life-app",
   "description": "Game of Life implementaion in Polymer",
   "main": "index.html",
   "dependencies": {

@@ -1,5 +1,5 @@
 {
-  "name": "Game_of_life",
+  "name": "life-app",
   "short_name": "life",
   "description": "Game of Life implementaion in Polymer",
   "scope": "./",
