@@ -216,12 +216,10 @@
           document.getElementById('endDrawer').toggle();
         }
       },
-      _pageChanged: function() {
+      _pageChanged: function(page) {
         this.$.drawer.close();
 
-        // TODO
-        // ga('set', 'page', '/new-page.html');
-        // ga('send', 'pageview');
+        this.sendPageChange(page);
       }
 
     });
