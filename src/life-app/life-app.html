@@ -4,6 +4,7 @@
 <link rel="import" href="../../bower_components/iron-icons/social-icons.html">
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
@@ -90,27 +91,23 @@
 
     <iron-pages role="main" selected="[[page]]" attr-for-selected="name" fallback-selection="path-warning">
       <section name="playground">
-        <life-canvas
-          id="mainCanvas"
-          width="{{app.width}}"
-          height="{{app.height}}"
-          is-playing="{{app.controller.isPlaying}}"
-          refresh-rate="{{app.controller.refreshRate}}"
-          cell-size="{{app.cellSize}}"
-          cell-color="{{app.cellColor}}"
-          overlay-color="{{app.overlayColor}}"
-          background-color="{{app.backgroundColor}}"
-          brush="{{app._selectedPattern}}"></life-canvas>
+        <div class="wrapper">
+          <life-canvas
+            id="mainCanvas"
+            width="{{app.width}}"
+            height="{{app.height}}"
+            is-playing="{{app.controller.isPlaying}}"
+            refresh-rate="{{app.controller.refreshRate}}"
+            cell-size="{{app.cellSize}}"
+            cell-color="{{app.cellColor}}"
+            overlay-color="{{app.overlayColor}}"
+            background-color="{{app.backgroundColor}}"
+            brush="{{app._selectedPattern}}"></life-canvas>
+          <life-canvas-controller
+            is-playing="{{app.controller.isPlaying}}"
+            refresh-rate="{{app.controller.refreshRate}}"></life-canvas-controller>
+        </div>
         <life-brush-editor brush="{{app._selectedPattern}}" catalog="[[app.catalog]]"></life-brush-editor>
-        <life-canvas-controller
-          is-playing="{{app.controller.isPlaying}}"
-          refresh-rate="{{app.controller.refreshRate}}"></life-canvas-controller>
-        <!-- <nav>
-          <life-pause-button
-            state="{{app.controller.isPlaying}}" style="float: left;"></life-pause-button>
-          <paper-slider value="{{app.controller.refreshRate}}" min="20" max="300" editable style="float: left; min-width: 300px;"></paper-slider>
-          <paper-button id="clearcontroller" on-tap="handleClear" toggles style="float: left;">Clear</paper-button>
-        </nav> -->
       </section>
 
       <life-catalog
@@ -132,24 +129,10 @@
 
 
   <style>
-    /*app-toolbar {
-      background-color: #1E88E5;
-      font-family: 'Roboto', Helvetica, sans-serif;
-      color: white;
-      --app-toolbar-font-size: 20px;
+    section[name="playground"] .wrapper {
+      @apply(--layout-vertical);
+      @apply(--layout-inline);
     }
-    app-header-layout {
-      z-index: 10;
-    }
-    app-drawer {
-      z-index: 11;
-    }
-    paper-tabs {
-      --paper-tabs-selection-bar-color: #304ffe;
-    }
-    paper-tab {
-      --paper-tab-ink: #304ffe;
-    }*/
   </style>
 
   <script>
