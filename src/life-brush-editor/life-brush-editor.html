@@ -392,17 +392,22 @@
       },
 
       _updateBrush: function() {
-        this.brush = {
-          id: 'brush',
-          name: 'Brush',
-          payload: this.$.canvas.getRLE(this.$.canvas._gameManager.updateRegion()),
-          meta: {
-            x: this.$.canvas._cellHorizontalNum,
-            y: this.$.canvas._cellVerticalNum
-          }
-        };
+        if (this.editMode) {
+          this.debounce('update-brush', () => {
+            this.brush = {
+              id: 'brush',
+              name: 'Brush',
+              payload: this.$.canvas.getRLE(this.$.canvas._gameManager.updateRegion()),
+              meta: {
+                x: this.$.canvas._cellHorizontalNum,
+                y: this.$.canvas._cellVerticalNum
+              }
+            };
+          }, 100);
+        }
 
-        if(this.editMode && this.isBrushModified === false){
+
+        if (this.editMode && this.isBrushModified === false) {
           this.debounce('update-brush-modified', () => {
             this.isBrushModified = true
           }, 500);
