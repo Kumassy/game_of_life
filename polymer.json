@@ -13,7 +13,7 @@
     "sw-import.js",
     "bower_components/webcomponentsjs/webcomponents-lite.js",
     "bower_components/webcomponentsjs/webcomponents-lite.min.js",
-    "bower_components/platinum-sw/*",
+    "bower_components/platinum-sw/**/*",
     "patterns.json",
     "patterns-lite.json"
   ]
