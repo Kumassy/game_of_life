@@ -1,0 +1,156 @@
+<html><head><meta charset="UTF-8"><link rel="import" href="../life-app/life-app.html"></head><body><dom-module id="life-catalog">
+  <template>
+    <app-route route="{{route}}" pattern="/:page" data="{{_routeData}}"></app-route>
+
+    <div id="scrollable">
+      <div class="patterns">
+        <template is="dom-repeat" items="[[currentPatterns]]">
+          <div class="card">
+            <life-preview-canvas width="240" height="240" play-on-hover="" pattern="[[item]]"></life-preview-canvas>
+            <life-icon-button checked="[[item.starred]]" on-tap="_toggleStar"></life-icon-button>
+            <div class="card-content">
+              <div class="title">[[item.name]]</div>
+              <div class="author">[[item.author]]</div>
+              <div class="comments">[[item.comments]]</div>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <div class="buttons">
+      <paper-button id="goBack" disabled="[[!canGoBack]]" on-tap="goBack">Back</paper-button>
+      <paper-button id="goNext" disabled="[[!canGoNext]]" on-tap="goNext">Next</paper-button>
+    </div>
+
+    <iron-signals on-iron-signal-catalog-updated="_refreshStar"></iron-signals>
+  </template>
+
+  <style include="paper-material">
+    :host {
+      @apply(--layout-relative);
+    }
+    #scrollable {
+      @apply(--layout-scroll);
+      max-height: calc(100vh - 57px - 64px);
+    }
+    .patterns {
+      @apply(--layout);
+      @apply(--layout-wrap);
+      padding: 0 24px;
+      /*@apply(--layout-center-justified);*/
+    }
+    .card {
+      /*display: inline-block;*/
+      position: relative;
+      box-sizing: border-box;
+      background-color: var(--paper-card-background-color, --primary-background-color);
+      border-radius: 2px;
+      @apply(--paper-font-common-base);
+      @apply(--paper-card);
+      @apply(--shadow-elevation-2dp);
+
+      margin: 4px;
+      flex: 0 0 auto;
+      max-width: 240px;
+    }
+
+    .card life-preview-canvas {
+      display: block;
+      width: 100%;
+      /*pointer-events: none;*/
+      @apply(--paper-card-header-image);
+    }
+
+    .card .card-content{
+      padding: 16px;
+      position:relative;
+      @apply(--paper-card-content);
+    }
+    .card .card-content .title{
+      /*padding: 16px;*/
+      font-size: 24px;
+      font-weight: 400;
+      color: var(--paper-card-header-color, #000);
+      @apply(--paper-card-header-text);
+    }
+    .card .card-content .author{
+      color: var(--paper-grey-600);
+    }
+    .card .card-content .comments{
+      padding-top: 16px;
+      overflow-wrap: break-word;
+    }
+
+    .card life-icon-button {
+      position: absolute;
+      top: 219px;
+      right: 15px;
+      border-radius: 50%;
+      padding: 8px;
+      box-sizing: border-box;
+
+      background: white;
+
+      @apply(--shadow-elevation-2dp);
+    }
+
+    .buttons {
+      @apply(--layout-relative);
+      padding: 8px 8px 8px 24px;
+      margin: 0;
+      color: var(--paper-dialog-button-color, --primary-color);
+      @apply(--layout-horizontal);
+      @apply(--layout-end-justified);
+    }
+  </style>
+
+  <script>
+    Polymer({
+      is: 'life-catalog',
+      behaviors: [LifePatternCatalogBehavior],
+      properties: {
+        route: Object,
+        _routeData: Object,
+      },
+
+      observers: [
+        '_routePageChanged(_routeData.page)',
+        '_restoreRoutePage(route.prefix)',
+      ],
+      listeners: {
+        'page-change': '_onPageChanged',
+      },
+
+      // attached: function() {
+      //   let offset = Polymer.dom(this.root).querySelector('.buttons').offsetHeight;
+      //   offset += 64; // height of app-header
+      //   this.$.scrollable.style.maxHeight = `calc(100vh - ${offset}px)`;
+      // },
+
+      _routePageChanged: function(page) {
+        this.currentPage = parseInt(page) || 0;
+      },
+
+      _restoreRoutePage: function(prefix) {
+        if(prefix === '/catalog') {
+          this.set('route.path', '/' + this.currentPage);
+        }
+      },
+      _onPageChanged: function() {
+        this.set('route.path', '/' + this.currentPage);
+      },
+
+      _toggleStar: function(e) {
+        this.fire('pattern-starred', e);
+      },
+
+      _refreshStar: function() {
+        for (let i = 0; i < this.currentPatterns.length; i++) {
+          this.notifyPath(['currentPatterns', i, 'starred']);
+        }
+      },
+    });
+  </script>
+</dom-module>
+</body></html>

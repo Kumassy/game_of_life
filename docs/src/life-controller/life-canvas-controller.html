@@ -1,0 +1,19 @@
+<html><head><meta charset="UTF-8"><link rel="import" href="../life-app/life-app.html"></head><body><dom-module id="life-canvas-controller">
+  <template>
+    <style>
+      :host {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+      }
+      paper-slider {
+        @apply(--layout-flex);
+      }
+    </style>
+
+    <life-pause-button state="{{isPlaying}}"></life-pause-button>
+    <paper-slider value="{{refreshRate}}" min="20" max="300" editable=""></paper-slider>
+    <paper-button on-tap="_clearCanvas">Clear</paper-button>
+  </template>
+  <script>Polymer({is:"life-canvas-controller",properties:{isPlaying:{type:Boolean,notify:!0},refreshRate:{type:Number,notify:!0}},_clearCanvas:function(){this.fire("clear-canvas")}});</script>
+</dom-module>
+</body></html>

@@ -1,0 +1,18 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+</head><body><dom-module id="life-pause-button">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <paper-button id="button" on-tap="_handleTap" toggles="">[[label]]</paper-button>
+
+  </template>
+  <script>Polymer({is:"life-pause-button",properties:{state:{type:Boolean,notify:!0,value:!0},label:{type:String,computed:"_computeLabel(state)"}},_handleTap:function(){this.state=!this.state},_computeLabel:function(e){return e?"Pause":"Resume"}});</script>
+</dom-module>
+</body></html>

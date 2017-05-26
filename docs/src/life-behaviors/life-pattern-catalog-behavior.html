@@ -1,0 +1,99 @@
+<html><head><script type="text/javascript">
+  LifePatternCatalogBehavior = {
+    properties: {
+      catalog: {
+        type: Array,
+        value: function() {
+          return [];
+        }
+      },
+      filter: {
+        type: String,
+        value: '',
+        observer: '_filterChanged'
+      },
+      filterByStar: {
+        type: Boolean,
+        value: false,
+        observer: '_filterChanged'
+      },
+      currentPatterns: {
+        type: Object,
+        computed: '_computeCurrentPatterns(catalog, filter, filterByStar, currentPage, patternsPerPage)'
+      },
+      currentPage: {
+        type: Number,
+        value: 0
+      },
+      patternsPerPage: {
+        type: Number,
+        value: 12
+      },
+      pageCount: {
+        type: Number,
+        computed: '_computePageCount(catalog, filter, filterByStar, patternsPerPage)'
+      },
+      canGoNext: {
+        type: Boolean,
+        computed: '_checkWhetherCanGoNext(currentPage, pageCount)'
+      },
+      canGoBack: {
+        type: Boolean,
+        computed: '_checkWhetherCanGoBack(currentPage, pageCount)'
+      }
+    },
+
+    _filterChanged: function() {
+      this.currentPage = 0;
+      this.fire('page-change', {page: this.currentPage});
+    },
+
+    __filterCatalog: function(catalog, filter, filterByStar){
+      return catalog.filter((pattern) => !filterByStar || pattern.starred).filter((pattern) => (new RegExp(filter, "i")).test(pattern.name));
+    },
+
+    _computePageCount: function(catalog, filter, filterByStar, patternsPerPage){
+      const ctlg = this.__filterCatalog(catalog, filter, filterByStar);
+      return Math.ceil(ctlg.length / patternsPerPage);
+    },
+
+    _computeCurrentPatterns: function(catalog, filter, filterByStar, currentPage, patternsPerPage){
+      const ctlg = this.__filterCatalog(catalog, filter, filterByStar);
+      return ctlg.slice(currentPage * patternsPerPage, currentPage * patternsPerPage + patternsPerPage);
+    },
+
+    _checkWhetherCanGoNext: function(currentPage, pageCount) {
+      if(currentPage < pageCount - 1){
+        return true;
+      }
+      else {
+        return false;
+      }
+    },
+    _checkWhetherCanGoBack: function(currentPage, pageCount) {
+      if(currentPage > 0){
+        return true;
+      }
+      else {
+        return false;
+      }
+    },
+
+    goNext: function() {
+      if(this.canGoNext) {
+        this.currentPage += 1;
+        this.fire('page-change', {page: this.currentPage});
+      }
+    },
+
+    goBack: function() {
+      if(this.canGoBack) {
+        this.currentPage -= 1;
+        this.fire('page-change', {page: this.currentPage});
+      }
+    },
+
+  }
+
+</script>
+</head><body></body></html>

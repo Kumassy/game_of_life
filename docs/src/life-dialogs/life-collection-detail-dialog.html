@@ -1,0 +1,48 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+</head><body><dom-module id="life-collection-detail-dialog">
+  <template>
+    <style>
+      .buttons {
+        @apply(--layout);
+        @apply(--layout-justified);
+      }
+      paper-button.delete {
+        color: var(--paper-red-500);
+      }
+    </style>
+    <paper-dialog id="dialog">
+      <h2>Collection Detail</h2>
+      <paper-dialog-scrollable>
+        <paper-input label="Title" value="{{target.title}}"></paper-input>
+        <div style="position: relative">
+          <a href="[[_downloadURL]]" download="[[_downloadFileName]]">
+            <img src="[[target.dataUrl]]" style="max-height: 60vh; max-width: 100%; width: auto">
+          </a>
+        </div>
+        
+        
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button class="delete" on-tap="_openConfirmationDialog">Delete</paper-button>
+        <paper-button dialog-confirm="" autofocus="">OK</paper-button>
+      </div>
+    </paper-dialog>
+    <paper-dialog id="confirmation">
+      <div>Are you sure?</div>
+      <div class="buttons">
+        <paper-button dialog-dismiss="">Cancel</paper-button>
+        <paper-button dialog-confirm="" autofocus="" on-tap="_deleteTarget">OK</paper-button>
+      </div>
+    </paper-dialog>
+  </template>
+
+  <script>Polymer({is:"life-collection-detail-dialog",properties:{target:{type:Object},_downloadURL:{type:String,computed:"_computeDownloadURL(target.dataUrl)"},_downloadFileName:{type:String,computed:"_computeDownloadFileName(target.title)"}},observers:["_titleChanged(target.title)"],_computeDownloadURL:function(t){return t.replace("image/png","application/octet-stream")},_computeDownloadFileName:function(t){return t+".png"},_titleChanged:function(){this.set("target.updatedAt",new Date),this.fire("title-change",{title:this.title})},_openConfirmationDialog:function(){this.$.confirmation.open()},_deleteTarget:function(){this.$.dialog.close(),this.fire("delete-collection",{collection:this.target})},open:function(){this.$.dialog.open()}});</script>
+</dom-module>
+</body></html>

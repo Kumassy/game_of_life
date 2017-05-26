@@ -1,0 +1,302 @@
+<html><head><script>
+  var Cell = function(x, y){
+    this.x = x;
+    this.y = y;
+    this.state = 0; //dead => not colored
+    this._state = 0; //cache
+    this.color = 'rgb(255, 0, 0)';
+  };
+
+  Cell.prototype.update = function(aliveCount){
+    if(this._state){ //1, alive
+      if(aliveCount <= 1 || aliveCount >= 4){
+        this.state = 0;
+      }
+    }
+    else{ // 0, dead
+      if(aliveCount === 3){
+        this.state = 1;
+      }
+    }
+
+    return this.state;
+  };
+
+  var GameManager = function(cellWidth, cellHeight, cellSize, canvas){
+    this.CELL_WIDTH = cellWidth;
+    this.CELL_HEIGHT = cellHeight;
+    this.CELL_SIZE = cellSize;
+
+    this.canvas = canvas;
+    this.context = canvas.getContext('2d');
+
+    this.region = {
+      top: this.CELL_HEIGHT,
+      left: this.CELL_WIDTH,
+      bottom: -1,
+      right: -1
+    };
+
+    this.cellColor = 'rgb(255, 0, 0)';
+    this.overlayColor = 'rgba(255, 0, 0, 0.3)';
+    this.backgroundColor = 'rgb(238, 238, 238)';
+    this.backgroundImage = null;
+
+    this.cells = new Array(this.CELL_WIDTH * this.CELL_HEIGHT);
+    for(var i=0; i < this.cells.length; i++){
+      this.cells[i] = new Cell( i % this.CELL_WIDTH, Math.floor(i / this.CELL_WIDTH ));
+    }
+  };
+
+  GameManager.prototype.getCellAt = function (x, y){
+    if( x < 0 || y < 0 || x >= this.CELL_WIDTH || y >= this.CELL_HEIGHT ){
+      return null;
+    }
+    return this.cells[ x + y * this.CELL_WIDTH ];
+  };
+
+  GameManager.prototype._getCellStateAt = function(x, y){
+    if( x < 0 || y < 0 || x >= this.CELL_WIDTH || y >= this.CELL_HEIGHT ){
+      return 0;
+    }
+    return this.cells[ x + y * this.CELL_WIDTH ]._state;
+  };
+
+  GameManager.prototype.refreshCanvas = function(){
+    if(this.backgroundImage){
+      this.context.fillStyle = this.backgroundColor;
+      this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+      this.context.drawImage(backgroundImage, 0, 0);
+    }
+    else{
+      this.context.fillStyle = this.backgroundColor;
+      this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+  };
+
+  GameManager.prototype.draw = function(){
+    this.cells.forEach((cell) => {
+      // cell._state = cell.state;
+
+      // cell.draw();
+      if(cell.state){
+        // this.context.fillStyle = '#ff0000';
+        // this.context.fillStyle = cell.color;
+        this.context.fillStyle = this.cellColor;
+        this.context.fillRect(cell.x * this.CELL_SIZE, cell.y * this.CELL_SIZE, this.CELL_SIZE, this.CELL_SIZE);
+      }
+    });
+  };
+  GameManager.prototype.update = function(){
+    this.cells.forEach((cell) => {
+      cell._state = cell.state
+    });
+    
+    var directions = [[-1, -1], [0, -1], [1, -1],
+                      [-1, 0], [1, 0],
+                      [-1, 1], [0, 1], [1, 1]];
+
+    this.cells.forEach((cell) => {
+      var aliveCount = 0;
+      directions.forEach((d) => {
+        aliveCount += this._getCellStateAt(cell.x + d[0], cell.y + d[1]);
+      });
+
+      cell.update(aliveCount)
+
+      if(cell.state) {
+        if(cell.x < this.region.left) {
+          this.region.left = cell.x;
+        }
+        if(cell.x > this.region.right) {
+          this.region.right = cell.x;
+        }
+        if(cell.y < this.region.top) {
+          this.region.top = cell.y;
+        }
+        if(cell.y > this.region.bottom) {
+          this.region.bottom = cell.y;
+        }
+      }
+    });
+  };
+
+  GameManager.prototype.updateRegion = function(){
+    let region = {
+      top: this.CELL_HEIGHT,
+      left: this.CELL_WIDTH,
+      bottom: -1,
+      right: -1
+    };
+
+    this.cells.forEach((cell) => {
+      if(cell.state) {
+        if(cell.x < region.left) {
+          region.left = cell.x;
+        }
+        if(cell.x > region.right) {
+          region.right = cell.x;
+        }
+        if(cell.y < region.top) {
+          region.top = cell.y;
+        }
+        if(cell.y > region.bottom) {
+          region.bottom = cell.y;
+        }
+      }
+    });
+
+    this.region = region;
+    return region;
+  }
+
+
+  GameManager.prototype._parseRLE = function(src){
+    var result = [];
+    var line = '';
+    for(var stream = src; stream.length > 0; stream = stream.substring(consumed.length)){
+      var regexResult = stream.match(/(\d*)([bo\$!])/);
+
+      var consumed = regexResult[0];
+      var length = regexResult[1] || 1;
+      var type = regexResult[2];
+
+      if(type === 'o'){
+        line += '1'.repeat(length);
+      }
+      else if(type === 'b'){
+        line += '0'.repeat(length);
+      }
+      else if(type === '$'){
+        for(var i = length; i > 0; i--){
+          result.push(line);
+          line = '';
+        }
+      }
+      else if(type === '!'){
+        result.push(line);
+        break;
+      }
+    }
+    return result;
+  };
+
+  // GameManager.prototype._encodeRLE = function(){
+  GameManager.prototype.toRLE = function(region){
+    region = region || {
+      top: 0,
+      left: 0,
+      bottom: this.CELL_HEIGHT - 1,
+      right: this.CELL_WIDTH - 1
+    };
+
+    var accumulator = [];
+    var line = [];
+    for(let y = region.top; y <= region.bottom; y++){
+      for(let x = region.left; x <= region.right; x++){
+        line.push(this.getCellAt(x, y).state);
+      }
+
+      var t = line.join('');
+      if(t.includes('1')){
+        accumulator.push(t);
+      }
+      else{
+        accumulator.push('');
+      }
+      line = [];
+    }
+
+    accumulator = accumulator.map(function(a){
+      if(a === ''){
+        return '$';
+      }
+      else{
+        return a + '$';
+      }
+    });
+
+    var rawPattern = accumulator.join('').replace(/0/g, 'b').replace(/1/g, 'o');;
+
+
+    var focusing = '';
+    var count = 0;
+    var result = '';
+    for(var stream = rawPattern; stream.length > 0; stream = stream.substring(1)){
+      if(stream[0] === focusing){
+        count++;
+      }
+      else{
+        if(count === 0){
+          // corner case: will be execute on the very first character of the stream
+          focusing = stream[0];
+          count = 1;
+        }
+        else if(count === 1){
+          result += '' + focusing;
+          focusing = stream[0];
+          count = 1;
+        }
+        else if(count > 1){
+          result += '' + count + focusing;
+          focusing = stream[0];
+          count = 1;
+        }
+      }
+    }
+    result += '!';
+
+    return result;
+  };
+
+
+  // GameManager.prototype.injectPattern = function(startX, startY, pattern, color){
+  GameManager.prototype.drawPattern = function(startX, startY, pattern){
+    if(!Array.isArray(pattern)){
+      pattern = this._parseRLE(pattern);
+    }
+
+    var i, j; // i => vertical, j => horizontal
+    for(i = 0; i < pattern.length; i++){
+      for(j = 0; j < pattern[i].length; j++){
+        if(pattern[i][j] === "1"){
+          if(this.getCellAt(startX + j, startY + i)){
+            this.getCellAt(startX + j, startY + i).state = 1;
+            // this.getCellAt(startX + j, startY + i).color = this.color;
+          }
+        }
+      }
+    }
+    // console.log(pattern);
+  };
+
+  // GameManager.prototype.injectOverlay = function(startX, startY, pattern, color){
+  GameManager.prototype.drawOverlay = function(startX, startY, pattern){
+    if(!Array.isArray(pattern)){
+      pattern = this._parseRLE(pattern);
+    }
+    for(i = 0; i < pattern.length; i++){
+      for(j = 0; j < pattern[i].length; j++){
+        if(pattern[i][j] === "1"){
+          if(this.getCellAt(startX + j, startY + i)){
+            // ^ use Cell.getCellAt() to check boundaries
+            // this.context.fillStyle = 'rgba(255, 0, 0, 0.3)';
+            this.context.fillStyle = this.overlayColor;
+            this.context.fillRect((startX + j) * this.CELL_SIZE, (startY + i) * this.CELL_SIZE, this.CELL_SIZE, this.CELL_SIZE);
+          }
+        }
+      }
+    }
+  };
+
+  GameManager.prototype.clearCanvas = function(){
+    this.cells.forEach(function(c){
+      c.state = 0;
+      c._state = 0;
+    });
+    this.draw();
+  };
+
+
+</script>
+</head><body></body></html>

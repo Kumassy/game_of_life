@@ -1,0 +1,228 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
+
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html">
+
+<link rel="import" href="../../bower_components/paper-styles/default-theme.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item-body.html">
+<link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-toggle-button/paper-toggle-button.html">
+
+<link rel="import" href="../life-behaviors/life-analytics-behavior.html">
+
+</head><body><dom-module id="life-nav">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      paper-listbox a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      app-header {
+        background: var(--primary-color);
+        color: var(--dark-theme-text-color);
+        /*background: 'magenta';*/
+        font-family: 'Roboto', Helvetica, sans-serif;
+        /*color: white;*/
+        --app-toolbar-font-size: 20px;
+      }
+      app-header-layout {
+        z-index: 10;
+      }
+      app-drawer {
+        z-index: 11;
+      }
+      app-toolbar paper-input {
+        --paper-input-container-input-color: var(--dark-theme-text-color);
+      }
+      app-toolbar paper-toggle-button {
+        --paper-toggle-button-label-color: var(--dark-theme-text-color);
+        --paper-toggle-button-checked-bar-color: var(--accent-color);
+        --paper-toggle-button-checked-button-color: var(--accent-color);
+        --paper-toggle-button-checked-ink-color: var(--accent-color);
+
+      }
+    </style>
+
+
+    <app-drawer-layout force-narrow="">
+      <app-drawer id="drawer" swipe-open="">
+        <paper-listbox selected="[[page]]" attr-for-selected="name">
+          <a href="#/playground" name="playground">
+            <paper-item>PlayGround</paper-item>
+          </a>
+          <a href="#/catalog" name="catalog">
+            <paper-item>Pattern Catalog</paper-item>
+          </a>
+          <a href="#/about" name="about">
+            <paper-item>About / License</paper-item>
+          </a>
+        </paper-listbox>
+      </app-drawer>
+
+      <template is="dom-if" if="[[_shouldRenderEndDrawer]]">
+        <app-drawer id="endDrawer" align="end" swipe-open="">
+          <paper-button on-tap="_addCollection" style="width: 100%; text-transform: none; justify-content: flex-start; margin-right: 4px">
+            <iron-icon icon="add" item-icon=""></iron-icon>
+              New
+          </paper-button>
+          <paper-listbox id="collections" style="height: 100%; overflow: auto">
+            <template is="dom-repeat" items="[[collection]]">
+              <paper-item style="justify-content: space-between">
+                <span>[[item.title]]</span>
+                <div>
+                  <paper-icon-button icon="info" on-tap="_showCollectionDetail">
+                  </paper-icon-button>
+                </div>
+              </paper-item>
+            </template>
+          </paper-listbox>
+        </app-drawer>
+      </template>
+
+      <app-header-layout>
+        <app-header fixed="">
+          <app-toolbar>
+            <paper-icon-button icon="menu" drawer-toggle=""></paper-icon-button>
+            <div main-title="">[[title]]</div>
+
+            
+            <template is="dom-if" if="[[_shouldRenderSettings]]">
+              <paper-icon-button icon="settings" on-tap="_openSettingsDialog"></paper-icon-button>
+              <paper-icon-button icon="star" on-tap="_openEndDrawer"></paper-icon-button>
+            </template>
+
+            <template is="dom-if" if="[[_shouldRenderSearchBox]]">
+              <paper-input id="searchBox" no-label-float="" placeholder="Search Catalog" value="{{searchKeyword}}">
+                <iron-icon icon="search" prefix=""></iron-icon>
+              </paper-input>
+              <paper-toggle-button checked="{{filterByStar}}">Star Only</paper-toggle-button>
+            </template>
+
+          </app-toolbar>
+        </app-header>
+      </app-header-layout>
+    </app-drawer-layout>
+  </template>
+  <script>
+    Polymer({
+      is: 'life-nav',
+      behaviors: [LifeAnalyticsBehavior],
+
+      properties: {
+        title: {
+          type: String,
+          computed: '_computePageTitle(page)'
+        },
+        searchKeyword: {
+          type: String,
+          value: '',
+          notify: true,
+          observer: '_sendSearchKeyword'
+        },
+        filterByStar: {
+          type: Boolean,
+          value: false,
+          notify: true,
+        },
+
+        // current page name / title e.g. playground, catalog ...
+        page: {
+          type: String,
+          notify: true,
+          observer: '_pageChanged',
+          // value: 'playground'
+        },
+        _pageTitles: {
+          type: Object,
+          value: function() {
+            return {
+              playground: 'Playground',
+              catalog: 'Catalog',
+              about: 'About'
+            }
+          }
+        },
+
+        collection: {
+          type: Array,
+          value: []
+        },
+        _shouldRenderEndDrawer: {
+          type: Boolean,
+          computed: '_computeShouldRenderEndDrawer(page)'
+        },
+        _shouldRenderSettings: {
+          type: Boolean,
+          computed: '_computeShouldRenderSettings(page)'
+        },
+        _shouldRenderSearchBox: {
+          type: Boolean,
+          computed: '_computeShouldRenderSearchBox(page)'
+        },
+      },
+
+      _sendSearchKeyword: function(keyword) {
+        if (keyword == null) return;
+        this.debounce('send-search-keyword', () => {
+          this.sendEvent('catalog', 'search', keyword);
+        }, 2000);
+      },
+
+      _computeShouldRenderEndDrawer: function(page) {
+        return page === 'playground';
+      },
+      _computeShouldRenderSettings: function(page) {
+        return page === 'playground';
+      },
+      _computeShouldRenderSearchBox: function(page) {
+        return page === 'catalog';
+      },
+      _computePageTitle: function(page) {
+        return this._pageTitles[page];
+      },
+
+      _addCollection: function(event) {
+        this.fire('add-collection');
+      },
+      _showCollectionDetail: function(event) {
+        this.fire('show-collection-detail', {collection: event.model.get('item')});
+      },
+      _openSettingsDialog: function() {
+        if(this._shouldRenderSettings) {
+          this.fire('open-settings-dialog');
+        }
+      },
+      _openEndDrawer: function() {
+        if(this._shouldRenderSettings) {
+          // this.$.endDrawer.toggle();
+          document.getElementById('endDrawer').toggle();
+        }
+      },
+      _pageChanged: function(page) {
+        this.$.drawer.close();
+
+        this.sendPageChange(page);
+      }
+
+    });
+  </script>
+</dom-module>
+</body></html>

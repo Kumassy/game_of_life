@@ -1,0 +1,11 @@
+{
+  "name": "life-app",
+  "short_name": "life",
+  "description": "Game of Life implementaion in Polymer",
+  "scope": "./",
+  "start_url": "index.html",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#2196f3",
+  "background_color": "#2196f3"
+}

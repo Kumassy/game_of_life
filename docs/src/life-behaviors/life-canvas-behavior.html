@@ -1,0 +1,180 @@
+<html><head><link rel="import" href="../cell.html">
+<script type="text/javascript">
+  LifeCanvasBehavior = {
+    properties: {
+      _canvasWidth: {
+        type: Number,
+      },
+      _canvasHeight: {
+        type: Number,
+      },
+      _cellHorizontalNum: {
+        type: Number,
+      },
+      _cellVerticalNum: {
+        type: Number,
+      },
+      width: {
+        type: Number,
+        // notify: true,
+        value: 20
+      },
+      height: {
+        type: Number,
+        // notify: true,
+        value: 20
+      },
+      // Either `cell` or `canvas` is valid.
+      // `cell`: specify size by cell nums, canvas size is calculated based on cell nums and `cellSize`
+      // `canvas`: specify size by canvas size, cell-length is calculated based on canvas size and `cellSize`
+      mode: {
+        type: String,
+        // notify: true,
+        value: 'cell'
+      },
+      cellSize: {
+        type: Number,
+        // notify: true,
+        value: 4
+      },
+      _gameManager: {
+        type: Object
+      },
+
+      canvas: {
+        type: Object,
+        value: function() {
+          return null;
+        }
+      },
+
+      isPlaying: {
+        type: Boolean,
+        value: false,
+        observer: '_wakeMainLoop'
+      },
+      refreshRate: {
+        type: Number,
+        value: 300
+      },
+      // background: {
+      //   type: String
+      // },
+      cellColor: {
+        type: String,
+        value: 'rgb(255, 0, 0)'
+      },
+      overlayColor: {
+        type: String,
+        value: 'rgba(255, 0, 0, 0.3)'
+      },
+      backgroundColor: {
+        type: String,
+        value: 'rgb(238, 238, 238)'
+      }
+    },
+
+    observers: [
+      '_handleSizeChanged(width, height, cellSize, mode, canvas)', // add canvas to ensure not undefined
+      '_syncColors(cellColor, overlayColor, backgroundColor)',
+    ],
+
+    ready: function(){
+      // this.mainLoop();
+    },
+
+    _handleSizeChanged: function(width, height, cellSize, mode, canvas) {
+      if(mode === 'cell'){
+        this._canvasWidth = width * cellSize;
+        this._canvasHeight = height * cellSize;
+        this._cellHorizontalNum = width;
+        this._cellVerticalNum = height;
+      }
+      else if(mode === 'canvas'){
+        this._canvasWidth = width;
+        this._canvasHeight = height;
+        this._cellHorizontalNum = Math.floor(width / cellSize);
+        this._cellVerticalNum = Math.floor(height / cellSize);
+      }
+
+      this._initialize();
+    },
+
+    _syncColors: function(cellColor, overlayColor, backgroundColor) {
+      this._gameManager.cellColor = cellColor;
+      this._gameManager.overlayColor = overlayColor;
+      this._gameManager.backgroundColor = backgroundColor;
+    },
+
+    _initialize: function() {
+      this._gameManager = new GameManager(this._cellHorizontalNum, this._cellVerticalNum, this.cellSize, this.canvas);
+    },
+
+    // getCanvas: function(){
+    //   return this.canvas;
+    // },
+
+    getCanvasDataURL: function() {
+      // return this._gameManager.canvas.toDataURL();
+      return this.canvas.toDataURL();
+    },
+
+    getRLE: function(region) {
+      return this._gameManager.toRLE(region);
+    },
+
+    // interface
+    // drawPattern: function(startX, startY, pattern, location){
+    drawPattern: function(pattern, location) {
+      // location {
+      //   location: 'center' | 'top-left'
+      //   coordinate: 'canvas' | 'cursor'
+      // }
+
+      let x, y;
+      if(location.location === 'center' && location.coordinate === 'canvas'){
+        x = Math.floor((this._canvasWidth / this.cellSize) / 2 - pattern.meta.x / 2);
+        y = Math.floor((this._canvasHeight / this.cellSize) / 2 - pattern.meta.y / 2);
+      }
+      else if(location.location === 'top-left' && location.coordinate === 'cursor'){
+        x = location.x;
+        y = location.y;
+      }
+
+      this._gameManager.drawPattern(x, y, pattern.payload);
+      this._gameManager.draw();
+      this.fire('draw');
+    },
+    drawPatternAsOverlay: function(startX, startY, pattern){
+      this._gameManager.drawOverlay(startX, startY, pattern.payload);
+    },
+    drawPreview: function() {
+      return null;
+    },
+    clearCanvas: function() {
+      this._gameManager.clearCanvas();
+      this._gameManager.refreshCanvas();
+    },
+
+    _wakeMainLoop: function(isPlaying, oldIsPlaying) {
+      if (isPlaying && !oldIsPlaying) {
+        this.mainLoop();
+      }
+    },
+
+    mainLoop: function() {
+      if(this.isPlaying) {
+        // this._gameManager.refreshCanvas(this.backgroundColor, this.background);
+        this._gameManager.refreshCanvas();
+        this._gameManager.update();
+        this._gameManager.draw();
+        // this.fire('game-loop-end');
+        this.drawPreview();
+        setTimeout(() => this.mainLoop(), this.refreshRate);
+      }
+      // setTimeout(this.mainLoop, this.refreshRate);
+      // setTimeout(() => this.mainLoop(), this.refreshRate);
+    },
+  }
+</script>
+</head><body></body></html>

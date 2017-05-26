@@ -1,0 +1,39 @@
+<html><head></head><body><dom-module id="life-pattern-detail">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <life-canvas id="canvas" width="[[width]]" height="[[height]]" is-playing="[[isPlaying]]" refresh-rate="[[refreshRate]]" cell-size="[[cellSize]]" cell-color="[[cellColor]]" overlay-color="[[overlayColor]]" background-color="[[backgroundColor]]" brush="[[brush]]"></life-canvas>
+    <life-brush-editor brush="{{brush}}" app="{{app}}"></life-brush-editor>
+  </template>
+  <script>
+    Polymer({
+      is: 'life-pattern-detail',
+
+      properties: {
+        width: Number,
+        height: Number,
+        isPlaying: Boolean,
+        refreshRate: Number,
+        cellSize: Number,
+        cellColor: String,
+        overlayColor: String,
+        backgroundColor: String,
+        brush: Object,
+        app: Object,
+
+        pattern: {
+          type: Object,
+          observer: '_patternChanged'
+          value: function() {
+            return {};
+          }
+        }
+      },
+    });
+  </script>
+</dom-module>
+</body></html>

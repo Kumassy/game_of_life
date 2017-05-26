@@ -1,0 +1,46 @@
+<html><head><link rel="import" href="../../bower_components/iron-dropdown/iron-dropdown.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animations.html">
+
+<link rel="import" href="../../bower_components/paper-styles/default-theme.html">
+
+
+</head><body><dom-module id="dropdown-wrapper">
+  <template>
+    <style>
+      :host {
+        display: inline-block;
+
+      }
+
+      :host ::content .dropdown-content {
+        position: relative;
+        left: 46px;
+        padding: 12px;
+
+        box-sizing: border-box;
+        border-radius: 2px;
+
+        @apply(--layout-horizontal);
+
+        background: #fff;
+        color: var(--primary-text-color);
+        @apply(--shadow-elevation-2dp);
+      }
+
+      :host ::content .dropdown-content > * {
+        margin: 4px;
+      }
+    </style>
+
+    <div on-tap="open">
+      <content select=".dropdown-trigger"></content>
+    </div>
+    <iron-dropdown id="dropdown" vertical-align="[[verticalAlign]]" horizontal-align="[[horizontalAlign]]" disabled="[[disabled]]" open-animation-config="[[openAnimationConfig]]" close-animation-config="[[closeAnimationConfig]]">
+      <content select=".dropdown-content"></content>
+    </iron-dropdown>
+
+  </template>
+
+  <script>Polymer({is:"dropdown-wrapper",properties:{verticalAlign:String,horizontalAlign:String,disabled:Boolean,openAnimationConfig:{type:Array,value:function(){return[{name:"fade-in-animation",timing:{delay:150,duration:200}}]}},closeAnimationConfig:{type:Array,value:function(){return[{name:"fade-out-animation",timing:{duration:200}}]}}},open:function(){this.$.dropdown.open()}});</script>
+</dom-module>
+</body></html>

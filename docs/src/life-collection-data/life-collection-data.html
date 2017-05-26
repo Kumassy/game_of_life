@@ -1,0 +1,85 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymerfire/polymerfire.html">
+<link rel="import" href="../../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
+
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+
+<link rel="import" href="../life-behaviors/life-analytics-behavior.html">
+<link rel="import" href="../life-login-toast/life-login-toast.html">
+
+</head><body><dom-module id="life-collection-data">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <firebase-document id="document" app-name="life">
+    </firebase-document>
+
+    <firebase-query id="query" app-name="life" path="/collections/[[user.uid]]" data="{{collections}}">
+    </firebase-query>
+    <app-indexeddb-mirror session="[[user.uid]]" key="life" data="{{collections}}" persisted-data="{{persistedCollections}}">
+    </app-indexeddb-mirror>
+
+
+    <paper-toast id="toast" text="collection was deleted successfully"></paper-toast>
+    <life-login-toast id="loginToast"></life-login-toast>
+  </template>
+  <script>
+    Polymer({
+      is: 'life-collection-data',
+      behaviors: [LifeAnalyticsBehavior],
+
+      properties: {
+        // user: Object,
+
+        collections: {
+          type: Array,
+          notify: true,
+        },
+
+        persistedCollections: {
+          type: Array,
+          notify: true,
+        },
+        disabled: Boolean,
+      },
+
+      addCollection: function(collection) {
+        if (this.disabled) {
+          this.$.loginToast.open();
+          return;
+        }
+        // this.push('collections', collection);
+
+        this.$.document.data = collection;
+        this.$.document.save(this.collectionsPath).then(() => {
+          this.$.document.reset();
+        });
+      },
+      deleteCollection: function(collection) {
+        if (this.disabled) {
+          this.$.loginToast.open();
+          return;
+        }
+        
+        const index = this.collections.indexOf(collection);
+        if (index != -1) {
+          this.$.document.path = `${this.collectionsPath}/${collection.$key}`;
+          this.$.document.destroy();
+
+          this.$.toast.open();
+        } else {
+          this.sendException('failed to delete collection');
+        }
+      },
+
+      get collectionsPath() {
+        return '/collections/' + this.user.uid;
+      },
+    });
+  </script>
+</dom-module>
+</body></html>

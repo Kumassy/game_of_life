@@ -1,0 +1,87 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
+
+
+</head><body><dom-module id="life-settings-dialog">
+  <template>
+    <paper-dialog id="dialog">
+      
+
+      <h2>Settings</h2>
+      <paper-dialog-scrollable>
+        <template is="dom-if" if="[[!signedIn]]">
+          <h3>Sign In</h3>
+          <paper-button on-tap="signIn" disabled="[[disabled]]" class="account">
+            <iron-icon icon="account-circle"></iron-icon>
+            <span>Sign in with Google</span>
+          </paper-button>
+        </template>
+        <template is="dom-if" if="[[signedIn]]">
+          <h3>Sign Out</h3>
+          <div>
+            You are currently signed in as:<br>
+            [[user.displayName]]([[user.email]])
+          </div>
+          <paper-button on-tap="signOut" class="account">
+            <iron-icon icon="account-circle"></iron-icon>
+            <span>Sign out</span>
+          </paper-button>
+        </template>
+
+        <h3>Canvas Size</h3>
+        <paper-input label="Cell width" value="{{app.width}}" type="number" max="3000"></paper-input>
+        <paper-input label="Cell height" value="{{app.height}}" type="number" max="3000"></paper-input>
+        <paper-input label="Cell size" value="{{app.cellSize}}" type="number" min="1" max="10"></paper-input>
+
+        <h3>Cell Color</h3>
+        
+        <paper-slider class="red" value="{{cellRed}}" max="255" editable=""></paper-slider>
+        
+        <paper-slider class="green" value="{{cellGreen}}" max="255" editable=""></paper-slider>
+        
+        <paper-slider class="blue" value="{{cellBlue}}" max="255" editable=""></paper-slider>
+
+        <h3>Background Color</h3>
+        
+        <paper-slider class="red" value="{{bgRed}}" max="255" editable=""></paper-slider>
+        
+        <paper-slider class="green" value="{{bgGreen}}" max="255" editable=""></paper-slider>
+        
+        <paper-slider class="blue" value="{{bgBlue}}" max="255" editable=""></paper-slider>
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button dialog-confirm="" autofocus="">OK</paper-button>
+      </div>
+    </paper-dialog>
+  </template>
+
+  <style>
+    paper-slider {
+      min-width: 320px;
+    }
+    paper-slider.red {
+      --paper-slider-knob-color: var(--paper-red-500);
+      --paper-slider-active-color: var(--paper-red-500);
+    }
+    paper-slider.green {
+      --paper-slider-knob-color: var(--paper-green-500);
+      --paper-slider-active-color: var(--paper-green-500);
+    }
+    paper-slider.blue {
+      --paper-slider-knob-color: var(--paper-light-blue-500);
+      --paper-slider-active-color: var(--paper-light-blue-500);
+    }
+    paper-button.account {
+      vertical-align: middle;
+      text-transform: none;
+    }
+  </style>
+
+  <script>Polymer({is:"life-settings-dialog",properties:{app:{type:Object},cellRed:{type:Number,value:255},cellGreen:{type:Number,value:0},cellBlue:{type:Number,value:0},bgRed:{type:Number,value:238},bgGreen:{type:Number,value:238},bgBlue:{type:Number,value:238},disabled:{type:Boolean,value:!1},signedIn:{type:Boolean,value:!1},user:{type:Object}},observers:["_handleCellColorChanged(cellRed, cellGreen, cellBlue)","_handleBGColorChanged(bgRed, bgGreen, bgBlue)"],_handleCellColorChanged:function(e,l,n){this.set("app.cellColor","rgb("+e+", "+l+", "+n+")"),this.set("app.overlayColor","rgba("+e+", "+l+", "+n+", 0.3)")},_handleBGColorChanged:function(e,l,n){this.set("app.backgroundColor","rgb("+e+", "+l+", "+n+")")},open:function(){this.$.dialog.open()},signIn:function(){this.fire("sign-in")},signOut:function(){this.fire("sign-out")}});</script>
+</dom-module>
+</body></html>

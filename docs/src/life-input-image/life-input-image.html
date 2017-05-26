@@ -1,0 +1,10 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+</head><body><dom-module id="life-input-image">
+  <template>
+    <input type="file" id="file">
+  </template>
+
+  <script>Polymer({is:"life-input-image",properties:{app:{type:Object}},ready:function(){var e=this;this.$.file.addEventListener("change",function(){var a=new FileReader;a.onload=function(){var a=this.result,i=new Image;i.src=a,e.set("app.backgroundImage",i)},a.readAsDataURL(this.files[0])})}});</script>
+</dom-module>
+</body></html>

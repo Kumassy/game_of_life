@@ -1,11 +1,35 @@
-<!DOCTYPE html>
-
-<html>
-  <head>
+<!DOCTYPE html><html><head>
+    <title>Game of Life</title>
     <meta charset="utf-8">
-    <title>life-app</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="manifest" href="manifest.json">
+    
+
+    <link rel="import" href="src/life-app/life-app.html">
+    <link rel="import" href="bower_components/polymerfire/firebase-app.html">
+    <link rel="import" href="bower_components/platinum-sw/platinum-sw-elements.html">
+
+    <style>
+      html, body{
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+
   </head>
   <body>
-    <p>It works!</p>
-  </body>
-</html>
+    
+
+    <platinum-sw-register auto-register="" skip-waiting="" clients-claim="" reload-on-install="" href="sw-import.js">
+      <platinum-sw-cache default-cache-strategy="networkFirst">
+      </platinum-sw-cache>
+    </platinum-sw-register>
+
+    <firebase-app name="life" api-key="AIzaSyB5erUZcTtKId-V0B1yjWEG75ux4bVHwk8" auth-domain="life-a90cb.firebaseapp.com" database-url="https://life-a90cb.firebaseio.com">
+    </firebase-app>
+
+    <life-app></life-app>
+    <script type="text/javascript">!function(){if("registerElement"in document&&"import"in document.createElement("link")&&"content"in document.createElement("template"));else{var e=document.createElement("script");e.src="bower_components/webcomponentsjs/webcomponents-lite.min.js",document.body.appendChild(e)}}();</script>
+  
+
+</body></html>

@@ -1,0 +1,180 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/polymerfire/polymerfire.html">
+<link rel="import" href="../../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
+
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+
+<link rel="import" href="../life-behaviors/life-analytics-behavior.html">
+<link rel="import" href="../life-login-toast/life-login-toast.html">
+
+</head><body><dom-module id="life-catalog-data">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    
+    <firebase-document id="document" app-name="life" path="/catalog/[[user.uid]]" data="{{_starredCatalog}}">
+    </firebase-document>
+
+    <app-indexeddb-mirror session="[[user.uid]]" key="life" data="{{_starredCatalog}}" persisted-data="{{persistedStarredCatalog}}">
+    </app-indexeddb-mirror>
+
+    <life-login-toast id="loginToast"></life-login-toast>
+
+    <iron-ajax auto="" url="../../patterns-lite.json" handle-as="json" on-response="handleResponse"></iron-ajax>
+  </template>
+  <script>
+    Polymer({
+      is: 'life-catalog-data',
+      behaviors: [LifeAnalyticsBehavior],
+
+      properties: {
+        catalog: {
+          type: Array,
+          notify: true,
+          readOnly: true,
+          value: function() {
+            return [];
+          }
+        },
+
+        // raw data got from iron-ajax
+        _catalogData: {
+          type: Array,
+          value: function() {
+            return [];
+          }
+        },
+        _starredCatalog: {
+          type: Object,
+        },
+        persistedStarredCatalog: {
+          type: Object,
+          value: function() {
+            return {
+            }
+          },
+        },
+        disabled: Boolean,
+      },
+
+      observers: [
+        'updateCatalog(_catalogData, persistedStarredCatalog)'
+      ],
+
+
+      toggleStar: function(e) {
+        if (this.disabled) {
+          this.$.loginToast.open();
+          return;
+        }
+        
+        let starred = e.model.get('item.starred') || false;
+        let patternId = e.model.get('item.id');
+
+        if (starred) {
+          // remove star
+          e.model.set('item.starred', false);
+
+          if (this._starredCatalog.hasOwnProperty(patternId)) {
+            delete this._starredCatalog[patternId];
+            this.sendEvent('catalog', 'star_removed', patternId);
+          } else {
+            this.sendException(`${patternId} is missing in _starredCatalog`);
+          }
+        } else {
+          // put star
+          e.model.set('item.starred', true);
+
+          if (!this._starredCatalog.hasOwnProperty(patternId)) {
+            this._starredCatalog[patternId] = true;
+            this.sendEvent('catalog', 'star_put', patternId);
+          } else {
+            this.sendException(`_starredCatalog has ${patternId}`);
+          }
+        }
+
+        this.$.document.save('/catalog', this.user.uid).then(() => {
+          this.$.document.reset();
+        });
+      },
+
+      handleResponse: function(r) {
+        this._catalogData = [
+          {
+            id: 'pencil',
+            name: 'Pencil',
+            payload: ["1"],
+            meta: {
+              x: 1,
+              y: 1
+            }
+          },
+          {
+            id: 'glider',
+            name: 'Glider',
+            payload: [
+              "010",
+              "001",
+              "111"],
+            meta: {
+              x: 3,
+              y: 3
+            }
+          },
+          {
+            id: 'light_weight_spaceship',
+            name: 'Light Weight Spaceship',
+            payload: [
+              "01001",
+              "10000",
+              "10001",
+              "11110"
+            ],
+            meta: {
+              x: 5,
+              y: 4
+            }
+          },
+          {
+            id: 'glider_gun',
+            name: 'Glider Gun',
+            payload: [
+              "000000000000000000000000100000000000",
+              "000000000000000000000010100000000000",
+              "000000000000110000001100000000000011",
+              "000000000001000100001100000000000011",
+              "110000000010000010001100000000000000",
+              "110000000010001011000010100000000000",
+              "000000000010000010000000100000000000",
+              "000000000001000100000000000000000000",
+              "000000000000110000000000000000000000"
+            ],
+            meta: {
+              x: 36,
+              y: 9
+            }
+          }
+        ].concat(r.detail.response);
+      },
+
+      updateCatalog: function(_catalogData, persistedStarredCatalog) {
+        let catalog = _catalogData.map((pattern) => {
+          pattern.starred = persistedStarredCatalog.hasOwnProperty(pattern.id);
+          return pattern;
+        });
+
+        this._setCatalog(catalog);
+        this.fire('catalog-updated');
+        this.fire('iron-signal', {name: 'catalog-updated', data: null});
+      },
+
+    });
+  </script>
+</dom-module>
+</body></html>

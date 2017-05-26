@@ -1,0 +1,34 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../../bower_components/paper-styles/default-theme.html">
+
+<link rel="import" href="../life-behaviors/life-analytics-behavior.html">
+
+</head><body><dom-module id="life-login-toast">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      .close {
+        text-transform: none;
+        color: #eeff41;
+      }
+
+      .signIn {
+        text-transform: none;
+        color: var(--accent-color);
+      }
+    </style>
+
+
+    <paper-toast id="toast" duration="0" text="You need to sign in to use this feature.">
+      <paper-button on-tap="rejected" class="close">Later</paper-button>
+      <paper-button on-tap="accepted" class="signIn">Sign In</paper-button>
+    </paper-toast>
+
+  </template>
+  <script>Polymer({is:"life-login-toast",behaviors:[LifeAnalyticsBehavior],open:function(){this.$.toast.open()},close:function(){this.$.toast.close()},rejected:function(){this.close(),this.sendEvent("life-login-toast","signin","rejected")},accepted:function(){this.fire("open-settings-dialog"),this.close(),this.sendEvent("life-login-toast","signin","accepted")}});</script>
+</dom-module>
+</body></html>

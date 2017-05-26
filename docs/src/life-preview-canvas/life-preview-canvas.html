@@ -1,0 +1,111 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../life-behaviors/life-canvas-behavior.html">
+
+
+</head><body><dom-module id="life-preview-canvas">
+  <template>
+    <canvas id="canvas" width$="[[_canvasWidth]]" height$="[[_canvasHeight]]">Your browser doesn't support html5 canvas</canvas>
+  </template>
+
+
+  <script>
+    Polymer({
+      is: 'life-preview-canvas',
+      behaviors: [LifeCanvasBehavior],
+      properties: {
+        mode: {
+          type: String,
+          value: 'canvas'
+        },
+        canvas: {
+          type: Object,
+          value: function() {
+            return this.$.canvas;
+          }
+        },
+        // autoPlay: {
+        //   type: Boolean,
+        //   value: false
+        // },
+        pattern: {
+          type: Object,
+          value: function() {
+            return {
+              id: 'glider',
+              name: 'Glider',
+              payload: [
+                "010",
+                "001",
+                "111"],
+              meta: {
+                x: 3,
+                y: 3
+              }
+            };
+          }
+        },
+
+        refreshRate: {
+          type: Number,
+          value: 30
+        },
+        onHover: {
+          type: Boolean,
+          value: false
+        },
+        playOnHover: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      observers: [
+        '_drawPattern(pattern)',
+      ],
+
+      ready: function(){
+        this.canvas.addEventListener('mouseenter', this._onMouseEnter.bind(this), false);
+        this.canvas.addEventListener('mouseleave', this._onMouseLeave.bind(this), false);
+      },
+
+      _onMouseEnter: function(e) {
+        this.onHover = true;
+        if (this.playOnHover) {
+          this.isPlaying = true;
+        }
+      },
+      _onMouseLeave: function(e) {
+        this.onHover = false;
+        if (this.playOnHover) {
+          this.isPlaying = false;
+          this._drawPattern(this.pattern);
+        }
+      },
+
+      _drawPattern: function(pattern){
+        let cellSize = 1;
+        const patternWidth = pattern.meta.x;
+        const patternHeight = pattern.meta.y;
+
+
+        if(patternWidth > this.width || patternHeight > this.height){
+          cellSize = 1;
+        }
+        else{
+          var _cellSize = Math.min(Math.floor(this.width / (patternWidth * 1.4)), Math.floor(this.height / (patternHeight * 1.4)));
+          cellSize = [1, _cellSize, 8].sort((a, b) => a - b)[1];
+        }
+        this.cellSize = cellSize;
+
+        this.clearCanvas();
+        this.drawPattern(pattern,
+                          {
+                            location: 'center',
+                            coordinate: 'canvas',
+                          });
+
+      },
+    });
+  </script>
+</dom-module>
+</body></html>
