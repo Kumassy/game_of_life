@@ -1,4 +1,19 @@
-<html><head><meta charset="UTF-8"><link rel="import" href="../life-app/life-app.html"></head><body><dom-module id="life-catalog">
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/paper-styles/default-theme.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="../../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+
+<link rel="import" href="../life-behaviors/life-pattern-catalog-behavior.html">
+<link rel="import" href="../life-preview-canvas/life-preview-canvas.html">
+<link rel="import" href="life-icon-button.html">
+
+
+</head><body><dom-module id="life-catalog">
   <template>
     <app-route route="{{route}}" pattern="/:page" data="{{_routeData}}"></app-route>
 
