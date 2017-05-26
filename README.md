@@ -1,7 +1,7 @@
 # life-app
 The Game of Life app made by Polymer.
 
-![image-playground](https://cloud.githubusercontent.com/assets/6278784/26480089/cced7740-4212-11e7-9af5-45c5e7df2f98.png)
+![image-playground](https://cloud.githubusercontent.com/assets/6278784/26480718/ce61e350-4216-11e7-82d3-336d82980d24.gif)
 
 ## Game of Life
 The Game of Life is a cellular automaton devised by the British mathematician John Horton Conway in 1970. A simple algorithm determines the state of cells every frame.
