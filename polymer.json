@@ -15,6 +15,7 @@
     "bower_components/webcomponentsjs/webcomponents-lite.min.js",
     "bower_components/platinum-sw/**/*",
     "bower_components/sw-toolbox/*",
+    "bower_components/app-storage/**/*",
     "patterns.json",
     "patterns-lite.json"
   ]
